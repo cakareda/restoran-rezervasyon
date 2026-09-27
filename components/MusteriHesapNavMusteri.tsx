@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import NextLink from "next/link";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-export default function MusteriHesapNav() {
+export default function MusteriHesapNavMusteri() {
+  const t = useTranslations("SiteNav");
   const supabase = createClient();
   const router = useRouter();
   const [adSoyad, setAdSoyad] = useState<string | null>(null);
@@ -34,8 +35,6 @@ export default function MusteriHesapNav() {
         .maybeSingle();
 
       if (!iptalEdildi) {
-        // Girişli hesap bir restoran hesabıysa (kullanicilar tablosunda kaydı yoksa)
-        // müşteri menüsünde e-postasını göstermek yerine çıkış yapılmış gibi davran.
         setAdSoyad(kullanici?.ad_soyad ?? null);
         setYukleniyor(false);
       }
@@ -61,22 +60,22 @@ export default function MusteriHesapNav() {
   if (adSoyad) {
     return (
       <div className="flex items-center gap-3 text-sm">
-        <NextLink href="/hesap/profil" className="font-medium text-foreground hover:text-brand-dark">
-          Merhaba, {adSoyad.split(" ")[0]}
-        </NextLink>
+        <Link href="/hesap/profil" className="font-medium text-foreground hover:text-brand-dark">
+          {t("merhaba")} {adSoyad.split(" ")[0]}
+        </Link>
         <button onClick={cikisYap} className="font-medium text-muted hover:text-brand-dark">
-          Çıkış yap
+          {t("cikisYap")}
         </button>
       </div>
     );
   }
 
   return (
-    <NextLink
+    <Link
       href="/hesap/giris"
       className="rounded-full border border-border px-4 py-2 text-sm font-semibold text-foreground transition hover:border-brand hover:text-brand"
     >
-      Giriş Yap / Kayıt Ol
-    </NextLink>
+      {t("girisKayitOl")}
+    </Link>
   );
 }

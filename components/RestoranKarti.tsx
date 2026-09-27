@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import type { Restoran } from "@/lib/types";
 import { TabakIkonu } from "@/components/icons";
 
@@ -11,6 +12,8 @@ export default function RestoranKarti({
   ortalamaPuan: number | null;
   yorumSayisi: number;
 }) {
+  const t = useTranslations("RestoranKarti");
+
   return (
     <Link
       href={`/restoran/${restoran.id}`}
@@ -44,7 +47,7 @@ export default function RestoranKarti({
             </span>
           )}
           {yorumSayisi > 0 && (
-            <span className="text-xs text-muted">{yorumSayisi} yorum</span>
+            <span className="text-xs text-muted">{t("yorumSayisi", { sayi: yorumSayisi })}</span>
           )}
         </div>
       </div>
