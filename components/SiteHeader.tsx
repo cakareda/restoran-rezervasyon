@@ -43,7 +43,7 @@ export default function SiteHeader({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo-full.svg" alt={SITE_ADI} className="h-11 w-auto sm:h-12" />
             {sloganMetni && (
-              <span className="ml-14 mt-1 hidden text-xs font-normal tracking-wide text-muted sm:block">
+              <span className="ml-14 -mt-0.5 hidden text-xs font-normal tracking-wide text-foreground sm:block">
                 {sloganMetni}
               </span>
             )}
