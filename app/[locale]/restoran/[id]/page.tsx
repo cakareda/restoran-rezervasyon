@@ -78,8 +78,8 @@ export default async function RestoranDetay({
     restoran.olanaklar?.includes(o.deger)
   );
   const bilinenDegerler = OLANAK_ETIKETLERI.map((o) => o.deger) as string[];
-  const ozelOlanaklar = (restoran.olanaklar ?? []).filter(
-    (o) => !bilinenDegerler.includes(o)
+  const ozelOlanaklar = ((restoran.olanaklar ?? []) as string[]).filter(
+    (o: string) => !bilinenDegerler.includes(o)
   );
   const haritaAdresi = restoran.adres || `${restoran.ad}, ${restoran.semt}, ${restoran.sehir}`;
 
