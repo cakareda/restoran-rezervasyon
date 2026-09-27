@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { OLANAK_ETIKETLERI, type Restoran } from "@/lib/types";
+import { fiyatTemizle } from "@/lib/format";
 import OlanakIkonu from "@/components/OlanakIkonu";
 import GooglePlacesArama, { type GooglePlaceSonucu } from "@/components/GooglePlacesArama";
 import FotoYukleyici from "@/components/FotoYukleyici";
@@ -25,10 +26,11 @@ export default function RestoranimForm({
   const [telefon, setTelefon] = useState(restoran?.telefon ?? "");
   const [adres, setAdres] = useState(restoran?.adres ?? "");
   const [mutfakTuru, setMutfakTuru] = useState(restoran?.mutfak_turu ?? "");
-  const [ortalamaFiyat, setOrtalamaFiyat] = useState(restoran?.ortalama_fiyat ?? "");
+  const [ortalamaFiyat, setOrtalamaFiyat] = useState(fiyatTemizle(restoran?.ortalama_fiyat ?? ""));
   const [acilisSaati, setAcilisSaati] = useState(restoran?.acilis_saati?.slice(0, 5) ?? "12:00");
   const [kapanisSaati, setKapanisSaati] = useState(restoran?.kapanis_saati?.slice(0, 5) ?? "23:00");
   const [olanaklar, setOlanaklar] = useState<string[]>(restoran?.olanaklar ?? []);
+  const [ozelOlanakGirdi, setOzelOlanakGirdi] = useState("");
   const [fotograflar, setFotograflar] = useState<string[]>(restoran?.fotograflar ?? []);
 
   const googleSecimUygula = useCallback((sonuc: GooglePlaceSonucu) => {
@@ -44,6 +46,20 @@ export default function RestoranimForm({
     setOlanaklar((mevcut) =>
       isaretli ? [...mevcut, deger] : mevcut.filter((o) => o !== deger)
     );
+  }
+
+  const bilinenOlanakDegerleri = OLANAK_ETIKETLERI.map((o) => o.deger) as string[];
+  const ozelOlanaklar = olanaklar.filter((o) => !bilinenOlanakDegerleri.includes(o));
+
+  function ozelOlanakEkle() {
+    const deger = ozelOlanakGirdi.trim();
+    if (!deger || olanaklar.includes(deger)) return;
+    setOlanaklar((mevcut) => [...mevcut, deger]);
+    setOzelOlanakGirdi("");
+  }
+
+  function ozelOlanakSil(deger: string) {
+    setOlanaklar((mevcut) => mevcut.filter((o) => o !== deger));
   }
 
   return (
@@ -130,13 +146,18 @@ export default function RestoranimForm({
           </div>
           <div>
             <label className={etiketStil}>Ortalama fiyat</label>
-            <input
-              name="ortalamaFiyat"
-              value={ortalamaFiyat}
-              onChange={(e) => setOrtalamaFiyat(e.target.value)}
-              placeholder="örn. 500-800 TL"
-              className={girdiStil}
-            />
+            <div className="relative">
+              <span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-sm text-muted">
+                ₺
+              </span>
+              <input
+                name="ortalamaFiyat"
+                value={ortalamaFiyat}
+                onChange={(e) => setOrtalamaFiyat(e.target.value)}
+                placeholder="örn. 500-800"
+                className={`${girdiStil} pl-7`}
+              />
+            </div>
           </div>
         </div>
         <div>
@@ -229,6 +250,51 @@ export default function RestoranimForm({
                 {olanak.etiket}
               </label>
             ))}
+          </div>
+
+          {ozelOlanaklar.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {ozelOlanaklar.map((deger) => (
+                <span
+                  key={deger}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-brand/40 bg-brand-light px-3 py-1 text-sm text-brand-dark"
+                >
+                  {deger}
+                  <button
+                    type="button"
+                    onClick={() => ozelOlanakSil(deger)}
+                    aria-label={`${deger} olanağını kaldır`}
+                    className="text-brand-dark/60 hover:text-brand-dark"
+                  >
+                    ×
+                  </button>
+                  <input type="hidden" name="olanaklar" value={deger} />
+                </span>
+              ))}
+            </div>
+          )}
+
+          <div className="mt-2 flex gap-2">
+            <input
+              value={ozelOlanakGirdi}
+              onChange={(e) => setOzelOlanakGirdi(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  ozelOlanakEkle();
+                }
+              }}
+              type="text"
+              placeholder="Kendi olanağını ekle (örn. Deniz manzarası)"
+              className={girdiStil}
+            />
+            <button
+              type="button"
+              onClick={ozelOlanakEkle}
+              className="shrink-0 rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground hover:border-brand hover:text-brand-dark"
+            >
+              Ekle
+            </button>
           </div>
         </div>
 

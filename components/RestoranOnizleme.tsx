@@ -1,4 +1,5 @@
 import { OLANAK_ETIKETLERI } from "@/lib/types";
+import { fiyatGoster } from "@/lib/format";
 import { KonumIkonu, SaatIkonu, TabakIkonu } from "@/components/icons";
 import OlanakIkonu from "@/components/OlanakIkonu";
 
@@ -26,6 +27,8 @@ export default function RestoranOnizleme({
   fotograflar: string[];
 }) {
   const secilenOlanaklar = OLANAK_ETIKETLERI.filter((o) => olanaklar.includes(o.deger));
+  const bilinenDegerler = OLANAK_ETIKETLERI.map((o) => o.deger) as string[];
+  const ozelOlanaklar = olanaklar.filter((o) => !bilinenDegerler.includes(o));
 
   return (
     <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
@@ -42,13 +45,13 @@ export default function RestoranOnizleme({
           {semt || "Semt"}, {sehir || "Şehir"} · {mutfakTuru || "Mutfak türü"}
         </p>
 
-        {ortalamaFiyat && (
+        {fiyatGoster(ortalamaFiyat) && (
           <span className="mt-2 inline-block rounded-full bg-brand-light px-2.5 py-1 text-xs font-semibold text-brand-dark">
-            {ortalamaFiyat}
+            {fiyatGoster(ortalamaFiyat)}
           </span>
         )}
 
-        {secilenOlanaklar.length > 0 && (
+        {(secilenOlanaklar.length > 0 || ozelOlanaklar.length > 0) && (
           <div className="mt-2 flex flex-wrap gap-1.5">
             {secilenOlanaklar.map((o) => (
               <span
@@ -57,6 +60,14 @@ export default function RestoranOnizleme({
               >
                 <OlanakIkonu deger={o.deger} className="h-3 w-3 text-muted" />
                 {o.etiket}
+              </span>
+            ))}
+            {ozelOlanaklar.map((o) => (
+              <span
+                key={o}
+                className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[11px] text-foreground"
+              >
+                {o}
               </span>
             ))}
           </div>

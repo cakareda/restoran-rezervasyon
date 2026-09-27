@@ -15,6 +15,6 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/restoran-panel/:path*",
-    "/((?!api|_next|restoran-panel|restoran-girisi|restoran-kayit|restoranlar-icin|.*\\..*).*)",
+    "/((?!api|auth|_next|restoran-panel|restoran-girisi|restoran-kayit|restoranlar-icin|.*\\..*).*)",
   ],
 };

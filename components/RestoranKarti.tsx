@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import type { Restoran } from "@/lib/types";
+import { fiyatGoster } from "@/lib/format";
 import { TabakIkonu } from "@/components/icons";
 
 export default function RestoranKarti({
@@ -41,9 +42,9 @@ export default function RestoranKarti({
           {restoran.semt}, {restoran.sehir} · {restoran.mutfak_turu}
         </p>
         <div className="mt-2.5 flex items-center gap-2">
-          {restoran.ortalama_fiyat && (
+          {fiyatGoster(restoran.ortalama_fiyat) && (
             <span className="inline-block rounded-full bg-brand-light px-2.5 py-1 text-xs font-semibold text-brand-dark">
-              {restoran.ortalama_fiyat}
+              {fiyatGoster(restoran.ortalama_fiyat)}
             </span>
           )}
           {yorumSayisi > 0 && (

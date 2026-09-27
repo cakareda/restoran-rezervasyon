@@ -47,7 +47,7 @@ export default function SiteFooter({
             alt={SITE_ADI}
             className="h-12 w-auto sm:h-14"
           />
-          <p className="mt-3 max-w-xs text-sm">{slogan}</p>
+          <p className="mt-3 max-w-xs text-sm font-normal tracking-wide">{slogan}</p>
         </div>
         <div>
           <p className="text-xs font-bold uppercase tracking-wide text-white/50">{baslikMasadaki}</p>

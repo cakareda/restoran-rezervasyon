@@ -1,7 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { OLANAK_ETIKETLERI } from "@/lib/types";
 import RestoranimForm from "./RestoranimForm";
 
 async function kaydet(formData: FormData) {
@@ -13,9 +12,10 @@ async function kaydet(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) return;
 
-  const olanaklar = OLANAK_ETIKETLERI.map((o) => o.deger).filter((deger) =>
-    formData.getAll("olanaklar").includes(deger)
-  );
+  const olanaklar = formData
+    .getAll("olanaklar")
+    .map((deger) => String(deger).trim())
+    .filter(Boolean);
 
   const fotograflar = String(formData.get("fotograflar") ?? "")
     .split("\n")

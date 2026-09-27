@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -14,6 +14,17 @@ export default function RestoranGirisi() {
   const [gonderiliyor, setGonderiliyor] = useState(false);
   const [hata, setHata] = useState<string | null>(null);
   const [sifreGorunur, setSifreGorunur] = useState(false);
+  const [oturumKontrolEdiliyor, setOturumKontrolEdiliyor] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        router.replace("/restoran-panel");
+        return;
+      }
+      setOturumKontrolEdiliyor(false);
+    });
+  }, [router, supabase]);
 
   async function girisYap(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -35,6 +46,10 @@ export default function RestoranGirisi() {
 
     router.push("/restoran-panel");
     router.refresh();
+  }
+
+  if (oturumKontrolEdiliyor) {
+    return <RestoranAuthLayout>{null}</RestoranAuthLayout>;
   }
 
   return (

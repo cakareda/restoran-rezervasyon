@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import type { Yorum } from "@/lib/types";
 import { OLANAK_ETIKETLERI } from "@/lib/types";
+import { fiyatGoster } from "@/lib/format";
 import { KonumIkonu, SaatIkonu, TabakIkonu } from "@/components/icons";
 import OlanakIkonu from "@/components/OlanakIkonu";
 import RezervasyonFormu from "./RezervasyonFormu";
@@ -76,6 +77,10 @@ export default async function RestoranDetay({
   const secilenOlanaklar = OLANAK_ETIKETLERI.filter((o) =>
     restoran.olanaklar?.includes(o.deger)
   );
+  const bilinenDegerler = OLANAK_ETIKETLERI.map((o) => o.deger) as string[];
+  const ozelOlanaklar = (restoran.olanaklar ?? []).filter(
+    (o) => !bilinenDegerler.includes(o)
+  );
   const haritaAdresi = restoran.adres || `${restoran.ad}, ${restoran.semt}, ${restoran.sehir}`;
 
   return (
@@ -122,9 +127,9 @@ export default async function RestoranDetay({
         )}
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          {restoran.ortalama_fiyat && (
+          {fiyatGoster(restoran.ortalama_fiyat) && (
             <span className="inline-block rounded-full bg-brand-light px-3 py-1 text-sm font-semibold text-brand-dark">
-              {restoran.ortalama_fiyat}
+              {fiyatGoster(restoran.ortalama_fiyat)}
             </span>
           )}
           {secilenOlanaklar.map((o) => (
@@ -134,6 +139,14 @@ export default async function RestoranDetay({
             >
               <OlanakIkonu deger={o.deger} className="h-3.5 w-3.5 text-muted" />
               {tOlanak(o.deger)}
+            </span>
+          ))}
+          {ozelOlanaklar.map((o) => (
+            <span
+              key={o}
+              className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-sm text-foreground"
+            >
+              {o}
             </span>
           ))}
         </div>
