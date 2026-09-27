@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import type { Restoran } from "@/lib/types";
 import { restoranBazindaPuanla } from "@/lib/puanlama";
 import RestoranKarti from "@/components/RestoranKarti";
+
+export const metadata: Metadata = {
+  title: "Restoranları keşfet",
+  description:
+    "Şehrindeki restoranları keşfet, tarih ve saatini seç, saniyeler içinde rezervasyon talebi gönder.",
+};
 
 export default async function RestoranlarSayfasi({
   searchParams,

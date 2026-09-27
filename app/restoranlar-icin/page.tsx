@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { SITE_ADI } from "@/lib/config";
 import {
@@ -10,6 +11,12 @@ import {
 
 const SAHIP_FOTO =
   "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1800&q=80";
+
+export const metadata: Metadata = {
+  title: "Restoranlar için",
+  description:
+    "Rezervasyon taleplerini tek panelden yönet, telefon trafiğini azalt. Ücretsiz kayıt ol, komisyon yok.",
+};
 
 export default function RestoranlarIcin() {
   return (
@@ -86,7 +93,7 @@ export default function RestoranlarIcin() {
             <OnayIkonu className="mx-auto h-6 w-6 text-brand sm:mx-0" />
             <p className="mt-2 font-bold text-foreground">Geldi/gelmedi takibi</p>
             <p className="mt-1 text-sm text-muted">
-              Misafirin gelip gelmediğini işaretle, no-show'ları netleştir.
+              Misafirin gelip gelmediğini işaretle, no-show&apos;ları netleştir.
             </p>
           </div>
           <div>

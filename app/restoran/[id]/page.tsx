@@ -1,3 +1,5 @@
+import { cache } from "react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Yorum } from "@/lib/types";
@@ -5,6 +7,39 @@ import { OLANAK_ETIKETLERI } from "@/lib/types";
 import { KonumIkonu, SaatIkonu, TabakIkonu } from "@/components/icons";
 import OlanakIkonu from "@/components/OlanakIkonu";
 import RezervasyonFormu from "./RezervasyonFormu";
+
+const getRestoran = cache(async (id: string) => {
+  const supabase = await createClient();
+  const { data } = await supabase.from("restoranlar").select("*").eq("id", id).single();
+  return data;
+});
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const restoran = await getRestoran(id);
+
+  if (!restoran) return { title: "Restoran bulunamadı" };
+
+  const baslik = `${restoran.ad} — ${restoran.semt}, ${restoran.sehir}`;
+  const aciklama =
+    restoran.aciklama?.slice(0, 155) ||
+    `${restoran.ad}, ${restoran.semt}/${restoran.sehir} adresinde. ${restoran.mutfak_turu} mutfağı, Masadaki üzerinden ücretsiz rezervasyon.`;
+  const foto = restoran.fotograflar?.[0];
+
+  return {
+    title: baslik,
+    description: aciklama,
+    openGraph: {
+      title: baslik,
+      description: aciklama,
+      images: foto ? [{ url: foto }] : undefined,
+    },
+  };
+}
 
 export default async function RestoranDetay({
   params,
@@ -14,11 +49,7 @@ export default async function RestoranDetay({
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: restoran } = await supabase
-    .from("restoranlar")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const restoran = await getRestoran(id);
 
   if (!restoran) notFound();
 
