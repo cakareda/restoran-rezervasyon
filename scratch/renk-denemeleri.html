@@ -1,0 +1,332 @@
+<title>Renk Denemeleri</title>
+<style>
+  :root {
+    --bg: #faf9f7;
+    --ink: #24211e;
+    --sub: #746b64;
+    --card-bg: #ffffff;
+    --card-border: #ece7e1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1c1a18;
+      --ink: #f1ede8;
+      --sub: #b3a89f;
+      --card-bg: #26221f;
+      --card-border: #3a352f;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1c1a18;
+    --ink: #f1ede8;
+    --sub: #b3a89f;
+    --card-bg: #26221f;
+    --card-border: #3a352f;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Inter", -apple-system, "Segoe UI", sans-serif;
+    padding: 40px 20px 60px;
+  }
+  .intro {
+    max-width: 720px;
+    margin: 0 auto 36px;
+    text-align: center;
+  }
+  .intro h1 {
+    font-size: clamp(24px, 4vw, 34px);
+    margin: 0 0 10px;
+    text-wrap: balance;
+  }
+  .intro p {
+    color: var(--sub);
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0;
+  }
+  .grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  .palette {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .palette-label {
+    padding: 14px 16px 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sub);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .palette-label .tag {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--card-border);
+    color: var(--ink);
+  }
+  .mock {
+    margin: 12px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--p-border);
+    background: var(--p-bg);
+  }
+  .mock-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: #fff;
+    border-bottom: 1px solid var(--p-border);
+  }
+  .mock-logo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--p-ink);
+  }
+  .mock-logo .dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: var(--p-accent);
+  }
+  .mock-loginbtn {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--p-border);
+    color: var(--p-ink);
+  }
+  .mock-hero {
+    padding: 16px 12px 10px;
+    background: var(--p-light);
+  }
+  .mock-hero h3 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    color: var(--p-ink);
+  }
+  .mock-hero p {
+    margin: 0;
+    font-size: 11px;
+    color: var(--p-sub);
+  }
+  .mock-card {
+    margin: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--p-border);
+    background: #fff;
+    overflow: hidden;
+  }
+  .mock-card .photo {
+    height: 46px;
+    background: var(--p-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .mock-card .info {
+    padding: 8px 10px 10px;
+  }
+  .mock-card .info .name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--p-ink);
+  }
+  .mock-card .info .meta {
+    font-size: 10px;
+    color: var(--p-sub);
+    margin-top: 2px;
+  }
+  .mock-badge {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: var(--p-light);
+    color: var(--p-accent-dark);
+  }
+  .mock-cta {
+    margin: 0 12px 12px;
+    padding: 9px;
+    text-align: center;
+    border-radius: 9px;
+    background: var(--p-accent);
+    color: var(--p-oncta);
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .swatches {
+    display: flex;
+    gap: 6px;
+    padding: 0 16px 16px;
+  }
+  .swatch {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,.08);
+  }
+</style>
+
+<div class="intro">
+  <h1>Renk denemeleri</h1>
+  <p>Aynı iki bileşen — üst menü ve restoran kartı — beş farklı palette ile. Hangisi doğru hissettiriyor?</p>
+</div>
+
+<div class="grid">
+
+  <div class="palette" style="--p-bg:#fff5f5; --p-light:#ffeced; --p-border:#f5d9d9; --p-ink:#2b2321; --p-sub:#8a7c7a; --p-accent:#ff5a5f; --p-accent-dark:#e0464b; --p-oncta:#fff;">
+    <div class="palette-label">Mercan &amp; Beyaz <span class="tag">mevcut</span></div>
+    <div class="mock">
+      <div class="mock-header">
+        <div class="mock-logo"><span class="dot"></span>Masa Bul</div>
+        <div class="mock-loginbtn">Giriş Yap</div>
+      </div>
+      <div class="mock-hero"><h3>Bugün nerede yemek yiyorsun?</h3><p>Sevdiğin restoranda yer ayırt.</p></div>
+      <div class="mock-card">
+        <div class="photo">🍽️</div>
+        <div class="info">
+          <div class="name">Kars Iğdır Lokantası</div>
+          <div class="meta">Beylikdüzü, İstanbul · Türk</div>
+          <span class="mock-badge">450-800 ₺</span>
+        </div>
+      </div>
+      <div class="mock-cta">Rezervasyon Talebi Gönder</div>
+    </div>
+    <div class="swatches">
+      <div class="swatch" style="background:#ff5a5f"></div>
+      <div class="swatch" style="background:#e0464b"></div>
+      <div class="swatch" style="background:#ffeced"></div>
+      <div class="swatch" style="background:#2b2321"></div>
+    </div>
+  </div>
+
+  <div class="palette" style="--p-bg:#f5fbf7; --p-light:#e8f8ee; --p-border:#cdeedb; --p-ink:#1f2b24; --p-sub:#6f8579; --p-accent:#1DB954; --p-accent-dark:#149a45; --p-oncta:#fff;">
+    <div class="palette-label">Yeşil &amp; Beyaz</div>
+    <div class="mock">
+      <div class="mock-header">
+        <div class="mock-logo"><span class="dot"></span>Masa Bul</div>
+        <div class="mock-loginbtn">Giriş Yap</div>
+      </div>
+      <div class="mock-hero"><h3>Bugün nerede yemek yiyorsun?</h3><p>Sevdiğin restoranda yer ayırt.</p></div>
+      <div class="mock-card">
+        <div class="photo">🍽️</div>
+        <div class="info">
+          <div class="name">Kars Iğdır Lokantası</div>
+          <div class="meta">Beylikdüzü, İstanbul · Türk</div>
+          <span class="mock-badge">450-800 ₺</span>
+        </div>
+      </div>
+      <div class="mock-cta">Rezervasyon Talebi Gönder</div>
+    </div>
+    <div class="swatches">
+      <div class="swatch" style="background:#1DB954"></div>
+      <div class="swatch" style="background:#149a45"></div>
+      <div class="swatch" style="background:#e8f8ee"></div>
+      <div class="swatch" style="background:#1f2b24"></div>
+    </div>
+  </div>
+
+  <div class="palette" style="--p-bg:#fff8f0; --p-light:#ffedd9; --p-border:#f6ddb8; --p-ink:#2c2013; --p-sub:#8a7658; --p-accent:#F27A1A; --p-accent-dark:#c95f0c; --p-oncta:#fff;">
+    <div class="palette-label">Turuncu &amp; Beyaz</div>
+    <div class="mock">
+      <div class="mock-header">
+        <div class="mock-logo"><span class="dot"></span>Masa Bul</div>
+        <div class="mock-loginbtn">Giriş Yap</div>
+      </div>
+      <div class="mock-hero"><h3>Bugün nerede yemek yiyorsun?</h3><p>Sevdiğin restoranda yer ayırt.</p></div>
+      <div class="mock-card">
+        <div class="photo">🍽️</div>
+        <div class="info">
+          <div class="name">Kars Iğdır Lokantası</div>
+          <div class="meta">Beylikdüzü, İstanbul · Türk</div>
+          <span class="mock-badge">450-800 ₺</span>
+        </div>
+      </div>
+      <div class="mock-cta">Rezervasyon Talebi Gönder</div>
+    </div>
+    <div class="swatches">
+      <div class="swatch" style="background:#F27A1A"></div>
+      <div class="swatch" style="background:#c95f0c"></div>
+      <div class="swatch" style="background:#ffedd9"></div>
+      <div class="swatch" style="background:#2c2013"></div>
+    </div>
+  </div>
+
+  <div class="palette" style="--p-bg:#fffdf5; --p-light:#fff6d1; --p-border:#ece0a8; --p-ink:#201d10; --p-sub:#83795a; --p-accent:#191712; --p-accent-dark:#000; --p-oncta:#FFC300;">
+    <div class="palette-label">Siyah &amp; Sarı</div>
+    <div class="mock">
+      <div class="mock-header">
+        <div class="mock-logo"><span class="dot" style="background:#191712"></span>Masa Bul</div>
+        <div class="mock-loginbtn">Giriş Yap</div>
+      </div>
+      <div class="mock-hero"><h3>Bugün nerede yemek yiyorsun?</h3><p>Sevdiğin restoranda yer ayırt.</p></div>
+      <div class="mock-card">
+        <div class="photo">🍽️</div>
+        <div class="info">
+          <div class="name">Kars Iğdır Lokantası</div>
+          <div class="meta">Beylikdüzü, İstanbul · Türk</div>
+          <span class="mock-badge" style="background:#fff6d1;color:#191712">450-800 ₺</span>
+        </div>
+      </div>
+      <div class="mock-cta" style="background:#FFC300;color:#191712">Rezervasyon Talebi Gönder</div>
+    </div>
+    <div class="swatches">
+      <div class="swatch" style="background:#FFC300"></div>
+      <div class="swatch" style="background:#191712"></div>
+      <div class="swatch" style="background:#fff6d1"></div>
+      <div class="swatch" style="background:#fffdf5"></div>
+    </div>
+  </div>
+
+  <div class="palette" style="--p-bg:#f6f8fb; --p-light:#e8eefc; --p-border:#cddaf4; --p-ink:#1c2333; --p-sub:#68738c; --p-accent:#2563EB; --p-accent-dark:#1d4fc4; --p-oncta:#fff;">
+    <div class="palette-label">Lacivert &amp; Beyaz <span class="tag">bonus</span></div>
+    <div class="mock">
+      <div class="mock-header">
+        <div class="mock-logo"><span class="dot"></span>Masa Bul</div>
+        <div class="mock-loginbtn">Giriş Yap</div>
+      </div>
+      <div class="mock-hero"><h3>Bugün nerede yemek yiyorsun?</h3><p>Sevdiğin restoranda yer ayırt.</p></div>
+      <div class="mock-card">
+        <div class="photo">🍽️</div>
+        <div class="info">
+          <div class="name">Kars Iğdır Lokantası</div>
+          <div class="meta">Beylikdüzü, İstanbul · Türk</div>
+          <span class="mock-badge">450-800 ₺</span>
+        </div>
+      </div>
+      <div class="mock-cta">Rezervasyon Talebi Gönder</div>
+    </div>
+    <div class="swatches">
+      <div class="swatch" style="background:#2563EB"></div>
+      <div class="swatch" style="background:#1d4fc4"></div>
+      <div class="swatch" style="background:#e8eefc"></div>
+      <div class="swatch" style="background:#1c2333"></div>
+    </div>
+  </div>
+
+</div>
