@@ -37,6 +37,8 @@ export function onayEpostasi(params: {
   restoranAd: string;
   tarihSaat: string;
   kisiSayisi: number;
+  iptalUrl?: string;
+  degistirUrl?: string;
 }) {
   return {
     konu: `Rezervasyonunuz onaylandı — ${params.restoranAd}`,
@@ -49,6 +51,36 @@ export function onayEpostasi(params: {
           <li><strong>Kişi Sayısı:</strong> ${params.kisiSayisi}</li>
         </ul>
         <p>Sizi ağırlamaktan mutluluk duyacaklar. İyi yemekler!</p>
+        ${
+          params.iptalUrl || params.degistirUrl
+            ? `<p style="margin-top:16px;font-size:14px;color:#6b7280;">
+                Planların değişti mi?
+                ${params.degistirUrl ? `<a href="${params.degistirUrl}" style="color:#2563eb;">Tarihi değiştir</a>` : ""}
+                ${params.iptalUrl && params.degistirUrl ? " · " : ""}
+                ${params.iptalUrl ? `<a href="${params.iptalUrl}" style="color:#dc2626;">Rezervasyonu iptal et</a>` : ""}
+              </p>`
+            : ""
+        }
+      </div>
+    `,
+  };
+}
+
+export function musteriIptalEpostasi(params: {
+  misafirAd: string;
+  tarihSaat: string;
+  kisiSayisi: number;
+}) {
+  return {
+    konu: `Rezervasyon iptal edildi — ${params.misafirAd}`,
+    html: `
+      <div style="${kutuStil}">
+        <h2>Bir rezervasyon iptal edildi</h2>
+        <p><strong>${params.misafirAd}</strong>, aşağıdaki rezervasyonunu iptal etti.</p>
+        <ul>
+          <li><strong>Tarih/Saat:</strong> ${tarihSaatFormatla(params.tarihSaat)}</li>
+          <li><strong>Kişi Sayısı:</strong> ${params.kisiSayisi}</li>
+        </ul>
       </div>
     `,
   };

@@ -1,5 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { RezervasyonDurum } from "@/lib/types";
 import { TakvimIkonu } from "@/components/icons";
@@ -8,12 +9,14 @@ const durumEtiketi: Record<RezervasyonDurum, string> = {
   beklemede: "Beklemede",
   onaylandi: "Onaylandı",
   reddedildi: "Reddedildi",
+  iptal_edildi: "İptal edildi",
 };
 
 const durumStil: Record<RezervasyonDurum, string> = {
   beklemede: "bg-amber-50 text-amber-700",
   onaylandi: "bg-green-50 text-green-700",
   reddedildi: "bg-red-50 text-red-700",
+  iptal_edildi: "bg-zinc-100 text-zinc-500",
 };
 
 async function kaydet(formData: FormData) {
@@ -60,7 +63,7 @@ export default async function Profilim({
 
   const { data: rezervasyonlar } = await supabase
     .from("rezervasyonlar")
-    .select("id, tarih_saat, kisi_sayisi, durum, restoranlar(ad, sehir, semt)")
+    .select("id, tarih_saat, kisi_sayisi, durum, restoran_id, restoranlar(ad, sehir, semt)")
     .eq("kullanici_id", kullanici.id)
     .order("tarih_saat", { ascending: false });
 
@@ -125,6 +128,9 @@ export default async function Profilim({
         ) : (
           rezervasyonlar.map((r) => {
             const restoran = Array.isArray(r.restoranlar) ? r.restoranlar[0] : r.restoranlar;
+            const durum = r.durum as RezervasyonDurum;
+            const aktifMi = durum !== "iptal_edildi" && durum !== "reddedildi";
+            const gelecekMi = new Date(r.tarih_saat) > new Date();
             return (
               <div key={r.id} className="rounded-2xl border border-border bg-white p-4 shadow-sm">
                 <div className="flex flex-wrap items-start justify-between gap-2">
@@ -142,10 +148,26 @@ export default async function Profilim({
                       · {r.kisi_sayisi} kişi
                     </p>
                   </div>
-                  <span className={`rounded-full px-3 py-1 text-xs font-bold ${durumStil[r.durum as RezervasyonDurum]}`}>
-                    {durumEtiketi[r.durum as RezervasyonDurum]}
+                  <span className={`rounded-full px-3 py-1 text-xs font-bold ${durumStil[durum]}`}>
+                    {durumEtiketi[durum]}
                   </span>
                 </div>
+                {aktifMi && gelecekMi && (
+                  <div className="mt-3 flex gap-4 border-t border-border pt-3">
+                    <Link
+                      href={`/rezervasyon/${r.id}/iptal?degistir=1`}
+                      className="text-sm font-semibold text-brand hover:underline"
+                    >
+                      Değiştir
+                    </Link>
+                    <Link
+                      href={`/rezervasyon/${r.id}/iptal`}
+                      className="text-sm font-semibold text-muted hover:text-red-600"
+                    >
+                      İptal Et
+                    </Link>
+                  </div>
+                )}
               </div>
             );
           })

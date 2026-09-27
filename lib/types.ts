@@ -1,4 +1,4 @@
-export type RezervasyonDurum = "beklemede" | "onaylandi" | "reddedildi";
+export type RezervasyonDurum = "beklemede" | "onaylandi" | "reddedildi" | "iptal_edildi";
 
 export interface Restoran {
   id: string;

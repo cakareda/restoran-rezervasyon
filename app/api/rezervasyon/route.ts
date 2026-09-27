@@ -5,7 +5,7 @@ import { yeniTalepEpostasi } from "@/lib/email/templates";
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { restoranId, adSoyad, eposta, telefon, tarihSaat, kisiSayisi } = body;
+  const { restoranId, adSoyad, eposta, telefon, tarihSaat, kisiSayisi, notlar } = body;
 
   if (!restoranId || !adSoyad || !eposta || !tarihSaat || !kisiSayisi) {
     return NextResponse.json({ hata: "Eksik bilgi." }, { status: 400 });
@@ -44,6 +44,7 @@ export async function POST(request: Request) {
       tarih_saat: tarihSaat,
       kisi_sayisi: kisiSayisi,
       durum: "beklemede",
+      notlar: notlar ?? null,
     })
     .select("id")
     .single();

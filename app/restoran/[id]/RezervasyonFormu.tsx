@@ -63,6 +63,7 @@ export default function RezervasyonFormu({
   const [adSoyad, setAdSoyad] = useState("");
   const [eposta, setEposta] = useState("");
   const [telefon, setTelefon] = useState("");
+  const [notlar, setNotlar] = useState("");
 
   const bugun = useMemo(() => yerelTarih(new Date()), []);
 
@@ -138,6 +139,7 @@ export default function RezervasyonFormu({
         telefon,
         tarihSaat: new Date(`${tarih}T${saat}`).toISOString(),
         kisiSayisi,
+        notlar: notlar.trim() || null,
       }),
     });
 
@@ -288,6 +290,19 @@ export default function RezervasyonFormu({
               </p>
             </>
           )}
+
+          <div className="space-y-1">
+            <label className="block text-sm font-medium text-foreground">
+              Not (opsiyonel)
+            </label>
+            <textarea
+              value={notlar}
+              onChange={(e) => setNotlar(e.target.value)}
+              rows={2}
+              placeholder="Alerji, özel istek, kutlama vb."
+              className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+            />
+          </div>
 
           {hata && <p className="text-sm font-medium text-red-600">{hata}</p>}
 

@@ -8,6 +8,7 @@ import { SITE_ADI, SITE_SLOGAN } from "@/lib/config";
 export const metadata: Metadata = {
   title: `${SITE_ADI} — Restoran Rezervasyonu`,
   description: SITE_SLOGAN,
+  other: { "color-scheme": "light" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -48,9 +49,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <div className="sm:col-span-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/logo-full.svg"
+                src="/logo-full-krem.svg"
                 alt={SITE_ADI}
-                className="h-12 w-auto brightness-0 invert sm:h-14"
+                className="h-12 w-auto sm:h-14"
               />
               <p className="mt-3 max-w-xs text-sm">{SITE_SLOGAN}</p>
             </div>
@@ -95,7 +96,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </div>
           </div>
           <div className="border-t border-white/10 py-4 text-center text-xs text-white/50">
-            © {new Date().getFullYear()} {SITE_ADI}
+            <p>
+              Bize ulaşın:{" "}
+              <a href="mailto:info@masadaki.com" className="font-semibold text-white/70 hover:text-white">
+                info@masadaki.com
+              </a>
+            </p>
+            <p className="mt-1">
+              © {new Date().getFullYear()} {SITE_ADI}
+            </p>
           </div>
         </footer>
       </body>

@@ -4,7 +4,7 @@ import { createServiceRoleClient } from "@/lib/supabase/server";
 export async function bildirimGonderVeKaydet(params: {
   rezervasyonId: string;
   aliciEposta: string;
-  tur: "yeni_talep" | "onay" | "red" | "yorum_daveti";
+  tur: "yeni_talep" | "onay" | "red" | "yorum_daveti" | "musteri_iptali";
   konu: string;
   html: string;
 }) {

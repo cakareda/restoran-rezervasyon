@@ -9,12 +9,14 @@ const durumEtiketi: Record<RezervasyonDurum, string> = {
   beklemede: "Beklemede",
   onaylandi: "Onaylandı",
   reddedildi: "Reddedildi",
+  iptal_edildi: "Misafir iptal etti",
 };
 
 const durumStil: Record<RezervasyonDurum, string> = {
   beklemede: "bg-amber-50 text-amber-700",
   onaylandi: "bg-green-50 text-green-700",
   reddedildi: "bg-red-50 text-red-700",
+  iptal_edildi: "bg-zinc-100 text-zinc-500",
 };
 
 export default function RezervasyonSatiri({
@@ -25,6 +27,7 @@ export default function RezervasyonSatiri({
   kisiSayisi,
   durum,
   geldiMi,
+  notlar,
 }: {
   id: string;
   misafirAd: string;
@@ -33,6 +36,7 @@ export default function RezervasyonSatiri({
   kisiSayisi: number;
   durum: RezervasyonDurum;
   geldiMi: boolean | null;
+  notlar?: string | null;
 }) {
   const router = useRouter();
   const [yukleniyor, setYukleniyor] = useState(false);
@@ -62,6 +66,11 @@ export default function RezervasyonSatiri({
             })}{" "}
             · {kisiSayisi} kişi
           </p>
+          {notlar && (
+            <p className="mt-2 inline-flex max-w-md items-start gap-1.5 rounded-lg bg-amber-50 px-2.5 py-1.5 text-xs font-medium text-amber-800">
+              📝 {notlar}
+            </p>
+          )}
         </div>
         <span className={`rounded-full px-3 py-1 text-xs font-bold ${durumStil[durum]}`}>
           {durumEtiketi[durum]}

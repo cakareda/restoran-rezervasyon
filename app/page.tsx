@@ -59,6 +59,11 @@ export default async function AnaSayfa() {
       <section className="border-b border-border bg-white">
         <div className="mx-auto grid max-w-5xl gap-6 px-6 py-8 text-center sm:grid-cols-3">
           <div>
+            <TabakIkonu className="mx-auto h-6 w-6 text-brand" />
+            <p className="mt-2 text-sm font-semibold text-foreground">Restorana doğrudan</p>
+            <p className="text-xs text-muted">Aracı yok, talebin doğrudan restorana ulaşır</p>
+          </div>
+          <div>
             <EpostaIkonu className="mx-auto h-6 w-6 text-brand" />
             <p className="mt-2 text-sm font-semibold text-foreground">E-postayla net yanıt</p>
             <p className="text-xs text-muted">Onay veya red, saniyeler içinde gelen kutunda</p>
@@ -67,11 +72,6 @@ export default async function AnaSayfa() {
             <OnayIkonu className="mx-auto h-6 w-6 text-brand" />
             <p className="mt-2 text-sm font-semibold text-foreground">Doğrulanmış yorumlar</p>
             <p className="text-xs text-muted">Yalnızca gerçekten gelmiş misafirler yorum yazar</p>
-          </div>
-          <div>
-            <TabakIkonu className="mx-auto h-6 w-6 text-brand" />
-            <p className="mt-2 text-sm font-semibold text-foreground">Restorana doğrudan</p>
-            <p className="text-xs text-muted">Aracı yok, talebin doğrudan restorana ulaşır</p>
           </div>
         </div>
       </section>
@@ -141,6 +141,32 @@ export default async function AnaSayfa() {
           </div>
         </section>
       )}
+
+      {/* Nasıl çalışır */}
+      <section id="nasil-calisir" className="mx-auto max-w-5xl px-6 py-14 text-center">
+        <p className="text-xs font-bold uppercase tracking-wide text-brand">Nasıl çalışır?</p>
+        <h2 className="mt-1 text-2xl font-extrabold text-foreground">
+          Üç adımda restorana ulaş
+        </h2>
+        <p className="mx-auto mt-2 max-w-md text-sm text-muted">
+          Karmaşık üyelikler veya ödeme adımları yok. Talebini gönder, restoranın yanıtını bekle.
+        </p>
+
+        <div className="mt-8 grid gap-5 sm:grid-cols-3">
+          {[
+            { no: "01", Ikon: AramaIkonu, baslik: "Sofranı seç", aciklama: "Konum, tarih, saat ve kişi sayısını belirle, restoranını bul." },
+            { no: "02", Ikon: GonderIkonu, baslik: "Talebini gönder", aciklama: "Rezervasyon talebin restorana anında iletilir." },
+            { no: "03", Ikon: OnayIkonu, baslik: "Yanıtını e-postanda gör", aciklama: "Restoran onaylandığında veya reddettiğinde haberin olur." },
+          ].map((adim) => (
+            <div key={adim.no} className="rounded-2xl border border-border bg-white p-6 text-left">
+              <p className="text-xs font-bold text-muted">{adim.no}</p>
+              <adim.Ikon className="mt-2 h-6 w-6 text-brand" />
+              <p className="mt-2 font-bold text-foreground">{adim.baslik}</p>
+              <p className="mt-1 text-sm text-muted">{adim.aciklama}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* Doğrulanmış yorum sistemi */}
       <section className="bg-brand-darkest py-14 text-white">

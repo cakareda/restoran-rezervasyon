@@ -46,6 +46,8 @@ export async function POST(
       restoranAd: restoran.ad,
       tarihSaat: rezervasyon.tarih_saat,
       kisiSayisi: rezervasyon.kisi_sayisi,
+      iptalUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/rezervasyon/${rezervasyon.id}/iptal`,
+      degistirUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/rezervasyon/${rezervasyon.id}/iptal?degistir=1`,
     });
     await bildirimGonderVeKaydet({
       rezervasyonId: rezervasyon.id,
