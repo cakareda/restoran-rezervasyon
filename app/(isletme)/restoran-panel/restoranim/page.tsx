@@ -37,6 +37,9 @@ async function kaydet(formData: FormData) {
       adres: String(formData.get("adres") ?? ""),
       acilis_saati: String(formData.get("acilisSaati") ?? "12:00"),
       kapanis_saati: String(formData.get("kapanisSaati") ?? "23:00"),
+      oturma_suresi_dk: formData.get("oturmaSuresiDk")
+        ? Number(formData.get("oturmaSuresiDk"))
+        : 90,
       olanaklar,
       fotograflar,
     },

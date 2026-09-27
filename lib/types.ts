@@ -17,9 +17,17 @@ export interface Restoran {
   calisma_saatleri: string | null;
   acilis_saati: string;
   kapanis_saati: string;
+  oturma_suresi_dk: number;
   olanaklar: string[];
   fotograflar: string[];
   olusturulma: string;
+}
+
+export interface Masa {
+  id: string;
+  restoran_id: string;
+  kapasite: number;
+  adet: number;
 }
 
 export interface Kullanici {
@@ -42,6 +50,13 @@ export const OLANAK_ETIKETLERI = [
 
 export type RezervasyonKaynagi = "online" | "telefon";
 
+export const OZEL_GUN_SECENEKLERI = [
+  { deger: "dogum_gunu", etiket: "Doğum günü" },
+  { deger: "yil_donumu", etiket: "Yıl dönümü" },
+  { deger: "is_yemegi", etiket: "İş yemeği" },
+  { deger: "kutlama", etiket: "Kutlama" },
+] as const;
+
 export interface Rezervasyon {
   id: string;
   restoran_id: string;
@@ -51,6 +66,21 @@ export interface Rezervasyon {
   durum: RezervasyonDurum;
   geldi_mi: boolean | null;
   kaynak: RezervasyonKaynagi;
+  masa_kapasitesi: number | null;
+  ozel_gun: string | null;
+  olusturulma: string;
+}
+
+export interface BeklemeKaydi {
+  id: string;
+  restoran_id: string;
+  ad_soyad: string;
+  eposta: string;
+  telefon: string | null;
+  tarih: string;
+  saat: string;
+  kisi_sayisi: number;
+  durum: "bekliyor" | "iletildi" | "iptal";
   olusturulma: string;
 }
 

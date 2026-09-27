@@ -9,7 +9,8 @@
     "nedenMasadaki": "Warum Masadaki?",
     "restoranGirisi": "Restaurant-Login",
     "restoranKayit": "Restaurant kostenlos eintragen",
-    "bizeUlasin": "Kontakt:"
+    "bizeUlasin": "Kontakt:",
+    "slogan": "Reserviere deinen Tisch in deinem Lieblingsrestaurant, in Minuten bestätigt."
   },
   "Hero": {
     "rozetVarsayilan": "Dein Tisch wartet",
@@ -109,12 +110,20 @@
     "girisYapLink": "Anmelden",
     "girisYapSonu": "damit du deine Daten nicht erneut eingeben musst.",
     "notEtiket": "Notiz (optional)",
-    "notPlaceholder": "Allergien, besondere Wünsche, Feiern usw.",
+    "notPlaceholder": "Allergien, besondere Wünsche usw.",
+    "ozelGunEtiket": "Anlass (optional)",
+    "ozelGunYok": "Keiner",
+    "ozelGun.dogum_gunu": "Geburtstag",
+    "ozelGun.yil_donumu": "Jahrestag",
+    "ozelGun.is_yemegi": "Geschäftsessen",
+    "ozelGun.kutlama": "Feier",
     "gonderBtn": "Reservierungsanfrage senden",
     "gonderiliyor": "Wird gesendet...",
     "hataSaatSec": "Bitte wähle eine Uhrzeit.",
     "hataGenel": "Reservierung konnte nicht erstellt werden, bitte erneut versuchen.",
-    "ucretsizNot": "Eine Reservierungsanfrage zu senden ist kostenlos, deine Karte wird nicht belastet."
+    "ucretsizNot": "Eine Reservierungsanfrage zu senden ist kostenlos, deine Karte wird nicht belastet.",
+    "beklemeListesineEkle": "Zur Warteliste hinzufügen",
+    "beklemeEklendiMesaj": "Du wurdest zur Warteliste hinzugefügt, das Restaurant ruft dich an, falls ein Platz frei wird."
   },
   "HesapGiris": {
     "baslik": "Anmelden",

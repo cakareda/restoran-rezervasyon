@@ -16,6 +16,7 @@ export default function IsletmeLayout({ children }: { children: React.ReactNode 
         nasilCalisirHref="/#nasil-calisir"
         nasilCalisirMetni="Nasıl çalışır?"
         isletmeSahibiyimMetni="Restoran sahibiyim"
+        sloganMetni={SITE_SLOGAN}
         musteriNav={<MusteriHesapNav />}
         mobilMenu={<MobilMenu />}
       />

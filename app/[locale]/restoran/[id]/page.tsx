@@ -81,15 +81,15 @@ export default async function RestoranDetay({
   return (
     <div>
       {fotograflar.length > 0 ? (
-        <div className="grid h-48 grid-cols-4 gap-1 sm:h-64">
+        <div className="grid h-48 grid-cols-4 grid-rows-1 gap-1 sm:h-64">
           <img
             src={fotograflar[0]}
             alt={restoran.ad}
-            className="col-span-4 h-full w-full object-cover sm:col-span-3"
+            className="col-span-4 h-full min-h-0 w-full object-cover sm:col-span-3"
           />
-          <div className="hidden grid-rows-2 gap-1 sm:grid">
+          <div className="hidden min-h-0 grid-rows-2 gap-1 sm:grid">
             {fotograflar.slice(1, 3).map((url: string, i: number) => (
-              <img key={i} src={url} alt="" className="h-full w-full object-cover" />
+              <img key={i} src={url} alt="" className="h-full min-h-0 w-full object-cover" />
             ))}
           </div>
         </div>

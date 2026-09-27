@@ -9,7 +9,8 @@
     "nedenMasadaki": "لماذا Masadaki؟",
     "restoranGirisi": "دخول المطاعم",
     "restoranKayit": "سجّل مطعمك مجاناً",
-    "bizeUlasin": "تواصل معنا:"
+    "bizeUlasin": "تواصل معنا:",
+    "slogan": "احجز طاولتك في مطعمك المفضل، ويتم التأكيد خلال دقائق."
   },
   "Hero": {
     "rozetVarsayilan": "طاولتك جاهزة",
@@ -109,12 +110,20 @@
     "girisYapLink": "سجّل الدخول",
     "girisYapSonu": "حتى لا تضطر لإعادة كتابة بياناتك.",
     "notEtiket": "ملاحظة (اختياري)",
-    "notPlaceholder": "حساسية، طلب خاص، احتفال، إلخ.",
+    "notPlaceholder": "حساسية، طلب خاص، إلخ.",
+    "ozelGunEtiket": "مناسبة (اختياري)",
+    "ozelGunYok": "لا شيء",
+    "ozelGun.dogum_gunu": "عيد ميلاد",
+    "ozelGun.yil_donumu": "ذكرى سنوية",
+    "ozelGun.is_yemegi": "عشاء عمل",
+    "ozelGun.kutlama": "احتفال",
     "gonderBtn": "إرسال طلب الحجز",
     "gonderiliyor": "جارٍ الإرسال...",
     "hataSaatSec": "يرجى اختيار وقت.",
     "hataGenel": "تعذر إنشاء الحجز، يرجى المحاولة مرة أخرى.",
-    "ucretsizNot": "إرسال طلب الحجز مجاني، ولن يتم خصم أي مبلغ من بطاقتك."
+    "ucretsizNot": "إرسال طلب الحجز مجاني، ولن يتم خصم أي مبلغ من بطاقتك.",
+    "beklemeListesineEkle": "إضافة إلى قائمة الانتظار",
+    "beklemeEklendiMesaj": "تمت إضافتك إلى قائمة الانتظار، سيتصل بك المطعم إذا توفر مكان."
   },
   "HesapGiris": {
     "baslik": "تسجيل الدخول",

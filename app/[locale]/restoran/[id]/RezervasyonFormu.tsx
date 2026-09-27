@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { yerelTarih } from "@/lib/tarih";
+import { yerelTarih, istanbulTarihSaat } from "@/lib/tarih";
+import { OZEL_GUN_SECENEKLERI } from "@/lib/types";
 import { KisiIkonu, TakvimIkonu, SaatIkonu } from "@/components/icons";
 
 function zamanDilimleriUret(acilisSaati: string, kapanisSaati: string) {
@@ -66,19 +67,42 @@ export default function RezervasyonFormu({
   const [eposta, setEposta] = useState("");
   const [telefon, setTelefon] = useState("");
   const [notlar, setNotlar] = useState("");
+  const [ozelGun, setOzelGun] = useState("");
+  const [beklemeEklendi, setBeklemeEklendi] = useState(false);
+  const [beklemeGonderiliyor, setBeklemeGonderiliyor] = useState(false);
 
   const bugun = useMemo(() => yerelTarih(new Date()), []);
 
   useEffect(() => {
+    setBeklemeEklendi(false);
     async function doluSaatleriYukle() {
       const yanit = await fetch(
-        `/api/restoran/${restoranId}/dolu-saatler?tarih=${tarih}`
+        `/api/restoran/${restoranId}/dolu-saatler?tarih=${tarih}&kisiSayisi=${kisiSayisi}`
       );
       const veri = await yanit.json();
       setDoluSaatler(veri.doluSaatler ?? []);
     }
     doluSaatleriYukle();
-  }, [restoranId, tarih]);
+  }, [restoranId, tarih, kisiSayisi]);
+
+  async function beklemeListesineEkle() {
+    setBeklemeGonderiliyor(true);
+    const yanit = await fetch("/api/rezervasyon/bekleme-listesi", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        restoranId,
+        adSoyad: adSoyad || profil?.adSoyad,
+        eposta: eposta || profil?.eposta,
+        telefon: telefon || profil?.telefon,
+        tarih,
+        saat: "20:00",
+        kisiSayisi,
+      }),
+    });
+    setBeklemeGonderiliyor(false);
+    if (yanit.ok) setBeklemeEklendi(true);
+  }
 
   const gosterilecekZamanDilimleri = useMemo(() => {
     let dilimler = zamanDilimleri.filter((dilim) => !doluSaatler.includes(dilim));
@@ -139,9 +163,10 @@ export default function RezervasyonFormu({
         adSoyad,
         eposta,
         telefon,
-        tarihSaat: new Date(`${tarih}T${saat}`).toISOString(),
+        tarihSaat: istanbulTarihSaat(tarih, saat).toISOString(),
         kisiSayisi,
         notlar: notlar.trim() || null,
+        ozelGun: ozelGun || null,
       }),
     });
 
@@ -227,7 +252,46 @@ export default function RezervasyonFormu({
             ))}
           </div>
         ) : (
-          <p className="text-sm text-muted">{t("uygunSaatYok")}</p>
+          <div className="space-y-3 rounded-xl bg-amber-50 p-3">
+            <p className="text-sm text-amber-800">{t("uygunSaatYok")}</p>
+            {beklemeEklendi ? (
+              <p className="text-sm font-medium text-green-700">{t("beklemeEklendiMesaj")}</p>
+            ) : profil ? (
+              <button
+                type="button"
+                onClick={beklemeListesineEkle}
+                disabled={beklemeGonderiliyor}
+                className="w-full rounded-xl bg-foreground px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+              >
+                {beklemeGonderiliyor ? t("gonderiliyor") : t("beklemeListesineEkle")}
+              </button>
+            ) : (
+              <div className="space-y-2">
+                <input
+                  value={adSoyad}
+                  onChange={(e) => setAdSoyad(e.target.value)}
+                  type="text"
+                  placeholder={t("adSoyadEtiket")}
+                  className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+                />
+                <input
+                  value={eposta}
+                  onChange={(e) => setEposta(e.target.value)}
+                  type="email"
+                  placeholder={t("epostaEtiket")}
+                  className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+                />
+                <button
+                  type="button"
+                  onClick={beklemeListesineEkle}
+                  disabled={beklemeGonderiliyor || !adSoyad || !eposta}
+                  className="w-full rounded-xl bg-foreground px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+                >
+                  {beklemeGonderiliyor ? t("gonderiliyor") : t("beklemeListesineEkle")}
+                </button>
+              </div>
+            )}
+          </div>
         )}
       </div>
 
@@ -294,6 +358,22 @@ export default function RezervasyonFormu({
               </p>
             </>
           )}
+
+          <div className="space-y-1">
+            <label className="block text-sm font-medium text-foreground">{t("ozelGunEtiket")}</label>
+            <select
+              value={ozelGun}
+              onChange={(e) => setOzelGun(e.target.value)}
+              className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+            >
+              <option value="">{t("ozelGunYok")}</option>
+              {OZEL_GUN_SECENEKLERI.map((o) => (
+                <option key={o.deger} value={o.deger}>
+                  {t(`ozelGun.${o.deger}`)}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className="space-y-1">
             <label className="block text-sm font-medium text-foreground">{t("notEtiket")}</label>

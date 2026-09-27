@@ -8,7 +8,6 @@ import MobilMenuMusteri from "@/components/MobilMenuMusteri";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Link } from "@/i18n/navigation";
 import { routing, RTL_DILLER } from "@/i18n/routing";
-import { SITE_SLOGAN } from "@/lib/config";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -40,6 +39,7 @@ export default async function LocaleLayout({
           nasilCalisirHref="/#nasil-calisir"
           nasilCalisirMetni={t("nasilCalisir")}
           isletmeSahibiyimMetni={t("isletmeSahibiyim")}
+          sloganMetni={t("slogan")}
           dilSecici={<LanguageSwitcher />}
           musteriNav={<MusteriHesapNavMusteri />}
           mobilMenu={
@@ -54,7 +54,7 @@ export default async function LocaleLayout({
         <main className="flex flex-1 flex-col">{children}</main>
         <SiteFooter
           LinkBileseni={Link}
-          slogan={SITE_SLOGAN}
+          slogan={t("slogan")}
           restoranlarHref="/restoranlar"
           restoranlarMetni={t("restoranlar")}
           nasilCalisirHref="/#nasil-calisir"

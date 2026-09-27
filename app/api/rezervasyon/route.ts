@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
 import { yeniTalepEpostasi } from "@/lib/email/templates";
+import { musaitlikHesapla } from "@/lib/kapasite";
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { restoranId, adSoyad, eposta, telefon, tarihSaat, kisiSayisi, notlar } = body;
+  const { restoranId, adSoyad, eposta, telefon, tarihSaat, kisiSayisi, notlar, ozelGun } = body;
 
   if (!restoranId || !adSoyad || !eposta || !tarihSaat || !kisiSayisi) {
     return NextResponse.json({ hata: "Eksik bilgi." }, { status: 400 });
@@ -15,12 +16,45 @@ export async function POST(request: Request) {
 
   const { data: restoran, error: restoranHata } = await supabase
     .from("restoranlar")
-    .select("id, ad, eposta")
+    .select("id, ad, eposta, oturma_suresi_dk")
     .eq("id", restoranId)
     .single();
 
   if (restoranHata || !restoran) {
     return NextResponse.json({ hata: "Restoran bulunamadı." }, { status: 404 });
+  }
+
+  // Sunucu tarafında da müsaitliği doğrula (yarış durumlarına karşı) ve masa ata.
+  const istenenBaslangic = new Date(tarihSaat);
+  const gunBaslangic = new Date(istenenBaslangic);
+  gunBaslangic.setUTCHours(0, 0, 0, 0);
+  const gunBitis = new Date(istenenBaslangic);
+  gunBitis.setUTCHours(23, 59, 59, 999);
+
+  const [{ data: masalar }, { data: aktifRezervasyonlar }] = await Promise.all([
+    supabase.from("masalar").select("kapasite, adet").eq("restoran_id", restoranId),
+    supabase
+      .from("rezervasyonlar")
+      .select("tarih_saat, masa_kapasitesi")
+      .eq("restoran_id", restoranId)
+      .in("durum", ["beklemede", "onaylandi"])
+      .gte("tarih_saat", gunBaslangic.toISOString())
+      .lte("tarih_saat", gunBitis.toISOString()),
+  ]);
+
+  const { musait, atanacakKapasite } = musaitlikHesapla({
+    istenenBaslangic,
+    kisiSayisi,
+    oturmaSuresiDk: restoran.oturma_suresi_dk ?? 90,
+    masalar: masalar ?? [],
+    aktifRezervasyonlar: aktifRezervasyonlar ?? [],
+  });
+
+  if (!musait) {
+    return NextResponse.json(
+      { hata: "Bu saat için müsait masa kalmadı, farklı bir saat seçin." },
+      { status: 409 }
+    );
   }
 
   const { data: kullanici, error: kullaniciHata } = await supabase
@@ -45,6 +79,8 @@ export async function POST(request: Request) {
       kisi_sayisi: kisiSayisi,
       durum: "beklemede",
       notlar: notlar ?? null,
+      ozel_gun: ozelGun ?? null,
+      masa_kapasitesi: atanacakKapasite,
     })
     .select("id")
     .single();

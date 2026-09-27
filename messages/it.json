@@ -9,7 +9,8 @@
     "nedenMasadaki": "Perché Masadaki?",
     "restoranGirisi": "Accesso ristoranti",
     "restoranKayit": "Registra il tuo ristorante gratis",
-    "bizeUlasin": "Contattaci:"
+    "bizeUlasin": "Contattaci:",
+    "slogan": "Prenota il tuo tavolo nel tuo ristorante preferito, confermato in pochi minuti."
   },
   "Hero": {
     "rozetVarsayilan": "Il tuo tavolo ti aspetta",
@@ -109,12 +110,20 @@
     "girisYapLink": "Accedi",
     "girisYapSonu": "così non dovrai reinserire i tuoi dati.",
     "notEtiket": "Nota (opzionale)",
-    "notPlaceholder": "Allergie, richieste speciali, festeggiamenti, ecc.",
+    "notPlaceholder": "Allergie, richieste speciali, ecc.",
+    "ozelGunEtiket": "Occasione (opzionale)",
+    "ozelGunYok": "Nessuna",
+    "ozelGun.dogum_gunu": "Compleanno",
+    "ozelGun.yil_donumu": "Anniversario",
+    "ozelGun.is_yemegi": "Cena di lavoro",
+    "ozelGun.kutlama": "Festeggiamento",
     "gonderBtn": "Invia Richiesta di Prenotazione",
     "gonderiliyor": "Invio in corso...",
     "hataSaatSec": "Seleziona un orario.",
     "hataGenel": "Impossibile creare la prenotazione, riprova.",
-    "ucretsizNot": "Inviare una richiesta di prenotazione è gratuito, la tua carta non verrà addebitata."
+    "ucretsizNot": "Inviare una richiesta di prenotazione è gratuito, la tua carta non verrà addebitata.",
+    "beklemeListesineEkle": "Aggiungi alla lista d'attesa",
+    "beklemeEklendiMesaj": "Sei stato aggiunto alla lista d'attesa, il ristorante ti chiamerà se si libera un posto."
   },
   "HesapGiris": {
     "baslik": "Accedi",

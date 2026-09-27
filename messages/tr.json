@@ -9,7 +9,8 @@
     "nedenMasadaki": "Neden Masadaki?",
     "restoranGirisi": "Restoran girişi",
     "restoranKayit": "Restoranımı ücretsiz kayıt et",
-    "bizeUlasin": "Bize ulaşın:"
+    "bizeUlasin": "Bize ulaşın:",
+    "slogan": "Sevdiğin restoranda yer ayırt, dakikalar içinde onaylansın."
   },
   "Hero": {
     "rozetVarsayilan": "Sofran hazır",
@@ -109,12 +110,20 @@
     "girisYapLink": "Giriş yap",
     "girisYapSonu": "ve bilgilerin bir daha yazmana gerek kalmasın.",
     "notEtiket": "Not (opsiyonel)",
-    "notPlaceholder": "Alerji, özel istek, kutlama vb.",
+    "notPlaceholder": "Alerji, özel istek vb.",
+    "ozelGunEtiket": "Özel gün (opsiyonel)",
+    "ozelGunYok": "Yok",
+    "ozelGun.dogum_gunu": "Doğum günü",
+    "ozelGun.yil_donumu": "Yıl dönümü",
+    "ozelGun.is_yemegi": "İş yemeği",
+    "ozelGun.kutlama": "Kutlama",
     "gonderBtn": "Rezervasyon Talebi Gönder",
     "gonderiliyor": "Gönderiliyor...",
     "hataSaatSec": "Lütfen bir saat seçin.",
     "hataGenel": "Rezervasyon oluşturulamadı, tekrar deneyin.",
-    "ucretsizNot": "Rezervasyon talebi göndermek ücretsizdir, kartınızdan hiçbir ücret alınmaz."
+    "ucretsizNot": "Rezervasyon talebi göndermek ücretsizdir, kartınızdan hiçbir ücret alınmaz.",
+    "beklemeListesineEkle": "Bekleme listesine ekle",
+    "beklemeEklendiMesaj": "Bekleme listesine eklendin, bir yer açılırsa restoran seni arayacak."
   },
   "HesapGiris": {
     "baslik": "Giriş Yap",

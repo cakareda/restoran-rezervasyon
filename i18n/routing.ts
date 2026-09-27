@@ -19,4 +19,5 @@ export const routing = defineRouting({
   locales: DILLER,
   defaultLocale: "tr",
   localePrefix: "as-needed",
+  localeDetection: false,
 });
