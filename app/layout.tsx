@@ -28,25 +28,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 <Link href="/#nasil-calisir" className="hover:text-brand-dark">
                   Nasıl çalışır?
                 </Link>
-                <Link href="/#restoranlar-icin" className="hover:text-brand-dark">
-                  Restoranlar için
-                </Link>
               </nav>
             </div>
-            <div className="hidden flex-nowrap items-center gap-4 whitespace-nowrap lg:flex">
+            <div className="hidden flex-nowrap items-center gap-3 whitespace-nowrap lg:flex">
+              <Link
+                href="/restoranlar-icin"
+                className="rounded-full px-3 py-2 text-sm font-medium text-muted hover:text-brand-dark"
+              >
+                Restoran sahibiyim
+              </Link>
               <MusteriHesapNav />
-              <Link
-                href="/restoran-girisi"
-                className="text-sm font-medium text-muted hover:text-brand-dark"
-              >
-                Restoran girişi
-              </Link>
-              <Link
-                href="/restoran-kayit"
-                className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-dark"
-              >
-                Restoranımı Ekle
-              </Link>
             </div>
             <MobilMenu />
           </div>
@@ -86,13 +77,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               </p>
               <ul className="mt-3 space-y-2 text-sm">
                 <li>
-                  <Link href="/#restoranlar-icin" className="hover:text-white">
+                  <Link href="/restoranlar-icin" className="hover:text-white">
                     Neden {SITE_ADI}?
                   </Link>
                 </li>
                 <li>
                   <Link href="/restoran-girisi" className="hover:text-white">
                     Restoran girişi
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/restoran-kayit" className="hover:text-white">
+                    Restoranımı ücretsiz kayıt et
                   </Link>
                 </li>
               </ul>

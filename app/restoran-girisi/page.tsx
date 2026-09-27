@@ -4,12 +4,16 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { GozIkonu, GozKapaliIkonu } from "@/components/icons";
+import RestoranAuthLayout from "@/components/RestoranAuthLayout";
+import { SITE_ADI } from "@/lib/config";
 
 export default function RestoranGirisi() {
   const router = useRouter();
   const supabase = createClient();
   const [gonderiliyor, setGonderiliyor] = useState(false);
   const [hata, setHata] = useState<string | null>(null);
+  const [sifreGorunur, setSifreGorunur] = useState(false);
 
   async function girisYap(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -34,47 +38,70 @@ export default function RestoranGirisi() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-brand-light px-6 py-10">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-xl shadow-orange-900/5">
-        <h1 className="text-2xl font-extrabold text-foreground">Restoran Girişi</h1>
-        <p className="mt-1 text-sm text-muted">
-          Rezervasyon taleplerinizi yönetmek için giriş yapın.
-        </p>
+    <RestoranAuthLayout>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/icon.svg" alt="" className="mx-auto h-12 w-12" />
+      <h1 className="mt-4 text-center text-2xl font-extrabold text-foreground">
+        {SITE_ADI} Restoran Girişi
+      </h1>
+      <p className="mt-1 text-center text-sm text-muted">
+        Rezervasyon taleplerinizi yönetmek için giriş yapın.
+      </p>
 
-        <form onSubmit={girisYap} className="mt-6 space-y-3">
-          <input
-            name="eposta"
-            type="email"
-            required
-            placeholder="E-posta"
-            className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
-          />
+      <form onSubmit={girisYap} className="mt-6 space-y-3">
+        <input
+          name="eposta"
+          type="email"
+          required
+          autoComplete="email"
+          placeholder="E-posta"
+          className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+        />
+        <div className="relative">
           <input
             name="sifre"
-            type="password"
+            type={sifreGorunur ? "text" : "password"}
             required
+            autoComplete="current-password"
             placeholder="Şifre"
-            className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+            className="w-full rounded-xl border-0 px-3.5 py-2.5 pr-10 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
           />
-
-          {hata && <p className="text-sm font-medium text-red-600">{hata}</p>}
-
           <button
-            type="submit"
-            disabled={gonderiliyor}
-            className="w-full rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-dark disabled:opacity-50"
+            type="button"
+            onClick={() => setSifreGorunur((v) => !v)}
+            aria-label={sifreGorunur ? "Şifreyi gizle" : "Şifreyi göster"}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground"
           >
-            {gonderiliyor ? "Giriş yapılıyor..." : "Giriş Yap"}
+            {sifreGorunur ? <GozKapaliIkonu className="h-4.5 w-4.5" /> : <GozIkonu className="h-4.5 w-4.5" />}
           </button>
-        </form>
+        </div>
 
-        <p className="mt-4 text-center text-sm text-muted">
-          Restoranın henüz kayıtlı değil mi?{" "}
-          <Link href="/restoran-kayit" className="font-semibold text-brand hover:underline">
-            Restoranını ekle
+        <div className="text-right">
+          <Link
+            href="/restoran-girisi/sifremi-unuttum"
+            className="text-xs font-medium text-muted hover:text-brand-dark"
+          >
+            Şifremi unuttum
           </Link>
-        </p>
-      </div>
-    </div>
+        </div>
+
+        {hata && <p className="text-sm font-medium text-red-600">{hata}</p>}
+
+        <button
+          type="submit"
+          disabled={gonderiliyor}
+          className="w-full rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-dark disabled:opacity-50"
+        >
+          {gonderiliyor ? "Giriş yapılıyor..." : "Giriş Yap"}
+        </button>
+      </form>
+
+      <p className="mt-4 text-center text-sm text-muted">
+        Restoranın henüz kayıtlı değil mi?{" "}
+        <Link href="/restoran-kayit" className="font-semibold text-brand hover:underline">
+          Ücretsiz kayıt ol
+        </Link>
+      </p>
+    </RestoranAuthLayout>
   );
 }

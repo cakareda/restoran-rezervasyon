@@ -44,13 +44,6 @@ export default function MobilMenu() {
               >
                 Nasıl çalışır?
               </Link>
-              <Link
-                href="/#restoranlar-icin"
-                onClick={() => setAcik(false)}
-                className="rounded-lg px-3 py-3 hover:bg-brand-light"
-              >
-                Restoranlar için
-              </Link>
               <div className="my-2 border-t border-border" />
               <Link
                 href="/hesap/giris"
@@ -59,19 +52,20 @@ export default function MobilMenu() {
               >
                 Giriş Yap / Kayıt Ol
               </Link>
+              <div className="my-2 border-t border-border" />
               <Link
-                href="/restoran-girisi"
+                href="/restoranlar-icin"
                 onClick={() => setAcik(false)}
                 className="rounded-lg px-3 py-3 hover:bg-brand-light"
               >
-                Restoran girişi
+                Restoran sahibiyim
               </Link>
               <Link
                 href="/restoran-kayit"
                 onClick={() => setAcik(false)}
                 className="rounded-lg px-3 py-3 font-semibold text-brand hover:bg-brand-light"
               >
-                Restoranımı Ekle
+                Restoranımı ücretsiz ekle
               </Link>
             </nav>
           </div>

@@ -12,9 +12,6 @@ const HERO_FOTO =
   "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1800&q=80";
 const SEMT_FOTO_YEDEK =
   "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?auto=format&fit=crop&w=800&q=80";
-const SAHIP_FOTO =
-  "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=900&q=80";
-
 export default async function AnaSayfa() {
   const supabase = await createClient();
 
@@ -212,50 +209,6 @@ export default async function AnaSayfa() {
               <p className="mt-1 text-sm text-muted">{adim.aciklama}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Restoranlar için */}
-      <section id="restoranlar-icin" className="bg-brand-light py-14">
-        <div className="mx-auto grid max-w-5xl items-center gap-8 px-6 lg:grid-cols-2">
-          <img
-            src={SAHIP_FOTO}
-            alt="Restoran içi"
-            className="h-64 w-full rounded-2xl object-cover lg:h-80"
-          />
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wide text-brand">
-              Restoranlar için
-            </p>
-            <h2 className="mt-1 text-2xl font-extrabold text-foreground">
-              Telefon trafiği azalır, servis odağı artar.
-            </h2>
-            <ul className="mt-5 space-y-2 text-sm text-foreground/80">
-              <li className="flex gap-2">
-                <span className="text-brand">✓</span> Rezervasyon taleplerini tek panelden yönet
-              </li>
-              <li className="flex gap-2">
-                <span className="text-brand">✓</span> Onayla, reddet, geldi/gelmedi işaretle
-              </li>
-              <li className="flex gap-2">
-                <span className="text-brand">✓</span> Yalnızca gelen misafirlerden doğrulanmış yorum al
-              </li>
-            </ul>
-            <div className="mt-6 flex flex-wrap items-center gap-4">
-              <Link
-                href="/restoran-girisi"
-                className="rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-dark"
-              >
-                Restoran Girişi
-              </Link>
-              <p className="text-sm text-muted">
-                Henüz hesabın yok mu?{" "}
-                <Link href="/restoran-kayit" className="font-semibold text-brand hover:underline">
-                  Restoranını ücretsiz ekle
-                </Link>
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 

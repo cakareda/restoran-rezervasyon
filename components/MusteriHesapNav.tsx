@@ -34,7 +34,9 @@ export default function MusteriHesapNav() {
         .maybeSingle();
 
       if (!iptalEdildi) {
-        setAdSoyad(kullanici?.ad_soyad ?? user.email ?? "Hesabım");
+        // Girişli hesap bir restoran hesabıysa (kullanicilar tablosunda kaydı yoksa)
+        // müşteri menüsünde e-postasını göstermek yerine çıkış yapılmış gibi davran.
+        setAdSoyad(kullanici?.ad_soyad ?? null);
         setYukleniyor(false);
       }
     }
@@ -59,7 +61,9 @@ export default function MusteriHesapNav() {
   if (adSoyad) {
     return (
       <div className="flex items-center gap-3 text-sm">
-        <span className="font-medium text-foreground">Merhaba, {adSoyad.split(" ")[0]}</span>
+        <Link href="/hesap/profil" className="font-medium text-foreground hover:text-brand-dark">
+          Merhaba, {adSoyad.split(" ")[0]}
+        </Link>
         <button onClick={cikisYap} className="font-medium text-muted hover:text-brand-dark">
           Çıkış yap
         </button>

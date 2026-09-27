@@ -48,12 +48,12 @@ export default function HeroArama({ semtler }: { semtler: [string, { sehir: stri
       <h1 className="mt-4 max-w-lg text-4xl font-extrabold leading-tight text-white sm:text-5xl">
         {sehir ? (
           <>
-            {sehirIyelikEki(sehir)} iyi sofralarında{" "}
+            {sehirIyelikEki(sehir)} en iyi sofralarında{" "}
             <span className="text-[#f0d2a8]">yerin</span> hazır.
           </>
         ) : (
           <>
-            Şehrinin iyi sofralarında <span className="text-[#f0d2a8]">yerin</span> hazır.
+            Şehrinin en iyi sofralarında <span className="text-[#f0d2a8]">yerin</span> hazır.
           </>
         )}
       </h1>
