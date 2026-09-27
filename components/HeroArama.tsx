@@ -47,6 +47,10 @@ export default function HeroArama({ semtler }: { semtler: [string, { sehir: stri
   const aramaAction =
     locale === routing.defaultLocale ? "/restoranlar" : `/${locale}/restoranlar`;
 
+  const gosterilecekSemtler = sehir
+    ? semtler.filter(([, bilgi]) => bilgi.sehir.toLocaleLowerCase("tr") === sehir.toLocaleLowerCase("tr"))
+    : [];
+
   return (
     <div className="mx-auto max-w-5xl px-6 py-20 sm:py-28">
       <p className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
@@ -143,10 +147,10 @@ export default function HeroArama({ semtler }: { semtler: [string, { sehir: stri
         </button>
       </form>
 
-      {semtler.length > 0 && (
+      {gosterilecekSemtler.length > 0 && (
         <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">
           <span className="text-white/70">{t("hizliSecim")}</span>
-          {semtler.map(([semt]) => (
+          {gosterilecekSemtler.map(([semt]) => (
             <Link
               key={semt}
               href={`/restoranlar?semt=${encodeURIComponent(semt)}`}
