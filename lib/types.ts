@@ -20,6 +20,9 @@ export interface Restoran {
   oturma_suresi_dk: number;
   olanaklar: string[];
   fotograflar: string[];
+  instagram_url: string | null;
+  menu_url: string | null;
+  iptal_politikasi: string | null;
   olusturulma: string;
 }
 
@@ -28,7 +31,15 @@ export interface Masa {
   restoran_id: string;
   kapasite: number;
   adet: number;
+  alan: string;
 }
+
+export const MASA_ALANLARI = [
+  { deger: "", etiket: "Genel" },
+  { deger: "salon", etiket: "Salon" },
+  { deger: "bahce", etiket: "Bahçe" },
+  { deger: "teras", etiket: "Teras" },
+];
 
 export interface Kullanici {
   id: string;

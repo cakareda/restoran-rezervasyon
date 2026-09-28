@@ -28,3 +28,9 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+input::placeholder,
+textarea::placeholder {
+  color: #6b6055;
+  opacity: 1;
+}

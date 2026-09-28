@@ -42,6 +42,9 @@ async function kaydet(formData: FormData) {
       acilis_saati: String(formData.get("acilisSaati") ?? "12:00"),
       kapanis_saati: String(formData.get("kapanisSaati") ?? "23:00"),
       calisma_saatleri: calismaSaatleriGecerli,
+      instagram_url: String(formData.get("instagramUrl") ?? "").trim() || null,
+      menu_url: String(formData.get("menuUrl") ?? "").trim() || null,
+      iptal_politikasi: String(formData.get("iptalPolitikasi") ?? "").trim() || null,
       oturma_suresi_dk: formData.get("oturmaSuresiDk")
         ? Number(formData.get("oturmaSuresiDk"))
         : 90,

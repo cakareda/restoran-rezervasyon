@@ -4,6 +4,8 @@ import type { RezervasyonDurum, RezervasyonKaynagi } from "@/lib/types";
 import { bugununTarihi, yerelTarih } from "@/lib/tarih";
 import RezervasyonSatiri from "./RezervasyonSatiri";
 import YeniRezervasyonEkle from "./YeniRezervasyonEkle";
+import DisaAktarButonu from "./DisaAktarButonu";
+import IceAktarButonu from "./IceAktarButonu";
 import { AsagiOkIkonu } from "@/components/icons";
 
 type RezervasyonSatirVerisi = {
@@ -155,12 +157,26 @@ export default async function RestoranPaneli({
           <h1 className="text-2xl font-extrabold text-foreground">{restoran.ad}</h1>
           <p className="mt-1 text-sm text-muted">Gelen rezervasyon talepleri</p>
         </div>
-        <YeniRezervasyonEkle
-          restoranId={restoran.id}
-          acilisSaati={restoran.acilis_saati.slice(0, 5)}
-          kapanisSaati={restoran.kapanis_saati.slice(0, 5)}
-          calismaSaatleriJson={restoran.calisma_saatleri}
-        />
+        <div className="flex items-center gap-2">
+          <IceAktarButonu />
+          <DisaAktarButonu
+            satirlar={gosterilecekListe.map((r) => ({
+              tarihSaat: r.tarih_saat,
+              misafirAd: r.kullanicilar?.ad_soyad ?? r.misafir_ad_soyad ?? "",
+              misafirTelefon: r.kullanicilar?.telefon ?? r.misafir_telefon ?? "",
+              kisiSayisi: r.kisi_sayisi,
+              durum: r.durum,
+              kaynak: r.kaynak,
+              notlar: r.notlar,
+            }))}
+          />
+          <YeniRezervasyonEkle
+            restoranId={restoran.id}
+            acilisSaati={restoran.acilis_saati.slice(0, 5)}
+            kapanisSaati={restoran.kapanis_saati.slice(0, 5)}
+            calismaSaatleriJson={restoran.calisma_saatleri}
+          />
+        </div>
       </div>
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-white p-3">
@@ -263,9 +279,40 @@ export default async function RestoranPaneli({
           <p className="rounded-2xl border border-dashed border-border bg-white p-8 text-center text-muted">
             &quot;{sekmeEtiketi[sekme]}&quot; sekmesinde rezervasyon yok.
           </p>
+        ) : tumu ? (
+          <div className="space-y-3 rounded-2xl border border-dashed border-border bg-white p-8 text-center">
+            <p className="text-muted">Henüz rezervasyon talebi yok.</p>
+            <p className="text-sm text-muted">
+              Restoranının sayfa linkini paylaşarak veya QR kodu masalara koyarak ilk
+              rezervasyonu alabilirsin: <br />
+              <a
+                href={`https://masadaki.com/restoranlar`}
+                target="_blank"
+                rel="noreferrer"
+                className="font-semibold text-brand hover:underline"
+              >
+                masadaki.com/restoranlar
+              </a>
+            </p>
+            <img
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(
+                "https://masadaki.com/restoranlar"
+              )}`}
+              alt="Masadaki QR kod"
+              width={140}
+              height={140}
+              className="mx-auto rounded-xl border border-border"
+            />
+            <YeniRezervasyonEkle
+              restoranId={restoran.id}
+              acilisSaati={restoran.acilis_saati.slice(0, 5)}
+              kapanisSaati={restoran.kapanis_saati.slice(0, 5)}
+              calismaSaatleriJson={restoran.calisma_saatleri}
+            />
+          </div>
         ) : (
           <p className="rounded-2xl border border-dashed border-border bg-white p-8 text-center text-muted">
-            {tumu ? "Henüz rezervasyon talebi yok." : "Bu tarihte rezervasyon yok."}
+            Bu tarihte rezervasyon yok.
           </p>
         )}
       </div>

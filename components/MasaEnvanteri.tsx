@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { Masa } from "@/lib/types";
+import { MASA_ALANLARI, type Masa } from "@/lib/types";
 
 export default function MasaEnvanteri({
   restoranId,
@@ -16,6 +16,7 @@ export default function MasaEnvanteri({
   const [yukleniyor, setYukleniyor] = useState(Boolean(restoranId));
   const [yeniKapasite, setYeniKapasite] = useState(2);
   const [yeniAdet, setYeniAdet] = useState(1);
+  const [yeniAlan, setYeniAlan] = useState("");
   const [hata, setHata] = useState<string | null>(null);
 
   useEffect(() => {
@@ -40,8 +41,8 @@ export default function MasaEnvanteri({
     const { data, error } = await supabase
       .from("masalar")
       .upsert(
-        { restoran_id: restoranId, kapasite: yeniKapasite, adet: yeniAdet },
-        { onConflict: "restoran_id,kapasite" }
+        { restoran_id: restoranId, kapasite: yeniKapasite, adet: yeniAdet, alan: yeniAlan },
+        { onConflict: "restoran_id,kapasite,alan" }
       )
       .select()
       .single();
@@ -52,13 +53,16 @@ export default function MasaEnvanteri({
     }
 
     setMasalar((mevcut) => {
-      const digerleri = mevcut.filter((m) => m.kapasite !== data.kapasite);
+      const digerleri = mevcut.filter(
+        (m) => !(m.kapasite === data.kapasite && m.alan === data.alan)
+      );
       const yeni = [...digerleri, data].sort((a, b) => a.kapasite - b.kapasite);
       onDegis?.(yeni);
       return yeni;
     });
     setYeniKapasite(2);
     setYeniAdet(1);
+    setYeniAlan("");
   }
 
   async function sil(id: string) {
@@ -91,6 +95,11 @@ export default function MasaEnvanteri({
             >
               <span className="font-medium text-foreground">
                 {m.adet} masa × {m.kapasite} kişilik
+                {m.alan && (
+                  <span className="ml-2 rounded-full bg-brand-light px-2 py-0.5 text-xs font-semibold text-brand-dark">
+                    {MASA_ALANLARI.find((a) => a.deger === m.alan)?.etiket ?? m.alan}
+                  </span>
+                )}
               </span>
               <button
                 type="button"
@@ -129,6 +138,20 @@ export default function MasaEnvanteri({
             onChange={(e) => setYeniAdet(Number(e.target.value))}
             className="w-20 rounded-lg border-0 px-2.5 py-1.5 text-sm ring-1 ring-border"
           />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-semibold text-muted">Alan</label>
+          <select
+            value={yeniAlan}
+            onChange={(e) => setYeniAlan(e.target.value)}
+            className="rounded-lg border-0 px-2.5 py-1.5 text-sm ring-1 ring-border"
+          >
+            {MASA_ALANLARI.map((a) => (
+              <option key={a.deger} value={a.deger}>
+                {a.etiket}
+              </option>
+            ))}
+          </select>
         </div>
         <button
           type="button"

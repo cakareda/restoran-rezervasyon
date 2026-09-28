@@ -218,6 +218,37 @@ export default async function RestoranDetay({
           </p>
         </div>
 
+        {(restoran.instagram_url || restoran.menu_url) && (
+          <div className="mt-4 flex flex-wrap gap-3">
+            {restoran.instagram_url && (
+              <a
+                href={restoran.instagram_url}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-border px-3.5 py-1.5 text-sm font-semibold text-foreground hover:bg-brand-light"
+              >
+                Instagram
+              </a>
+            )}
+            {restoran.menu_url && (
+              <a
+                href={restoran.menu_url}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-border px-3.5 py-1.5 text-sm font-semibold text-foreground hover:bg-brand-light"
+              >
+                Menü
+              </a>
+            )}
+          </div>
+        )}
+
+        {restoran.iptal_politikasi && (
+          <p className="mt-4 max-w-2xl rounded-xl bg-zinc-50 p-3 text-sm text-muted">
+            {restoran.iptal_politikasi}
+          </p>
+        )}
+
         <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_1.2fr]">
           <RezervasyonFormu
             restoranId={restoran.id}

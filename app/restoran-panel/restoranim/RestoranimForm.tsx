@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { OLANAK_ETIKETLERI, MUTFAK_TURLERI, type Restoran, type Masa } from "@/lib/types";
 import { fiyatTemizle } from "@/lib/format";
 import { calismaSaatleriYikle, type CalismaSaatleri } from "@/lib/calismaSaatleri";
@@ -10,6 +10,7 @@ import FotoYukleyici from "@/components/FotoYukleyici";
 import MasaEnvanteri from "@/components/MasaEnvanteri";
 import CalismaSaatleriDuzenleyici from "@/components/CalismaSaatleriDuzenleyici";
 import RestoranOnizleme from "@/components/RestoranOnizleme";
+import { restoranYolu } from "@/lib/slug";
 
 const girdiStil =
   "w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand";
@@ -39,6 +40,16 @@ export default function RestoranimForm({
   const [calismaSaatleri, setCalismaSaatleri] = useState<CalismaSaatleri | null>(() =>
     calismaSaatleriYikle(restoran?.calisma_saatleri)
   );
+  const [degisti, setDegisti] = useState(false);
+
+  useEffect(() => {
+    function ayrilmaUyarisi(e: BeforeUnloadEvent) {
+      if (!degisti) return;
+      e.preventDefault();
+    }
+    window.addEventListener("beforeunload", ayrilmaUyarisi);
+    return () => window.removeEventListener("beforeunload", ayrilmaUyarisi);
+  }, [degisti]);
 
   const googleSecimUygula = useCallback((sonuc: GooglePlaceSonucu) => {
     setAd(sonuc.ad);
@@ -72,7 +83,8 @@ export default function RestoranimForm({
     <div className="mt-6 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
       <form
         action={kaydet}
-        className="h-fit max-w-lg space-y-4 rounded-2xl border border-border bg-white p-6 shadow-sm"
+        onChange={() => setDegisti(true)}
+        className="h-fit max-w-lg space-y-4 rounded-2xl border border-border bg-white p-6 pb-20 shadow-sm"
       >
         <GooglePlacesArama onSecim={googleSecimUygula} />
 
@@ -195,6 +207,37 @@ export default function RestoranimForm({
             value={adres}
             onChange={(e) => setAdres(e.target.value)}
             placeholder="Tam adres (haritada ve detay sayfasında gösterilir)"
+            className={girdiStil}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className={etiketStil}>Instagram linki</label>
+            <input
+              name="instagramUrl"
+              defaultValue={restoran?.instagram_url ?? ""}
+              placeholder="https://instagram.com/..."
+              className={girdiStil}
+            />
+          </div>
+          <div>
+            <label className={etiketStil}>Menü linki (PDF veya sayfa)</label>
+            <input
+              name="menuUrl"
+              defaultValue={restoran?.menu_url ?? ""}
+              placeholder="https://..."
+              className={girdiStil}
+            />
+          </div>
+        </div>
+        <div>
+          <label className={etiketStil}>İptal politikası</label>
+          <textarea
+            name="iptalPolitikasi"
+            defaultValue={restoran?.iptal_politikasi ?? ""}
+            placeholder="Örn: Rezervasyonunuzu en az 2 saat öncesinden iptal edebilirsiniz."
+            rows={2}
             className={girdiStil}
           />
         </div>
@@ -337,12 +380,18 @@ export default function RestoranimForm({
           <input type="hidden" name="fotograflar" value={fotograflar.join("\n")} />
         </div>
 
-        <button
-          type="submit"
-          className="rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-dark"
-        >
-          Kaydet
-        </button>
+        <div className="sticky -bottom-6 -mx-6 -mb-6 flex items-center justify-between gap-3 rounded-b-2xl border-t border-border bg-white/95 px-6 py-3 backdrop-blur">
+          <p className="text-xs text-muted">
+            {degisti ? "Kaydedilmemiş değişikliklerin var." : "Her şey kaydedildi."}
+          </p>
+          <button
+            type="submit"
+            onClick={() => setDegisti(false)}
+            className="rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-dark"
+          >
+            Kaydet
+          </button>
+        </div>
       </form>
 
       <div className="lg:sticky lg:top-20 lg:self-start">
@@ -361,6 +410,31 @@ export default function RestoranimForm({
           olanaklar={olanaklar}
           fotograflar={fotograflar}
         />
+
+        {restoran && (
+          <div className="mt-6 rounded-2xl border border-border bg-white p-4 text-center">
+            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-muted">
+              Sayfanı paylaş
+            </p>
+            <img
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(
+                `https://masadaki.com${restoranYolu(restoran)}`
+              )}`}
+              alt="Masadaki QR kod"
+              width={140}
+              height={140}
+              className="mx-auto rounded-xl border border-border"
+            />
+            <a
+              href={`https://masadaki.com${restoranYolu(restoran)}`}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-2 block break-all text-xs font-semibold text-brand hover:underline"
+            >
+              masadaki.com{restoranYolu(restoran)}
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

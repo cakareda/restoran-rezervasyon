@@ -27,7 +27,13 @@ export function musaitlikHesapla(params: {
     return { musait: !doluMu, atanacakKapasite: null };
   }
 
-  const uygunTierler = masalar
+  const kapasiteyeGoreToplam = new Map<number, number>();
+  for (const m of masalar) {
+    kapasiteyeGoreToplam.set(m.kapasite, (kapasiteyeGoreToplam.get(m.kapasite) ?? 0) + m.adet);
+  }
+
+  const uygunTierler = [...kapasiteyeGoreToplam.entries()]
+    .map(([kapasite, adet]) => ({ kapasite, adet }))
     .filter((m) => m.kapasite >= kisiSayisi)
     .sort((a, b) => a.kapasite - b.kapasite);
 
