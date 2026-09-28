@@ -22,6 +22,10 @@ async function kaydet(formData: FormData) {
     .map((satir) => satir.trim())
     .filter(Boolean);
 
+  const calismaSaatleriHam = String(formData.get("calismaSaatleri") ?? "{}");
+  const calismaSaatleriGecerli =
+    calismaSaatleriHam !== "{}" && calismaSaatleriHam.trim() !== "" ? calismaSaatleriHam : null;
+
   const { error } = await supabase.from("restoranlar").upsert(
     {
       auth_user_id: user.id,
@@ -37,6 +41,7 @@ async function kaydet(formData: FormData) {
       adres: String(formData.get("adres") ?? ""),
       acilis_saati: String(formData.get("acilisSaati") ?? "12:00"),
       kapanis_saati: String(formData.get("kapanisSaati") ?? "23:00"),
+      calisma_saatleri: calismaSaatleriGecerli,
       oturma_suresi_dk: formData.get("oturmaSuresiDk")
         ? Number(formData.get("oturmaSuresiDk"))
         : 90,

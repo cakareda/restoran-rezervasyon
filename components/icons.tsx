@@ -109,6 +109,16 @@ export function TelefonIkonu({ className }: IkonProps) {
   );
 }
 
+export function WhatsappIkonu({ className }: IkonProps) {
+  return (
+    <svg {...temelOzellikler} className={className}>
+      <path d="M4 20l1.3-4.1A8 8 0 1 1 9 18.6L4 20Z" />
+      <path d="M9 9.3c0 3.5 2.9 6.4 6.4 6.4" strokeLinecap="round" />
+      <path d="M9 9.3c-.2-.9.4-1.8 1-2 .3-.1.7-.1.9.2l.6 1c.2.3.1.7-.1 1l-.5.5c.4 1.1 1.3 2 2.4 2.4l.5-.5c.3-.2.7-.3 1-.1l1 .6c.3.2.3.6.2.9-.2.6-1.1 1.2-2 1" />
+    </svg>
+  );
+}
+
 export function TakvimIkonu({ className }: IkonProps) {
   return (
     <svg {...temelOzellikler} className={className}>

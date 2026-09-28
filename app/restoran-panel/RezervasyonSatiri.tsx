@@ -4,7 +4,17 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { RezervasyonDurum, RezervasyonKaynagi } from "@/lib/types";
 import { DIL_ADLARI } from "@/i18n/routing";
-import { TakvimIkonu, TelefonIkonu } from "@/components/icons";
+import { TakvimIkonu, TelefonIkonu, WhatsappIkonu } from "@/components/icons";
+
+function whatsappNumarasi(telefon: string) {
+  // Yeni kayıtlarda ülke kodu zaten "+" ile geliyor (örn. "+905551234567").
+  if (telefon.startsWith("+")) return telefon.slice(1).replace(/\D/g, "");
+  // Eski kayıtlar (ülke kodu olmadan girilmiş, Türk numarası varsayımı).
+  const rakamlar = telefon.replace(/\D/g, "");
+  if (rakamlar.startsWith("90")) return rakamlar;
+  if (rakamlar.startsWith("0")) return `90${rakamlar.slice(1)}`;
+  return `90${rakamlar}`;
+}
 
 const kaynakEtiketi: Record<RezervasyonKaynagi, string> = {
   online: "Online",
@@ -121,13 +131,24 @@ export default function RezervasyonSatiri({
           </>
         )}
         {misafirTelefon && (
-          <a
-            href={`tel:${misafirTelefon}`}
-            aria-label="Misafiri ara"
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-border text-foreground hover:bg-zinc-50"
-          >
-            <TelefonIkonu className="h-4 w-4" />
-          </a>
+          <>
+            <a
+              href={`tel:${misafirTelefon}`}
+              aria-label="Misafiri ara"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-border text-foreground hover:bg-zinc-50"
+            >
+              <TelefonIkonu className="h-4 w-4" />
+            </a>
+            <a
+              href={`https://wa.me/${whatsappNumarasi(misafirTelefon)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="WhatsApp'tan yaz"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-border text-green-600 hover:bg-green-50"
+            >
+              <WhatsappIkonu className="h-4 w-4" />
+            </a>
+          </>
         )}
 
         {durum === "onaylandi" && geldiMi === null && (

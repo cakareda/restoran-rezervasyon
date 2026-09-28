@@ -4,7 +4,13 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Masa } from "@/lib/types";
 
-export default function MasaEnvanteri({ restoranId }: { restoranId: string | null }) {
+export default function MasaEnvanteri({
+  restoranId,
+  onDegis,
+}: {
+  restoranId: string | null;
+  onDegis?: (masalar: Masa[]) => void;
+}) {
   const supabase = createClient();
   const [masalar, setMasalar] = useState<Masa[]>([]);
   const [yukleniyor, setYukleniyor] = useState(Boolean(restoranId));
@@ -21,9 +27,11 @@ export default function MasaEnvanteri({ restoranId }: { restoranId: string | nul
         .eq("restoran_id", restoranId)
         .order("kapasite");
       setMasalar(data ?? []);
+      onDegis?.(data ?? []);
       setYukleniyor(false);
     }
     yukle();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [restoranId, supabase]);
 
   async function ekle() {
@@ -45,7 +53,9 @@ export default function MasaEnvanteri({ restoranId }: { restoranId: string | nul
 
     setMasalar((mevcut) => {
       const digerleri = mevcut.filter((m) => m.kapasite !== data.kapasite);
-      return [...digerleri, data].sort((a, b) => a.kapasite - b.kapasite);
+      const yeni = [...digerleri, data].sort((a, b) => a.kapasite - b.kapasite);
+      onDegis?.(yeni);
+      return yeni;
     });
     setYeniKapasite(2);
     setYeniAdet(1);
@@ -53,7 +63,11 @@ export default function MasaEnvanteri({ restoranId }: { restoranId: string | nul
 
   async function sil(id: string) {
     await supabase.from("masalar").delete().eq("id", id);
-    setMasalar((mevcut) => mevcut.filter((m) => m.id !== id));
+    setMasalar((mevcut) => {
+      const yeni = mevcut.filter((m) => m.id !== id);
+      onDegis?.(yeni);
+      return yeni;
+    });
   }
 
   if (!restoranId) {

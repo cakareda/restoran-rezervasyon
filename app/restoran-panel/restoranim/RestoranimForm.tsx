@@ -1,12 +1,14 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { OLANAK_ETIKETLERI, MUTFAK_TURLERI, type Restoran } from "@/lib/types";
+import { OLANAK_ETIKETLERI, MUTFAK_TURLERI, type Restoran, type Masa } from "@/lib/types";
 import { fiyatTemizle } from "@/lib/format";
+import { calismaSaatleriYikle, type CalismaSaatleri } from "@/lib/calismaSaatleri";
 import OlanakIkonu from "@/components/OlanakIkonu";
 import GooglePlacesArama, { type GooglePlaceSonucu } from "@/components/GooglePlacesArama";
 import FotoYukleyici from "@/components/FotoYukleyici";
 import MasaEnvanteri from "@/components/MasaEnvanteri";
+import CalismaSaatleriDuzenleyici from "@/components/CalismaSaatleriDuzenleyici";
 import RestoranOnizleme from "@/components/RestoranOnizleme";
 
 const girdiStil =
@@ -32,6 +34,11 @@ export default function RestoranimForm({
   const [olanaklar, setOlanaklar] = useState<string[]>(restoran?.olanaklar ?? []);
   const [ozelOlanakGirdi, setOzelOlanakGirdi] = useState("");
   const [fotograflar, setFotograflar] = useState<string[]>(restoran?.fotograflar ?? []);
+  const [masalar, setMasalar] = useState<Masa[]>([]);
+  const hesaplananKapasite = masalar.reduce((toplam, m) => toplam + m.kapasite * m.adet, 0);
+  const [calismaSaatleri, setCalismaSaatleri] = useState<CalismaSaatleri | null>(() =>
+    calismaSaatleriYikle(restoran?.calisma_saatleri)
+  );
 
   const googleSecimUygula = useCallback((sonuc: GooglePlaceSonucu) => {
     setAd(sonuc.ad);
@@ -147,12 +154,12 @@ export default function RestoranimForm({
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className={etiketStil}>Kapasite</label>
-            <input
-              name="kapasite"
-              type="number"
-              defaultValue={restoran?.kapasite ?? ""}
-              className={girdiStil}
-            />
+            <input type="hidden" name="kapasite" value={hesaplananKapasite} />
+            <div className={`${girdiStil} bg-zinc-50 text-muted`}>
+              {hesaplananKapasite > 0
+                ? `${hesaplananKapasite} kişi (masalardan hesaplandı)`
+                : "Masa ekleyince otomatik hesaplanır"}
+            </div>
           </div>
           <div>
             <label className={etiketStil}>Ortalama fiyat</label>
@@ -217,8 +224,20 @@ export default function RestoranimForm({
           </div>
         </div>
         <p className="-mt-2 text-xs text-muted">
-          Rezervasyon saat seçenekleri bu aralığa göre gösterilir.
+          Rezervasyon saat seçenekleri bu aralığa göre gösterilir. Aşağıdan güne özel saat ya da
+          kapalı gün tanımlarsan o gün için bu ayarlar geçerli olur.
         </p>
+
+        <div>
+          <label className={etiketStil}>Gün bazlı çalışma saatleri (opsiyonel)</label>
+          <input type="hidden" name="calismaSaatleri" value={JSON.stringify(calismaSaatleri ?? {})} />
+          <CalismaSaatleriDuzenleyici
+            baslangicDeger={calismaSaatleri}
+            varsayilanAcilis={acilisSaati}
+            varsayilanKapanis={kapanisSaati}
+            onDegis={setCalismaSaatleri}
+          />
+        </div>
 
         <div>
           <label className={etiketStil}>Oturma süresi (dakika)</label>
@@ -237,7 +256,7 @@ export default function RestoranimForm({
 
         <div>
           <label className={etiketStil}>Masa envanteri</label>
-          <MasaEnvanteri restoranId={restoran?.id ?? null} />
+          <MasaEnvanteri restoranId={restoran?.id ?? null} onDegis={setMasalar} />
         </div>
 
         <div>

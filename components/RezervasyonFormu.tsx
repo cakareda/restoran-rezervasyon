@@ -7,6 +7,8 @@ import { createClient } from "@/lib/supabase/client";
 import { yerelTarih, istanbulTarihSaat } from "@/lib/tarih";
 import { OZEL_GUN_SECENEKLERI } from "@/lib/types";
 import { KisiIkonu, TakvimIkonu, SaatIkonu } from "@/components/icons";
+import TelefonGirdisi from "@/components/TelefonGirdisi";
+import { gununSaatleri } from "@/lib/calismaSaatleri";
 
 function zamanDilimleriUret(acilisSaati: string, kapanisSaati: string) {
   const [acilisSaat, acilisDakika] = acilisSaati.split(":").map(Number);
@@ -27,10 +29,12 @@ export default function RezervasyonFormu({
   restoranId,
   acilisSaati,
   kapanisSaati,
+  calismaSaatleriJson,
 }: {
   restoranId: string;
   acilisSaati: string;
   kapanisSaati: string;
+  calismaSaatleriJson?: string | null;
 }) {
   const t = useTranslations("RezervasyonFormu");
   const locale = useLocale();
@@ -56,9 +60,21 @@ export default function RezervasyonFormu({
     return secilen.toLocaleDateString(locale, { day: "numeric", month: "long", weekday: "long" });
   }
 
+  const gununSaati = useMemo(
+    () =>
+      gununSaatleri({
+        tarih,
+        calismaSaatleriJson,
+        varsayilanAcilis: acilisSaati,
+        varsayilanKapanis: kapanisSaati,
+      }),
+    [tarih, calismaSaatleriJson, acilisSaati, kapanisSaati]
+  );
+
   const zamanDilimleri = useMemo(
-    () => zamanDilimleriUret(acilisSaati, kapanisSaati),
-    [acilisSaati, kapanisSaati]
+    () =>
+      gununSaati.kapali ? [] : zamanDilimleriUret(gununSaati.acilis, gununSaati.kapanis),
+    [gununSaati]
   );
   const [profil, setProfil] = useState<{ adSoyad: string; eposta: string; telefon: string } | null>(
     null
@@ -343,11 +359,10 @@ export default function RezervasyonFormu({
                 <label className="block text-sm font-medium text-foreground">
                   {t("telefonEtiket")}
                 </label>
-                <input
+                <TelefonGirdisi
                   value={telefon}
-                  onChange={(e) => setTelefon(e.target.value)}
-                  type="tel"
-                  className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+                  onChange={setTelefon}
+                  girdiSinifi="rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
                 />
               </div>
               <p className="text-xs text-muted">

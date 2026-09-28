@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { bugununTarihi, istanbulTarihSaat } from "@/lib/tarih";
 import { KapatIkonu, KisiIkonu, TakvimIkonu } from "@/components/icons";
+import TelefonGirdisi from "@/components/TelefonGirdisi";
+import { gununSaatleri } from "@/lib/calismaSaatleri";
 
 function zamanDilimleriUret(acilisSaati: string, kapanisSaati: string) {
   const [acilisSaat, acilisDakika] = acilisSaati.split(":").map(Number);
@@ -24,10 +26,12 @@ export default function YeniRezervasyonEkle({
   restoranId,
   acilisSaati,
   kapanisSaati,
+  calismaSaatleriJson,
 }: {
   restoranId: string;
   acilisSaati: string;
   kapanisSaati: string;
+  calismaSaatleriJson?: string | null;
 }) {
   const router = useRouter();
   const [acik, setAcik] = useState(false);
@@ -40,9 +44,21 @@ export default function YeniRezervasyonEkle({
   const [saat, setSaat] = useState<string | null>(null);
   const [doluSaatler, setDoluSaatler] = useState<string[]>([]);
 
+  const gununSaati = useMemo(
+    () =>
+      gununSaatleri({
+        tarih,
+        calismaSaatleriJson,
+        varsayilanAcilis: acilisSaati,
+        varsayilanKapanis: kapanisSaati,
+      }),
+    [tarih, calismaSaatleriJson, acilisSaati, kapanisSaati]
+  );
+
   const zamanDilimleri = useMemo(
-    () => zamanDilimleriUret(acilisSaati, kapanisSaati),
-    [acilisSaati, kapanisSaati]
+    () =>
+      gununSaati.kapali ? [] : zamanDilimleriUret(gununSaati.acilis, gununSaati.kapanis),
+    [gununSaati]
   );
 
   useEffect(() => {
@@ -143,13 +159,13 @@ export default function YeniRezervasyonEkle({
 
               <div>
                 <label className="block text-sm font-semibold text-foreground">Telefon</label>
-                <input
-                  value={telefon}
-                  onChange={(e) => setTelefon(e.target.value)}
-                  type="tel"
-                  placeholder="05xx xxx xx xx"
-                  className="mt-1 w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
-                />
+                <div className="mt-1">
+                  <TelefonGirdisi
+                    value={telefon}
+                    onChange={setTelefon}
+                    girdiSinifi="rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+                  />
+                </div>
               </div>
 
               <div>
@@ -194,6 +210,11 @@ export default function YeniRezervasyonEkle({
 
               <div>
                 <label className="block text-sm font-semibold text-foreground">Saat</label>
+                {gununSaati.kapali ? (
+                  <p className="mt-1 rounded-xl bg-amber-50 px-3.5 py-2.5 text-sm text-amber-800">
+                    Restoran bu gün kapalı.
+                  </p>
+                ) : (
                 <div className="mt-1 flex flex-wrap gap-2">
                   {zamanDilimleri.map((dilim) => {
                     const dolu = doluSaatler.includes(dilim);
@@ -216,6 +237,7 @@ export default function YeniRezervasyonEkle({
                     );
                   })}
                 </div>
+                )}
               </div>
 
               {hata && <p className="text-sm font-medium text-red-600">{hata}</p>}

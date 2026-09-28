@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
-import { musteriIptalEpostasi } from "@/lib/email/templates";
+import { musteriIptalEpostasi, misafirIptalOnayEpostasi } from "@/lib/email/templates";
 
 export async function POST(
   _request: Request,
@@ -12,7 +12,7 @@ export async function POST(
 
   const { data: rezervasyon } = await supabase
     .from("rezervasyonlar")
-    .select("id, tarih_saat, kisi_sayisi, durum, restoran_id, kullanicilar(ad_soyad)")
+    .select("id, tarih_saat, kisi_sayisi, durum, restoran_id, kullanicilar(ad_soyad, eposta)")
     .eq("id", id)
     .single();
 
@@ -39,7 +39,7 @@ export async function POST(
 
   const { data: restoran } = await supabase
     .from("restoranlar")
-    .select("eposta")
+    .select("ad, eposta")
     .eq("id", rezervasyon.restoran_id)
     .single();
 
@@ -56,6 +56,21 @@ export async function POST(
     await bildirimGonderVeKaydet({
       rezervasyonId: rezervasyon.id,
       aliciEposta: restoran.eposta,
+      tur: "musteri_iptali",
+      konu,
+      html,
+    });
+  }
+
+  if (restoran && misafir?.eposta) {
+    const { konu, html } = misafirIptalOnayEpostasi({
+      restoranAd: restoran.ad,
+      tarihSaat: rezervasyon.tarih_saat,
+      kisiSayisi: rezervasyon.kisi_sayisi,
+    });
+    await bildirimGonderVeKaydet({
+      rezervasyonId: rezervasyon.id,
+      aliciEposta: misafir.eposta,
       tur: "musteri_iptali",
       konu,
       html,

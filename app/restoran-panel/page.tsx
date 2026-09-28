@@ -80,7 +80,7 @@ export default async function RestoranPaneli({
 
   const { data: restoran } = await supabase
     .from("restoranlar")
-    .select("id, ad, acilis_saati, kapanis_saati")
+    .select("id, ad, acilis_saati, kapanis_saati, calisma_saatleri")
     .eq("auth_user_id", user!.id)
     .maybeSingle();
 
@@ -159,6 +159,7 @@ export default async function RestoranPaneli({
           restoranId={restoran.id}
           acilisSaati={restoran.acilis_saati.slice(0, 5)}
           kapanisSaati={restoran.kapanis_saati.slice(0, 5)}
+          calismaSaatleriJson={restoran.calisma_saatleri}
         />
       </div>
 
