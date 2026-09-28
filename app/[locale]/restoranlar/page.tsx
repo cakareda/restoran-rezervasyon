@@ -6,7 +6,8 @@ import { fiyatSeviyesi } from "@/lib/format";
 import { musaitlikHesapla } from "@/lib/kapasite";
 import { istanbulTarihSaat, bugununTarihi } from "@/lib/tarih";
 import RestoranKarti from "@/components/RestoranKarti";
-import { TakvimIkonu, SaatIkonu, KisiIkonu } from "@/components/icons";
+import SaatSecici from "@/components/SaatSecici";
+import { TakvimIkonu, KisiIkonu } from "@/components/icons";
 
 export async function generateMetadata() {
   const t = await getTranslations("RestoranlarSayfasi");
@@ -183,21 +184,7 @@ export default async function RestoranlarSayfasi({
                   />
                 </span>
               </label>
-              <label className="flex flex-1 items-center gap-2 rounded-xl px-4 py-2.5 ring-1 ring-border focus-within:ring-2 focus-within:ring-brand">
-                <SaatIkonu className="h-4 w-4 shrink-0 text-muted" />
-                <span className="flex-1">
-                  <span className="block text-[10px] font-bold uppercase tracking-wide text-muted">
-                    {t("saatEtiket")}
-                  </span>
-                  <input
-                    type="time"
-                    name="saat"
-                    step={1800}
-                    defaultValue={saat}
-                    className="w-full border-0 p-0 text-sm font-semibold text-foreground outline-none"
-                  />
-                </span>
-              </label>
+              <SaatSecici name="saat" defaultValue={saat} etiket={t("saatEtiket")} />
               <label className="flex items-center gap-2 rounded-xl px-4 py-2.5 ring-1 ring-border focus-within:ring-2 focus-within:ring-brand sm:w-28">
                 <KisiIkonu className="h-4 w-4 shrink-0 text-muted" />
                 <span className="flex-1">

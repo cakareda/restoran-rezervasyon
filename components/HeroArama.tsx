@@ -6,10 +6,10 @@ import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { sehirIyelikEki } from "@/lib/turkce";
 import { bugununTarihi } from "@/lib/tarih";
+import SaatSecici from "@/components/SaatSecici";
 import {
   KonumIkonu,
   TakvimIkonu,
-  SaatIkonu,
   KisiIkonu,
   AramaIkonu,
   TabakIkonu,
@@ -114,18 +114,9 @@ export default function HeroArama({ semtler }: { semtler: [string, { sehir: stri
           />
         </label>
 
-        <label className="flex-1 px-4 py-2.5">
-          <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-muted">
-            <SaatIkonu className="h-3 w-3" /> {t("saatEtiket")}
-          </span>
-          <input
-            type="time"
-            name="saat"
-            step={1800}
-            defaultValue="20:00"
-            className="mt-0.5 w-full border-0 p-0 text-sm font-semibold text-foreground outline-none"
-          />
-        </label>
+        <div className="flex-1">
+          <SaatSecici name="saat" defaultValue="20:00" etiket={t("saatEtiket")} varyant="duz" />
+        </div>
 
         <label className="px-4 py-2.5 sm:w-24">
           <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-muted">
