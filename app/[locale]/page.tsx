@@ -6,6 +6,7 @@ import type { Restoran, Yorum } from "@/lib/types";
 
 type YorumRestoranli = Yorum & { restoranlar: { ad: string } | null };
 import { restoranBazindaPuanla } from "@/lib/puanlama";
+import { dilAlternatifleri, ogLocale } from "@/lib/seo";
 import RestoranKarti from "@/components/RestoranKarti";
 import HeroArama from "@/components/HeroArama";
 import { EpostaIkonu, OnayIkonu, TabakIkonu, AramaIkonu, GonderIkonu } from "@/components/icons";
@@ -28,7 +29,8 @@ export async function generateMetadata({
   return {
     title: baslik,
     description: aciklama,
-    openGraph: { title: baslik, description: aciklama },
+    alternates: dilAlternatifleri("/", locale),
+    openGraph: { title: baslik, description: aciklama, locale: ogLocale(locale) },
   };
 }
 

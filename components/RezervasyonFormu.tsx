@@ -167,6 +167,7 @@ export default function RezervasyonFormu({
         kisiSayisi,
         notlar: notlar.trim() || null,
         ozelGun: ozelGun || null,
+        misafirDili: locale,
       }),
     });
 

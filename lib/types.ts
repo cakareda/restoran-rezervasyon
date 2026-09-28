@@ -46,6 +46,31 @@ export const OLANAK_ETIKETLERI = [
   { deger: "otopark", etiket: "Otopark" },
   { deger: "kredi_karti", etiket: "Kredi kartı" },
   { deger: "canli_muzik", etiket: "Canlı müzik" },
+  { deger: "alkol", etiket: "Alkol servisi" },
+  { deger: "cocuk_sandalyesi", etiket: "Çocuk sandalyesi" },
+  { deger: "engelli_erisimi", etiket: "Engelli erişimi" },
+  { deger: "vegan_helal", etiket: "Vegan / Helal seçenekler" },
+  { deger: "ingilizce_konusan_garson", etiket: "Garson İngilizce konuşuyor" },
+] as const;
+
+export const MUTFAK_TURLERI = [
+  "Türk",
+  "Osmanlı",
+  "Ev Yemekleri",
+  "Sokak Lezzetleri",
+  "Kebap",
+  "Deniz Ürünleri",
+  "İtalyan",
+  "Fransız",
+  "Uzak Doğu",
+  "Meksika",
+  "Hint",
+  "Akdeniz",
+  "Vejetaryen / Vegan",
+  "Kahvaltı",
+  "Tatlı & Pastane",
+  "Kafe",
+  "Diğer",
 ] as const;
 
 export type RezervasyonKaynagi = "online" | "telefon";
@@ -70,6 +95,7 @@ export interface Rezervasyon {
   ozel_gun: string | null;
   misafir_ad_soyad: string | null;
   misafir_telefon: string | null;
+  misafir_dili: string | null;
   olusturulma: string;
 }
 

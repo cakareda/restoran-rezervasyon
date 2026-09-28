@@ -42,7 +42,7 @@
     "tumRestoranlarLink": "Смотреть все рестораны →",
     "semtSemtEtiket": "По районам",
     "semtBaslik": "У каждого района свой вкус",
-    "mekanSayisi": "{sayi} мест · {sehir}",
+    "mekanSayisi": "{sayi, plural, one {# место} few {# места} many {# мест} other {# места}} · {sehir}",
     "yorumSistemiEtiket": "Реальные визиты, реальные отзывы",
     "yorumSistemiBaslik": "Право голоса есть только у тех, кто сидел за столом.",
     "yorumMadde1": "Отзыв нельзя написать, пока ресторан не подтвердит бронирование",
@@ -88,7 +88,7 @@
     "bulunamadi": "По вашему запросу рестораны не найдены."
   },
   "RestoranKarti": {
-    "yorumSayisi": "{sayi} отзывов"
+    "yorumSayisi": "{sayi, plural, one {# отзыв} few {# отзыва} many {# отзывов} other {# отзыва}}"
   },
   "Olanaklar": {
     "wifi": "Wi-Fi",
@@ -96,7 +96,12 @@
     "evcil_hayvan": "Можно с животными",
     "otopark": "Парковка",
     "kredi_karti": "Банковская карта",
-    "canli_muzik": "Живая музыка"
+    "canli_muzik": "Живая музыка",
+    "alkol": "Продажа алкоголя",
+    "cocuk_sandalyesi": "Детский стульчик",
+    "engelli_erisimi": "Доступно для инвалидных колясок",
+    "vegan_helal": "Веганские / халяльные блюда",
+    "ingilizce_konusan_garson": "Персонал говорит по-английски"
   },
   "RestoranDetay": {
     "restoranBulunamadi": "Ресторан не найден",

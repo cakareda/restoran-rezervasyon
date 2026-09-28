@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { RezervasyonDurum, RezervasyonKaynagi } from "@/lib/types";
+import { DIL_ADLARI } from "@/i18n/routing";
 import { TakvimIkonu, TelefonIkonu } from "@/components/icons";
 
 const kaynakEtiketi: Record<RezervasyonKaynagi, string> = {
@@ -29,6 +30,7 @@ export default function RezervasyonSatiri({
   misafirAd,
   misafirEposta,
   misafirTelefon,
+  misafirDili,
   kaynak,
   tarihSaat,
   kisiSayisi,
@@ -40,6 +42,7 @@ export default function RezervasyonSatiri({
   misafirAd: string;
   misafirEposta: string;
   misafirTelefon?: string;
+  misafirDili?: string | null;
   kaynak: RezervasyonKaynagi;
   tarihSaat: string;
   kisiSayisi: number;
@@ -65,7 +68,14 @@ export default function RezervasyonSatiri({
     <div className="rounded-2xl border border-border bg-white p-4 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <p className="font-bold text-foreground">{misafirAd}</p>
+          <p className="flex items-center gap-1.5 font-bold text-foreground">
+            {misafirAd}
+            {misafirDili && misafirDili !== "tr" && (
+              <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700">
+                {DIL_ADLARI[misafirDili as keyof typeof DIL_ADLARI] ?? misafirDili}
+              </span>
+            )}
+          </p>
           <p className="text-sm text-muted">{misafirEposta || misafirTelefon}</p>
           <p className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-foreground">
             <TakvimIkonu className="h-4 w-4 text-muted" />

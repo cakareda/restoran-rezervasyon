@@ -42,7 +42,7 @@
     "tumRestoranlarLink": "عرض جميع المطاعم ←",
     "semtSemtEtiket": "حسب الحي",
     "semtBaslik": "لكل حي نكهته الخاصة",
-    "mekanSayisi": "{sayi} مكان · {sehir}",
+    "mekanSayisi": "{sayi, plural, zero {لا أماكن} one {مكان واحد} two {مكانان} few {# أماكن} many {# مكانًا} other {# مكان}} · {sehir}",
     "yorumSistemiEtiket": "زيارات حقيقية، تقييمات حقيقية",
     "yorumSistemiBaslik": "فقط من جلس على الطاولة له رأي.",
     "yorumMadde1": "لا يمكن كتابة تقييم قبل أن يوافق المطعم على الحجز",
@@ -88,7 +88,7 @@
     "bulunamadi": "لم يتم العثور على مطاعم مطابقة لبحثك."
   },
   "RestoranKarti": {
-    "yorumSayisi": "{sayi} تقييم"
+    "yorumSayisi": "{sayi, plural, zero {لا تقييمات} one {تقييم واحد} two {تقييمان} few {# تقييمات} many {# تقييمًا} other {# تقييم}}"
   },
   "Olanaklar": {
     "wifi": "واي فاي",
@@ -96,7 +96,12 @@
     "evcil_hayvan": "يسمح بالحيوانات الأليفة",
     "otopark": "موقف سيارات",
     "kredi_karti": "بطاقة ائتمان",
-    "canli_muzik": "موسيقى حية"
+    "canli_muzik": "موسيقى حية",
+    "alkol": "تقديم الكحول",
+    "cocuk_sandalyesi": "كرسي أطفال",
+    "engelli_erisimi": "مدخل لذوي الإعاقة",
+    "vegan_helal": "خيارات نباتية / حلال",
+    "ingilizce_konusan_garson": "طاقم يتحدث الإنجليزية"
   },
   "RestoranDetay": {
     "restoranBulunamadi": "المطعم غير موجود",

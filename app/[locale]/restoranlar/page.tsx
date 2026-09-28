@@ -5,15 +5,23 @@ import { restoranBazindaPuanla } from "@/lib/puanlama";
 import { fiyatSeviyesi } from "@/lib/format";
 import { musaitlikHesapla } from "@/lib/kapasite";
 import { istanbulTarihSaat, bugununTarihi } from "@/lib/tarih";
+import { dilAlternatifleri, ogLocale } from "@/lib/seo";
 import RestoranKarti from "@/components/RestoranKarti";
 import SaatSecici from "@/components/SaatSecici";
 import { TakvimIkonu, KisiIkonu } from "@/components/icons";
 
-export async function generateMetadata() {
-  const t = await getTranslations("RestoranlarSayfasi");
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "RestoranlarSayfasi" });
   return {
     title: t("title"),
     description: t("description"),
+    alternates: dilAlternatifleri("/restoranlar", locale),
+    openGraph: { title: t("title"), description: t("description"), locale: ogLocale(locale) },
   };
 }
 

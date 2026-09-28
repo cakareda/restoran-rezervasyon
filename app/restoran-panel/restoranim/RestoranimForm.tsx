@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { OLANAK_ETIKETLERI, type Restoran } from "@/lib/types";
+import { OLANAK_ETIKETLERI, MUTFAK_TURLERI, type Restoran } from "@/lib/types";
 import { fiyatTemizle } from "@/lib/format";
 import OlanakIkonu from "@/components/OlanakIkonu";
 import GooglePlacesArama, { type GooglePlaceSonucu } from "@/components/GooglePlacesArama";
@@ -103,14 +103,25 @@ export default function RestoranimForm({
         </div>
         <div>
           <label className={etiketStil}>Mutfak türü</label>
-          <input
+          <select
             name="mutfakTuru"
             value={mutfakTuru}
             onChange={(e) => setMutfakTuru(e.target.value)}
             required
-            placeholder="örn. İtalyan"
             className={girdiStil}
-          />
+          >
+            <option value="" disabled>
+              Seçin
+            </option>
+            {mutfakTuru && !(MUTFAK_TURLERI as readonly string[]).includes(mutfakTuru) && (
+              <option value={mutfakTuru}>{mutfakTuru}</option>
+            )}
+            {MUTFAK_TURLERI.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>

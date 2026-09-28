@@ -5,8 +5,9 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import type { Restoran, Yorum } from "@/lib/types";
 import { OLANAK_ETIKETLERI } from "@/lib/types";
-import { fiyatGoster } from "@/lib/format";
+import { fiyatGoster, fiyatSeviyesi } from "@/lib/format";
 import { slugYap } from "@/lib/slug";
+import { dilAlternatifleri, ogLocale } from "@/lib/seo";
 import { KonumIkonu, SaatIkonu, TabakIkonu } from "@/components/icons";
 import OlanakIkonu from "@/components/OlanakIkonu";
 import RezervasyonFormu from "@/components/RezervasyonFormu";
@@ -40,9 +41,11 @@ export async function generateMetadata({
   return {
     title: baslik,
     description: aciklama,
+    alternates: dilAlternatifleri(`/${sehir}/${semt}/${slug}`, locale),
     openGraph: {
       title: baslik,
       description: aciklama,
+      locale: ogLocale(locale),
       images: foto ? [{ url: foto }] : undefined,
     },
   };
@@ -167,8 +170,16 @@ export default async function RestoranDetay({
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {fiyatGoster(restoran.ortalama_fiyat) && (
-            <span className="inline-block rounded-full bg-brand-light px-3 py-1 text-sm font-semibold text-brand-dark">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-light px-3 py-1 text-sm font-semibold text-brand-dark">
               {fiyatGoster(restoran.ortalama_fiyat)}
+              {fiyatSeviyesi(restoran.ortalama_fiyat) && (
+                <span aria-hidden className="text-xs">
+                  <span>{"₺".repeat(fiyatSeviyesi(restoran.ortalama_fiyat)!)}</span>
+                  <span className="text-brand-dark/30">
+                    {"₺".repeat(4 - fiyatSeviyesi(restoran.ortalama_fiyat)!)}
+                  </span>
+                </span>
+              )}
             </span>
           )}
           {secilenOlanaklar.map((o) => (

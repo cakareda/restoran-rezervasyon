@@ -42,7 +42,7 @@
     "tumRestoranlarLink": "Tüm restoranları gör →",
     "semtSemtEtiket": "Semt semt",
     "semtBaslik": "Her semtin başka bir sofrası var",
-    "mekanSayisi": "{sayi} mekan · {sehir}",
+    "mekanSayisi": "{sayi, plural, other {# mekan}} · {sehir}",
     "yorumSistemiEtiket": "Gerçek ziyaret, gerçek yorum",
     "yorumSistemiBaslik": "Sözü masaya oturanlar söyler.",
     "yorumMadde1": "Rezervasyon restoran tarafından onaylanmadan yorum yazılamaz",
@@ -88,7 +88,7 @@
     "bulunamadi": "Aramanıza uygun restoran bulunamadı."
   },
   "RestoranKarti": {
-    "yorumSayisi": "{sayi} yorum"
+    "yorumSayisi": "{sayi, plural, other {# yorum}}"
   },
   "Olanaklar": {
     "wifi": "Wi-Fi",
@@ -96,7 +96,12 @@
     "evcil_hayvan": "Evcil hayvan dostu",
     "otopark": "Otopark",
     "kredi_karti": "Kredi kartı",
-    "canli_muzik": "Canlı müzik"
+    "canli_muzik": "Canlı müzik",
+    "alkol": "Alkol servisi",
+    "cocuk_sandalyesi": "Çocuk sandalyesi",
+    "engelli_erisimi": "Engelli erişimi",
+    "vegan_helal": "Vegan / Helal seçenekler",
+    "ingilizce_konusan_garson": "Garson İngilizce konuşuyor"
   },
   "RestoranDetay": {
     "restoranBulunamadi": "Restoran bulunamadı",

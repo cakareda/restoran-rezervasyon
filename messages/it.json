@@ -42,7 +42,7 @@
     "tumRestoranlarLink": "Vedi tutti i ristoranti →",
     "semtSemtEtiket": "Per quartiere",
     "semtBaslik": "Ogni quartiere ha il suo sapore",
-    "mekanSayisi": "{sayi} locali · {sehir}",
+    "mekanSayisi": "{sayi, plural, one {# locale} other {# locali}} · {sehir}",
     "yorumSistemiEtiket": "Visite vere, recensioni vere",
     "yorumSistemiBaslik": "Solo chi si è seduto al tavolo ha voce in capitolo.",
     "yorumMadde1": "Nessuna recensione può essere scritta finché il ristorante non conferma la prenotazione",
@@ -88,7 +88,7 @@
     "bulunamadi": "Nessun ristorante corrisponde alla tua ricerca."
   },
   "RestoranKarti": {
-    "yorumSayisi": "{sayi} recensioni"
+    "yorumSayisi": "{sayi, plural, one {# recensione} other {# recensioni}}"
   },
   "Olanaklar": {
     "wifi": "Wi-Fi",
@@ -96,7 +96,12 @@
     "evcil_hayvan": "Animali ammessi",
     "otopark": "Parcheggio",
     "kredi_karti": "Carta di credito",
-    "canli_muzik": "Musica dal vivo"
+    "canli_muzik": "Musica dal vivo",
+    "alkol": "Servizio alcolici",
+    "cocuk_sandalyesi": "Seggiolone",
+    "engelli_erisimi": "Accesso disabili",
+    "vegan_helal": "Opzioni vegane / halal",
+    "ingilizce_konusan_garson": "Personale che parla inglese"
   },
   "RestoranDetay": {
     "restoranBulunamadi": "Ristorante non trovato",

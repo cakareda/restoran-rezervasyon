@@ -16,6 +16,7 @@ type RezervasyonSatirVerisi = {
   notlar: string | null;
   misafir_ad_soyad: string | null;
   misafir_telefon: string | null;
+  misafir_dili: string | null;
   kullanicilar: { ad_soyad: string; eposta: string; telefon: string | null } | null;
 };
 
@@ -98,7 +99,7 @@ export default async function RestoranPaneli({
   let sorgu = supabase
     .from("rezervasyonlar")
     .select(
-      "id, tarih_saat, kisi_sayisi, durum, geldi_mi, kaynak, notlar, misafir_ad_soyad, misafir_telefon, kullanicilar(ad_soyad, eposta, telefon)"
+      "id, tarih_saat, kisi_sayisi, durum, geldi_mi, kaynak, notlar, misafir_ad_soyad, misafir_telefon, misafir_dili, kullanicilar(ad_soyad, eposta, telefon)"
     )
     .eq("restoran_id", restoran.id)
     .order("tarih_saat", { ascending: true });
@@ -248,6 +249,7 @@ export default async function RestoranPaneli({
               misafirAd={r.kullanicilar?.ad_soyad ?? r.misafir_ad_soyad ?? ""}
               misafirEposta={r.kullanicilar?.eposta ?? ""}
               misafirTelefon={r.kullanicilar?.telefon ?? r.misafir_telefon ?? ""}
+              misafirDili={r.misafir_dili}
               kaynak={r.kaynak}
               tarihSaat={r.tarih_saat}
               kisiSayisi={r.kisi_sayisi}

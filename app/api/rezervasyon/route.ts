@@ -6,7 +6,8 @@ import { musaitlikHesapla } from "@/lib/kapasite";
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { restoranId, adSoyad, eposta, telefon, tarihSaat, kisiSayisi, notlar, ozelGun } = body;
+  const { restoranId, adSoyad, eposta, telefon, tarihSaat, kisiSayisi, notlar, ozelGun, misafirDili } =
+    body;
 
   if (!restoranId || !adSoyad || !eposta || !tarihSaat || !kisiSayisi) {
     return NextResponse.json({ hata: "Eksik bilgi." }, { status: 400 });
@@ -81,6 +82,7 @@ export async function POST(request: Request) {
       notlar: notlar ?? null,
       ozel_gun: ozelGun ?? null,
       masa_kapasitesi: atanacakKapasite,
+      misafir_dili: misafirDili ?? null,
     })
     .select("id")
     .single();
