@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import type { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Restoran, Yorum } from "@/lib/types";
@@ -13,6 +14,23 @@ const HERO_FOTO =
   "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1800&q=80";
 const SEMT_FOTO_YEDEK =
   "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?auto=format&fit=crop&w=800&q=80";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Anasayfa" });
+  const baslik = t("metaBaslik");
+  const aciklama = t("metaAciklama");
+
+  return {
+    title: baslik,
+    description: aciklama,
+    openGraph: { title: baslik, description: aciklama },
+  };
+}
 
 export default async function AnaSayfa() {
   const t = await getTranslations("Anasayfa");

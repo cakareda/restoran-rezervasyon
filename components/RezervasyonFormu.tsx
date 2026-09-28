@@ -74,8 +74,8 @@ export default function RezervasyonFormu({
   const bugun = useMemo(() => yerelTarih(new Date()), []);
 
   useEffect(() => {
-    setBeklemeEklendi(false);
     async function doluSaatleriYukle() {
+      setBeklemeEklendi(false);
       const yanit = await fetch(
         `/api/restoran/${restoranId}/dolu-saatler?tarih=${tarih}&kisiSayisi=${kisiSayisi}`
       );

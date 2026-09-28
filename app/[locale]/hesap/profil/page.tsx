@@ -1,10 +1,13 @@
 import { revalidatePath } from "next/cache";
+import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { RezervasyonDurum } from "@/lib/types";
 import { TakvimIkonu } from "@/components/icons";
+
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 async function kaydet(formData: FormData) {
   "use server";

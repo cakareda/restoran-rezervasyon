@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import YorumFormu from "./YorumFormu";
+
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 type RezervasyonRestoranli = {
   id: string;

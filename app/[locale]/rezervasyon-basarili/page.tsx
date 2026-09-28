@@ -1,6 +1,9 @@
 import { useTranslations } from "next-intl";
+import type { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
 import { OnayIkonu } from "@/components/icons";
+
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 export default function RezervasyonBasarili() {
   const t = useTranslations("RezervasyonBasarili");

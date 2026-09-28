@@ -7,16 +7,13 @@ import type { Masa } from "@/lib/types";
 export default function MasaEnvanteri({ restoranId }: { restoranId: string | null }) {
   const supabase = createClient();
   const [masalar, setMasalar] = useState<Masa[]>([]);
-  const [yukleniyor, setYukleniyor] = useState(true);
+  const [yukleniyor, setYukleniyor] = useState(Boolean(restoranId));
   const [yeniKapasite, setYeniKapasite] = useState(2);
   const [yeniAdet, setYeniAdet] = useState(1);
   const [hata, setHata] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!restoranId) {
-      setYukleniyor(false);
-      return;
-    }
+    if (!restoranId) return;
     async function yukle() {
       const { data } = await supabase
         .from("masalar")

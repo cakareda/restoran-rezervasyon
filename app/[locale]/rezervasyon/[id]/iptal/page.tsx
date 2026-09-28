@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import IptalKarti from "./IptalKarti";
+
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 type RezervasyonDetay = {
   id: string;

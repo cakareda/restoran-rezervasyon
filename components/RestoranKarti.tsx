@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import type { Restoran } from "@/lib/types";
 import { fiyatGoster } from "@/lib/format";
+import { restoranYolu } from "@/lib/slug";
 import { TabakIkonu } from "@/components/icons";
 
 export default function RestoranKarti({
@@ -17,7 +18,7 @@ export default function RestoranKarti({
 
   return (
     <Link
-      href={`/restoran/${restoran.id}`}
+      href={restoranYolu(restoran)}
       className="group overflow-hidden rounded-2xl border border-border bg-white transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-orange-900/10"
     >
       <div className="relative flex h-36 items-center justify-center overflow-hidden bg-brand-light">
