@@ -39,7 +39,6 @@ export default function RestoranimForm({
     if (sonuc.telefon) setTelefon(sonuc.telefon);
     if (sonuc.sehir) setSehir(sonuc.sehir);
     if (sonuc.semt) setSemt(sonuc.semt);
-    if (sonuc.fotograflar.length > 0) setFotograflar(sonuc.fotograflar);
   }, []);
 
   function olanakDegis(deger: string, isaretli: boolean) {

@@ -9,17 +9,14 @@ export type GooglePlaceSonucu = {
   telefon: string;
   sehir: string;
   semt: string;
-  fotograflar: string[];
 };
 
 type GoogleAdresBileseni = { long_name: string; types: string[] };
-type GoogleFoto = { getUrl: (opts: { maxWidth: number }) => string };
 type GooglePlace = {
   name?: string;
   formatted_address?: string;
   international_phone_number?: string;
   address_components?: GoogleAdresBileseni[];
-  photos?: GoogleFoto[];
 };
 type GoogleAutocomplete = {
   addListener: (olay: string, geriCagirma: () => void) => void;
@@ -81,13 +78,7 @@ export default function GooglePlacesArama({
         autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, {
           types: ["establishment"],
           componentRestrictions: { country: "tr" },
-          fields: [
-            "name",
-            "formatted_address",
-            "international_phone_number",
-            "address_components",
-            "photos",
-          ],
+          fields: ["name", "formatted_address", "international_phone_number", "address_components"],
         });
 
         autocomplete.addListener("place_changed", () => {
@@ -101,17 +92,12 @@ export default function GooglePlacesArama({
             bilesenBul(bilesenler, "sublocality_level_1") ||
             bilesenBul(bilesenler, "sublocality");
 
-          const fotograflar = (yer.photos ?? [])
-            .slice(0, 3)
-            .map((foto) => foto.getUrl({ maxWidth: 1200 }));
-
           onSecim({
             ad: yer.name ?? "",
             adres: yer.formatted_address ?? "",
             telefon: yer.international_phone_number ?? "",
             sehir,
             semt,
-            fotograflar,
           });
         });
 
@@ -139,7 +125,7 @@ export default function GooglePlacesArama({
         className="mt-2 w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
       />
       <p className="mt-1.5 text-xs text-muted">
-        Seçtiğinizde adres, telefon ve kapak fotoğrafları otomatik doldurulur — sonra dilediğinizi düzenleyebilirsiniz.
+        Seçtiğinizde adres ve telefon otomatik doldurulur — fotoğraflarınızı aşağıdan kendiniz yükleyin.
       </p>
     </div>
   );
