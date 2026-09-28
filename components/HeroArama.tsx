@@ -121,6 +121,7 @@ export default function HeroArama({ semtler }: { semtler: [string, { sehir: stri
           <input
             type="time"
             name="saat"
+            step={1800}
             defaultValue="20:00"
             className="mt-0.5 w-full border-0 p-0 text-sm font-semibold text-foreground outline-none"
           />

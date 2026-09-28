@@ -6,6 +6,7 @@ import { fiyatSeviyesi } from "@/lib/format";
 import { musaitlikHesapla } from "@/lib/kapasite";
 import { istanbulTarihSaat, bugununTarihi } from "@/lib/tarih";
 import RestoranKarti from "@/components/RestoranKarti";
+import { TakvimIkonu, SaatIkonu, KisiIkonu } from "@/components/icons";
 
 export async function generateMetadata() {
   const t = await getTranslations("RestoranlarSayfasi");
@@ -167,27 +168,52 @@ export default async function RestoranlarSayfasi({
             </div>
 
             <div className="flex flex-col gap-2 sm:flex-row">
-              <input
-                type="date"
-                name="tarih"
-                defaultValue={tarih}
-                min={bugununTarihi()}
-                className="rounded-xl border-0 px-4 py-3 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
-              />
-              <input
-                type="time"
-                name="saat"
-                defaultValue={saat}
-                className="rounded-xl border-0 px-4 py-3 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
-              />
-              <input
-                type="number"
-                name="kisi"
-                min={1}
-                defaultValue={kisi}
-                placeholder={t("kisiPlaceholder")}
-                className="w-24 rounded-xl border-0 px-4 py-3 text-sm text-foreground outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
-              />
+              <label className="flex flex-1 items-center gap-2 rounded-xl px-4 py-2.5 ring-1 ring-border focus-within:ring-2 focus-within:ring-brand">
+                <TakvimIkonu className="h-4 w-4 shrink-0 text-muted" />
+                <span className="flex-1">
+                  <span className="block text-[10px] font-bold uppercase tracking-wide text-muted">
+                    {t("tarihEtiket")}
+                  </span>
+                  <input
+                    type="date"
+                    name="tarih"
+                    defaultValue={tarih || bugununTarihi()}
+                    min={bugununTarihi()}
+                    className="w-full border-0 p-0 text-sm font-semibold text-foreground outline-none"
+                  />
+                </span>
+              </label>
+              <label className="flex flex-1 items-center gap-2 rounded-xl px-4 py-2.5 ring-1 ring-border focus-within:ring-2 focus-within:ring-brand">
+                <SaatIkonu className="h-4 w-4 shrink-0 text-muted" />
+                <span className="flex-1">
+                  <span className="block text-[10px] font-bold uppercase tracking-wide text-muted">
+                    {t("saatEtiket")}
+                  </span>
+                  <input
+                    type="time"
+                    name="saat"
+                    step={1800}
+                    defaultValue={saat}
+                    className="w-full border-0 p-0 text-sm font-semibold text-foreground outline-none"
+                  />
+                </span>
+              </label>
+              <label className="flex items-center gap-2 rounded-xl px-4 py-2.5 ring-1 ring-border focus-within:ring-2 focus-within:ring-brand sm:w-28">
+                <KisiIkonu className="h-4 w-4 shrink-0 text-muted" />
+                <span className="flex-1">
+                  <span className="block text-[10px] font-bold uppercase tracking-wide text-muted">
+                    {t("kisiEtiket")}
+                  </span>
+                  <input
+                    type="number"
+                    name="kisi"
+                    min={1}
+                    defaultValue={kisi}
+                    placeholder={t("kisiPlaceholder")}
+                    className="w-full border-0 p-0 text-sm font-semibold text-foreground outline-none"
+                  />
+                </span>
+              </label>
               <select
                 name="fiyatSeviye"
                 defaultValue={fiyatSeviye ?? ""}

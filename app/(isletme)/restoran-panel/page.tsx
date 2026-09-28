@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { RezervasyonDurum, RezervasyonKaynagi } from "@/lib/types";
 import { bugununTarihi, yerelTarih } from "@/lib/tarih";
 import RezervasyonSatiri from "./RezervasyonSatiri";
-import BlokEkleFormu from "./BlokEkleFormu";
+import YeniRezervasyonEkle from "./YeniRezervasyonEkle";
 import { AsagiOkIkonu } from "@/components/icons";
 
 type RezervasyonSatirVerisi = {
@@ -14,7 +14,9 @@ type RezervasyonSatirVerisi = {
   geldi_mi: boolean | null;
   kaynak: RezervasyonKaynagi;
   notlar: string | null;
-  kullanicilar: { ad_soyad: string; eposta: string } | null;
+  misafir_ad_soyad: string | null;
+  misafir_telefon: string | null;
+  kullanicilar: { ad_soyad: string; eposta: string; telefon: string | null } | null;
 };
 
 function tarihEtiketi(tarihStr: string) {
@@ -47,7 +49,7 @@ export default async function RestoranPaneli({
 
   const { data: restoran } = await supabase
     .from("restoranlar")
-    .select("id, ad")
+    .select("id, ad, acilis_saati, kapanis_saati")
     .eq("auth_user_id", user!.id)
     .maybeSingle();
 
@@ -65,7 +67,9 @@ export default async function RestoranPaneli({
 
   let sorgu = supabase
     .from("rezervasyonlar")
-    .select("id, tarih_saat, kisi_sayisi, durum, geldi_mi, kaynak, notlar, kullanicilar(ad_soyad, eposta)")
+    .select(
+      "id, tarih_saat, kisi_sayisi, durum, geldi_mi, kaynak, notlar, misafir_ad_soyad, misafir_telefon, kullanicilar(ad_soyad, eposta, telefon)"
+    )
     .eq("restoran_id", restoran.id)
     .order("tarih_saat", { ascending: true });
 
@@ -92,7 +96,11 @@ export default async function RestoranPaneli({
           <h1 className="text-2xl font-extrabold text-foreground">{restoran.ad}</h1>
           <p className="mt-1 text-sm text-muted">Gelen rezervasyon talepleri</p>
         </div>
-        <BlokEkleFormu />
+        <YeniRezervasyonEkle
+          restoranId={restoran.id}
+          acilisSaati={restoran.acilis_saati.slice(0, 5)}
+          kapanisSaati={restoran.kapanis_saati.slice(0, 5)}
+        />
       </div>
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-white p-3">
@@ -138,8 +146,10 @@ export default async function RestoranPaneli({
             <RezervasyonSatiri
               key={r.id}
               id={r.id}
-              misafirAd={r.kaynak === "telefon" ? "Telefonla rezervasyon" : r.kullanicilar?.ad_soyad ?? ""}
-              misafirEposta={r.kaynak === "telefon" ? "" : r.kullanicilar?.eposta ?? ""}
+              misafirAd={r.kullanicilar?.ad_soyad ?? r.misafir_ad_soyad ?? ""}
+              misafirEposta={r.kullanicilar?.eposta ?? ""}
+              misafirTelefon={r.kullanicilar?.telefon ?? r.misafir_telefon ?? ""}
+              kaynak={r.kaynak}
               tarihSaat={r.tarih_saat}
               kisiSayisi={r.kisi_sayisi}
               durum={r.durum}

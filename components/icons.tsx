@@ -101,6 +101,14 @@ export function KisiIkonu({ className }: IkonProps) {
   );
 }
 
+export function TelefonIkonu({ className }: IkonProps) {
+  return (
+    <svg {...temelOzellikler} className={className}>
+      <path d="M4 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v4a2 2 0 0 1-2 2C9.6 21 3 14.4 3 6a2 2 0 0 1 1-2Z" />
+    </svg>
+  );
+}
+
 export function TakvimIkonu({ className }: IkonProps) {
   return (
     <svg {...temelOzellikler} className={className}>

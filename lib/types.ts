@@ -68,6 +68,8 @@ export interface Rezervasyon {
   kaynak: RezervasyonKaynagi;
   masa_kapasitesi: number | null;
   ozel_gun: string | null;
+  misafir_ad_soyad: string | null;
+  misafir_telefon: string | null;
   olusturulma: string;
 }
 

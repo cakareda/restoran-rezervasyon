@@ -2,8 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { RezervasyonDurum } from "@/lib/types";
-import { TakvimIkonu } from "@/components/icons";
+import type { RezervasyonDurum, RezervasyonKaynagi } from "@/lib/types";
+import { TakvimIkonu, TelefonIkonu } from "@/components/icons";
+
+const kaynakEtiketi: Record<RezervasyonKaynagi, string> = {
+  online: "Online",
+  telefon: "Telefon",
+};
 
 const durumEtiketi: Record<RezervasyonDurum, string> = {
   beklemede: "Beklemede",
@@ -23,6 +28,8 @@ export default function RezervasyonSatiri({
   id,
   misafirAd,
   misafirEposta,
+  misafirTelefon,
+  kaynak,
   tarihSaat,
   kisiSayisi,
   durum,
@@ -32,6 +39,8 @@ export default function RezervasyonSatiri({
   id: string;
   misafirAd: string;
   misafirEposta: string;
+  misafirTelefon?: string;
+  kaynak: RezervasyonKaynagi;
   tarihSaat: string;
   kisiSayisi: number;
   durum: RezervasyonDurum;
@@ -57,7 +66,7 @@ export default function RezervasyonSatiri({
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <p className="font-bold text-foreground">{misafirAd}</p>
-          <p className="text-sm text-muted">{misafirEposta}</p>
+          <p className="text-sm text-muted">{misafirEposta || misafirTelefon}</p>
           <p className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-foreground">
             <TakvimIkonu className="h-4 w-4 text-muted" />
             {new Date(tarihSaat).toLocaleString("tr-TR", {
@@ -72,12 +81,17 @@ export default function RezervasyonSatiri({
             </p>
           )}
         </div>
-        <span className={`rounded-full px-3 py-1 text-xs font-bold ${durumStil[durum]}`}>
-          {durumEtiketi[durum]}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-semibold text-zinc-500">
+            {kaynakEtiketi[kaynak]}
+          </span>
+          <span className={`rounded-full px-3 py-1 text-xs font-bold ${durumStil[durum]}`}>
+            {durumEtiketi[durum]}
+          </span>
+        </div>
       </div>
 
-      <div className="mt-3 flex gap-2">
+      <div className="mt-3 flex flex-wrap items-center gap-2">
         {durum === "beklemede" && (
           <>
             <button
@@ -95,6 +109,15 @@ export default function RezervasyonSatiri({
               Reddet
             </button>
           </>
+        )}
+        {misafirTelefon && (
+          <a
+            href={`tel:${misafirTelefon}`}
+            aria-label="Misafiri ara"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-border text-foreground hover:bg-zinc-50"
+          >
+            <TelefonIkonu className="h-4 w-4" />
+          </a>
         )}
 
         {durum === "onaylandi" && geldiMi === null && (
