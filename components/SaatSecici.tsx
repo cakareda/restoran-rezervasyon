@@ -27,7 +27,7 @@ export default function SaatSecici({
   const [deger, setDeger] = useState(defaultValue ?? "");
   const [acik, setAcik] = useState(false);
   const kapsayiciRef = useRef<HTMLDivElement>(null);
-  const saatler = useMemo(saatListesiUret, []);
+  const saatler = useMemo(() => saatListesiUret(), []);
 
   useEffect(() => {
     function disariTikla(e: MouseEvent) {

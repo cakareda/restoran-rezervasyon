@@ -33,14 +33,44 @@ function tarihEtiketi(tarihStr: string) {
   return secilen.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" });
 }
 
+type Sekme = "bekleyen" | "onayli" | "geldi" | "gelmedi" | "iptal" | "tumu";
+
+const sekmeEtiketi: Record<Sekme, string> = {
+  bekleyen: "Bekleyen",
+  onayli: "Onaylı",
+  geldi: "Geldi",
+  gelmedi: "Gelmedi",
+  iptal: "İptal",
+  tumu: "Tümü",
+};
+
+function sekmeyeUyuyorMu(r: RezervasyonSatirVerisi, sekme: Sekme) {
+  switch (sekme) {
+    case "bekleyen":
+      return r.durum === "beklemede";
+    case "onayli":
+      return r.durum === "onaylandi" && r.geldi_mi === null;
+    case "geldi":
+      return r.geldi_mi === true;
+    case "gelmedi":
+      return r.geldi_mi === false;
+    case "iptal":
+      return r.durum === "reddedildi" || r.durum === "iptal_edildi";
+    case "tumu":
+      return true;
+  }
+}
+
 export default async function RestoranPaneli({
   searchParams,
 }: {
-  searchParams: Promise<{ tarih?: string }>;
+  searchParams: Promise<{ tarih?: string; sekme?: string; ara?: string }>;
 }) {
-  const { tarih: tarihParam } = await searchParams;
+  const { tarih: tarihParam, sekme: sekmeParam, ara } = await searchParams;
   const tumu = tarihParam === "tumu";
   const tarih = !tumu && tarihParam ? tarihParam : bugununTarihi();
+  const sekme: Sekme =
+    sekmeParam && sekmeParam in sekmeEtiketi ? (sekmeParam as Sekme) : "bekleyen";
 
   const supabase = await createClient();
   const {
@@ -81,10 +111,38 @@ export default async function RestoranPaneli({
   }
 
   const { data: rezervasyonlar } = await sorgu;
-  const liste = (rezervasyonlar ?? []) as unknown as RezervasyonSatirVerisi[];
+  const tumListe = (rezervasyonlar ?? []) as unknown as RezervasyonSatirVerisi[];
+
+  const aramaKucuk = (ara ?? "").trim().toLocaleLowerCase("tr");
+  const liste = aramaKucuk
+    ? tumListe.filter((r) => {
+        const ad = (r.kullanicilar?.ad_soyad ?? r.misafir_ad_soyad ?? "").toLocaleLowerCase("tr");
+        const tel = r.kullanicilar?.telefon ?? r.misafir_telefon ?? "";
+        return ad.includes(aramaKucuk) || tel.includes(aramaKucuk);
+      })
+    : tumListe;
+
+  const sekmeSayilari: Record<Sekme, number> = {
+    bekleyen: liste.filter((r) => sekmeyeUyuyorMu(r, "bekleyen")).length,
+    onayli: liste.filter((r) => sekmeyeUyuyorMu(r, "onayli")).length,
+    geldi: liste.filter((r) => sekmeyeUyuyorMu(r, "geldi")).length,
+    gelmedi: liste.filter((r) => sekmeyeUyuyorMu(r, "gelmedi")).length,
+    iptal: liste.filter((r) => sekmeyeUyuyorMu(r, "iptal")).length,
+    tumu: liste.length,
+  };
+  const gosterilecekListe = liste.filter((r) => sekmeyeUyuyorMu(r, sekme));
 
   const aktifListe = liste.filter((r) => r.durum !== "reddedildi" && r.durum !== "iptal_edildi");
   const toplamKisi = aktifListe.reduce((n, r) => n + r.kisi_sayisi, 0);
+
+  function sekmeUrl(hedefSekme: Sekme) {
+    const params = new URLSearchParams();
+    if (!tumu) params.set("tarih", tarih);
+    else params.set("tarih", "tumu");
+    params.set("sekme", hedefSekme);
+    if (ara) params.set("ara", ara);
+    return `/restoran-panel?${params.toString()}`;
+  }
 
   const oncekiGun = yerelTarih(new Date(new Date(`${tarih}T00:00:00`).getTime() - 86400000));
   const sonrakiGun = yerelTarih(new Date(new Date(`${tarih}T00:00:00`).getTime() + 86400000));
@@ -106,7 +164,7 @@ export default async function RestoranPaneli({
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-white p-3">
         <div className="flex items-center gap-2">
           <Link
-            href={`/restoran-panel?tarih=${oncekiGun}`}
+            href={`/restoran-panel?tarih=${oncekiGun}&sekme=${sekme}`}
             className="flex h-8 w-8 items-center justify-center rounded-full text-muted hover:bg-brand-light hover:text-brand-dark"
             aria-label="Önceki gün"
           >
@@ -117,7 +175,7 @@ export default async function RestoranPaneli({
             {!tumu && <p className="text-xs text-muted">{tarih}</p>}
           </div>
           <Link
-            href={`/restoran-panel?tarih=${sonrakiGun}`}
+            href={`/restoran-panel?tarih=${sonrakiGun}&sekme=${sekme}`}
             className="flex h-8 w-8 items-center justify-center rounded-full text-muted hover:bg-brand-light hover:text-brand-dark"
             aria-label="Sonraki gün"
           >
@@ -132,7 +190,11 @@ export default async function RestoranPaneli({
             </p>
           )}
           <Link
-            href={tumu ? `/restoran-panel?tarih=${bugununTarihi()}` : "/restoran-panel?tarih=tumu"}
+            href={
+              tumu
+                ? `/restoran-panel?tarih=${bugununTarihi()}&sekme=${sekme}`
+                : `/restoran-panel?tarih=tumu&sekme=${sekme}`
+            }
             className="text-sm font-semibold text-brand hover:underline"
           >
             {tumu ? "Bugüne dön" : "Tümünü gör"}
@@ -140,9 +202,46 @@ export default async function RestoranPaneli({
         </div>
       </div>
 
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap gap-2">
+          {(Object.keys(sekmeEtiketi) as Sekme[]).map((s) => (
+            <Link
+              key={s}
+              href={sekmeUrl(s)}
+              className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-semibold transition ${
+                sekme === s
+                  ? "bg-brand text-white"
+                  : "bg-white text-foreground ring-1 ring-border hover:bg-brand-light"
+              }`}
+            >
+              {sekmeEtiketi[s]}
+              <span
+                className={`rounded-full px-1.5 text-xs ${
+                  sekme === s ? "bg-white/20" : "bg-zinc-100 text-muted"
+                }`}
+              >
+                {sekmeSayilari[s]}
+              </span>
+            </Link>
+          ))}
+        </div>
+        <form method="get" className="flex items-center">
+          {!tumu && <input type="hidden" name="tarih" value={tarih} />}
+          {tumu && <input type="hidden" name="tarih" value="tumu" />}
+          <input type="hidden" name="sekme" value={sekme} />
+          <input
+            type="text"
+            name="ara"
+            defaultValue={ara}
+            placeholder="İsim veya telefon ara"
+            className="w-56 rounded-full border-0 px-4 py-2 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+          />
+        </form>
+      </div>
+
       <div className="mt-6 space-y-3">
-        {liste.length > 0 ? (
-          liste.map((r) => (
+        {gosterilecekListe.length > 0 ? (
+          gosterilecekListe.map((r) => (
             <RezervasyonSatiri
               key={r.id}
               id={r.id}
@@ -157,6 +256,10 @@ export default async function RestoranPaneli({
               notlar={r.notlar}
             />
           ))
+        ) : liste.length > 0 ? (
+          <p className="rounded-2xl border border-dashed border-border bg-white p-8 text-center text-muted">
+            &quot;{sekmeEtiketi[sekme]}&quot; sekmesinde rezervasyon yok.
+          </p>
         ) : (
           <p className="rounded-2xl border border-dashed border-border bg-white p-8 text-center text-muted">
             {tumu ? "Henüz rezervasyon talebi yok." : "Bu tarihte rezervasyon yok."}
