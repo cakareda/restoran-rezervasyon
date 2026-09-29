@@ -3,6 +3,7 @@ import { createServiceRoleClient } from "@/lib/supabase/server";
 import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
 import { yeniTalepEpostasi } from "@/lib/email/templates";
 import { musaitlikHesapla } from "@/lib/kapasite";
+import { telefonGecerliMi } from "@/lib/telefon";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -11,6 +12,10 @@ export async function POST(request: Request) {
 
   if (!restoranId || !adSoyad || !eposta || !tarihSaat || !kisiSayisi) {
     return NextResponse.json({ hata: "Eksik bilgi." }, { status: 400 });
+  }
+
+  if (!telefonGecerliMi(telefon)) {
+    return NextResponse.json({ hata: "Geçerli bir telefon numarası girin." }, { status: 400 });
   }
 
   const supabase = createServiceRoleClient();

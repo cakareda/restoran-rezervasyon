@@ -256,6 +256,7 @@ export default async function RestoranDetay({
             kapanisSaati={restoran.kapanis_saati.slice(0, 5)}
             calismaSaatleriJson={restoran.calisma_saatleri}
             maksimumKisi={restoran.maksimum_kisi_sayisi}
+            enErkenSaat={restoran.en_erken_rezervasyon_saat}
           />
 
           <div className="space-y-10">

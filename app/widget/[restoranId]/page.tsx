@@ -14,7 +14,9 @@ export default async function WidgetSayfasi({
 
   const { data: restoran } = await supabase
     .from("restoranlar")
-    .select("id, ad, acilis_saati, kapanis_saati, calisma_saatleri, maksimum_kisi_sayisi")
+    .select(
+      "id, ad, acilis_saati, kapanis_saati, calisma_saatleri, maksimum_kisi_sayisi, en_erken_rezervasyon_saat"
+    )
     .eq("id", restoranId)
     .maybeSingle();
 
@@ -32,6 +34,7 @@ export default async function WidgetSayfasi({
           kapanisSaati={restoran.kapanis_saati.slice(0, 5)}
           calismaSaatleriJson={restoran.calisma_saatleri}
           maksimumKisi={restoran.maksimum_kisi_sayisi}
+          enErkenSaat={restoran.en_erken_rezervasyon_saat}
         />
       </div>
     </NextIntlClientProvider>

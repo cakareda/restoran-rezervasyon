@@ -13,9 +13,9 @@ async function kaydet(formData: FormData) {
   if (!user) return;
 
   const hatirlatmaAktif = formData.get("hatirlatmaEpostasi") === "on";
-  const enErkenSaat = Math.max(0, Number(formData.get("enErkenSaat") ?? 1));
-  const enGecGun = Math.max(1, Number(formData.get("enGecGun") ?? 60));
-  const maksimumKisi = Math.max(1, Number(formData.get("maksimumKisi") ?? 20));
+  const enErkenSaat = Math.min(168, Math.max(0, Number(formData.get("enErkenSaat") ?? 1)));
+  const enGecGun = Math.min(365, Math.max(1, Number(formData.get("enGecGun") ?? 60)));
+  const maksimumKisi = Math.min(100, Math.max(1, Number(formData.get("maksimumKisi") ?? 20)));
 
   await supabase
     .from("restoranlar")

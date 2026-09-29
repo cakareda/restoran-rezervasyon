@@ -1,12 +1,17 @@
 import { NextResponse } from "next/server";
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { musaitlikHesapla } from "@/lib/kapasite";
+import { telefonGecerliMi } from "@/lib/telefon";
 
 export async function POST(request: Request) {
   const { adSoyad, telefon, tarihSaat, kisiSayisi } = await request.json();
 
   if (!adSoyad || !tarihSaat || !kisiSayisi) {
     return NextResponse.json({ hata: "Ad soyad, tarih/saat ve kişi sayısı gerekli." }, { status: 400 });
+  }
+
+  if (!telefonGecerliMi(telefon)) {
+    return NextResponse.json({ hata: "Geçerli bir telefon numarası girin." }, { status: 400 });
   }
 
   const oturumClient = await createClient();

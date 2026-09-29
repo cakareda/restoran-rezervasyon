@@ -10,25 +10,57 @@ type Satir = {
   notlar: string | null;
 };
 
+const durumEtiketi: Record<string, string> = {
+  beklemede: "Beklemede",
+  onaylandi: "Onaylandı",
+  reddedildi: "Reddedildi",
+  iptal_edildi: "Misafir iptal etti",
+};
+
+const kaynakEtiketi: Record<string, string> = {
+  online: "Online",
+  telefon: "Telefon",
+};
+
 function csvHucre(deger: string) {
   const guvenli = deger.replace(/"/g, '""');
   return `"${guvenli}"`;
 }
 
+// İstanbul saatine göre YYYY-MM-DD / HH:MM üretir — CSV İçe Aktar'ın beklediği
+// sütun formatıyla birebir aynı olsun diye (round-trip uyumluluk).
+function istanbulTarihSaatBol(tarihSaatIso: string) {
+  const istanbul = new Date(new Date(tarihSaatIso).getTime() + 3 * 60 * 60 * 1000);
+  const tarih = `${istanbul.getUTCFullYear()}-${String(istanbul.getUTCMonth() + 1).padStart(2, "0")}-${String(istanbul.getUTCDate()).padStart(2, "0")}`;
+  const saat = `${String(istanbul.getUTCHours()).padStart(2, "0")}:${String(istanbul.getUTCMinutes()).padStart(2, "0")}`;
+  return { tarih, saat };
+}
+
 export default function DisaAktarButonu({ satirlar }: { satirlar: Satir[] }) {
   function disaAktar() {
-    const basliklar = ["Tarih/Saat", "Misafir", "Telefon", "Kişi Sayısı", "Durum", "Kaynak", "Not"];
-    const satirMetinleri = satirlar.map((s) =>
-      [
-        csvHucre(new Date(s.tarihSaat).toLocaleString("tr-TR")),
+    const basliklar = [
+      "Ad Soyad",
+      "Telefon",
+      "Tarih",
+      "Saat",
+      "Kişi Sayısı",
+      "Durum",
+      "Kaynak",
+      "Not",
+    ];
+    const satirMetinleri = satirlar.map((s) => {
+      const { tarih, saat } = istanbulTarihSaatBol(s.tarihSaat);
+      return [
         csvHucre(s.misafirAd),
         csvHucre(s.misafirTelefon),
+        csvHucre(tarih),
+        csvHucre(saat),
         csvHucre(String(s.kisiSayisi)),
-        csvHucre(s.durum),
-        csvHucre(s.kaynak),
+        csvHucre(durumEtiketi[s.durum] ?? s.durum),
+        csvHucre(kaynakEtiketi[s.kaynak] ?? s.kaynak),
         csvHucre(s.notlar ?? ""),
-      ].join(",")
-    );
+      ].join(",");
+    });
     const csv = "﻿" + [basliklar.join(","), ...satirMetinleri].join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);

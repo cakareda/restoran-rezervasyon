@@ -31,12 +31,14 @@ export default function RezervasyonFormu({
   kapanisSaati,
   calismaSaatleriJson,
   maksimumKisi = 20,
+  enErkenSaat = 1,
 }: {
   restoranId: string;
   acilisSaati: string;
   kapanisSaati: string;
   calismaSaatleriJson?: string | null;
   maksimumKisi?: number;
+  enErkenSaat?: number;
 }) {
   const t = useTranslations("RezervasyonFormu");
   const locale = useLocale();
@@ -127,22 +129,20 @@ export default function RezervasyonFormu({
   }
 
   const gosterilecekZamanDilimleri = useMemo(() => {
-    let dilimler = zamanDilimleri.filter((dilim) => !doluSaatler.includes(dilim));
+    const dilimler = zamanDilimleri.filter((dilim) => !doluSaatler.includes(dilim));
 
-    if (tarih === bugun) {
-      // İstanbul UTC+3 sabit; sunucu (genelde UTC) ile tarayıcı farklı "şimdi"
-      // hesaplamasın diye runtime'ın local saatine değil İstanbul saatine göre
-      // filtreliyoruz (aksi halde SSR/hydration'da farklı buton listesi çıkar).
-      const simdiIstanbul = new Date(new Date().getTime() + 3 * 60 * 60 * 1000);
-      const simdiDk = simdiIstanbul.getUTCHours() * 60 + simdiIstanbul.getUTCMinutes();
-      dilimler = dilimler.filter((dilim) => {
-        const [saatStr, dakikaStr] = dilim.split(":");
-        return Number(saatStr) * 60 + Number(dakikaStr) > simdiDk;
-      });
-    }
-
-    return dilimler;
-  }, [tarih, bugun, zamanDilimleri, doluSaatler]);
+    // İstanbul UTC+3 sabit; sunucu (genelde UTC) ile tarayıcı farklı "şimdi"
+    // hesaplamasın diye runtime'ın local saatine değil İstanbul saatine göre
+    // filtreliyoruz (aksi halde SSR/hydration'da farklı buton listesi çıkar).
+    // Aynı zamanda restoranın "en erken X saat öncesinden" kuralını da burada
+    // uyguluyoruz ki sunucunun zaten reddedeceği bir saat arayüzde tıklanabilir
+    // görünmesin.
+    const enErkenMs = new Date().getTime() + enErkenSaat * 60 * 60 * 1000;
+    return dilimler.filter((dilim) => {
+      const zaman = istanbulTarihSaat(tarih, dilim);
+      return zaman.getTime() >= enErkenMs;
+    });
+  }, [tarih, zamanDilimleri, doluSaatler, enErkenSaat]);
 
   useEffect(() => {
     async function profiliYukle() {
@@ -297,6 +297,7 @@ export default function RezervasyonFormu({
                   value={adSoyad}
                   onChange={(e) => setAdSoyad(e.target.value)}
                   type="text"
+                  aria-label={t("adSoyadEtiket")}
                   placeholder={t("adSoyadEtiket")}
                   className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
                 />
@@ -304,6 +305,7 @@ export default function RezervasyonFormu({
                   value={eposta}
                   onChange={(e) => setEposta(e.target.value)}
                   type="email"
+                  aria-label={t("epostaEtiket")}
                   placeholder={t("epostaEtiket")}
                   className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
                 />

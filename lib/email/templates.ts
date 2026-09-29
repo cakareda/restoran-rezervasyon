@@ -225,6 +225,26 @@ export function hatirlatmaEpostasi(params: {
   };
 }
 
+export function restoranIptalEpostasi(params: {
+  restoranAd: string;
+  tarihSaat: string;
+  kisiSayisi: number;
+}) {
+  return {
+    konu: `Rezervasyonunuz iptal edildi — ${params.restoranAd}`,
+    html: epostaSarmalayici({
+      icerikHtml: `
+        ${baslik("Rezervasyonunuz iptal edildi")}
+        <p style="margin:0;"><strong>${params.restoranAd}</strong>, ${tarihSaatFormatla(
+          params.tarihSaat
+        )} tarihli rezervasyonunuzu iptal etti.</p>
+        ${detayListesi([`<strong>Kişi Sayısı:</strong> ${params.kisiSayisi}`])}
+        <p style="margin:0;">Sorularınız için doğrudan restoranla iletişime geçebilirsiniz.</p>
+      `,
+    }),
+  };
+}
+
 export function yorumDavetiEpostasi(params: { restoranAd: string; yorumUrl: string }) {
   return {
     konu: `${params.restoranAd} deneyiminizi puanlayın`,

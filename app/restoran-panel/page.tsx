@@ -186,7 +186,7 @@ export default async function RestoranPaneli({
               kisiSayisi: r.kisi_sayisi,
               durum: r.durum,
               kaynak: r.kaynak,
-              notlar: r.notlar,
+              notlar: r.restoran_notu,
             }))}
           />
           <YeniRezervasyonEkle

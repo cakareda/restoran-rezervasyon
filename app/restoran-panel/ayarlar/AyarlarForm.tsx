@@ -40,25 +40,29 @@ export default function AyarlarForm({
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="mb-1 block text-xs font-semibold text-muted">
+          <label htmlFor="enErkenSaat" className="mb-1 block text-xs font-semibold text-muted">
             En erken (kaç saat öncesinden)
           </label>
           <input
+            id="enErkenSaat"
             type="number"
             name="enErkenSaat"
             min={0}
+            max={168}
             defaultValue={enErkenSaat}
             className="w-full rounded-lg border-0 px-2.5 py-1.5 text-sm ring-1 ring-border"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-semibold text-muted">
+          <label htmlFor="enGecGun" className="mb-1 block text-xs font-semibold text-muted">
             En geç (kaç gün ileriye)
           </label>
           <input
+            id="enGecGun"
             type="number"
             name="enGecGun"
             min={1}
+            max={365}
             defaultValue={enGecGun}
             className="w-full rounded-lg border-0 px-2.5 py-1.5 text-sm ring-1 ring-border"
           />
@@ -66,13 +70,15 @@ export default function AyarlarForm({
       </div>
 
       <div>
-        <label className="mb-1 block text-xs font-semibold text-muted">
+        <label htmlFor="maksimumKisi" className="mb-1 block text-xs font-semibold text-muted">
           Online rezervasyonda maksimum kişi sayısı
         </label>
         <input
+          id="maksimumKisi"
           type="number"
           name="maksimumKisi"
           min={1}
+          max={100}
           defaultValue={maksimumKisi}
           className="w-32 rounded-lg border-0 px-2.5 py-1.5 text-sm ring-1 ring-border"
         />

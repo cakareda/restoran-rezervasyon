@@ -183,7 +183,11 @@ export default function RezervasyonSatiri({
             </button>
             <button
               disabled={yukleniyor}
-              onClick={() => eylemCagir(`/api/rezervasyon/${id}/reddet`)}
+              onClick={() => {
+                if (confirm("Bu rezervasyon talebini reddetmek istediğine emin misin?")) {
+                  eylemCagir(`/api/rezervasyon/${id}/reddet`);
+                }
+              }}
               className="rounded-lg border border-border px-3.5 py-1.5 text-sm font-semibold text-foreground hover:bg-zinc-50 disabled:opacity-50"
             >
               Reddet
@@ -238,6 +242,20 @@ export default function RezervasyonSatiri({
           <span className="text-sm text-muted">
             {geldiMi ? "✓ Misafir geldi" : "✗ Misafir gelmedi"}
           </span>
+        )}
+
+        {durum === "onaylandi" && (
+          <button
+            disabled={yukleniyor}
+            onClick={() => {
+              if (confirm("Bu rezervasyonu iptal etmek istediğine emin misin? Misafire e-posta gidecek.")) {
+                eylemCagir(`/api/rezervasyon/${id}/restoran-iptal`);
+              }
+            }}
+            className="rounded-lg border border-border px-3.5 py-1.5 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
+          >
+            İptal Et
+          </button>
         )}
       </div>
     </div>

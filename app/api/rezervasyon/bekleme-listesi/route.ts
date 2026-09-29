@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
+import { telefonGecerliMi } from "@/lib/telefon";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -7,6 +8,10 @@ export async function POST(request: Request) {
 
   if (!restoranId || !adSoyad || !eposta || !tarih || !saat || !kisiSayisi) {
     return NextResponse.json({ hata: "Eksik bilgi." }, { status: 400 });
+  }
+
+  if (!telefonGecerliMi(telefon)) {
+    return NextResponse.json({ hata: "Geçerli bir telefon numarası girin." }, { status: 400 });
   }
 
   const supabase = createServiceRoleClient();
