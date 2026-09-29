@@ -153,6 +153,7 @@ export default async function Profilim({
                       {new Date(r.tarih_saat).toLocaleString(locale, {
                         dateStyle: "medium",
                         timeStyle: "short",
+                        timeZone: "Europe/Istanbul",
                       })}{" "}
                       · {t("kisiSayisi", { sayi: r.kisi_sayisi })}
                     </p>

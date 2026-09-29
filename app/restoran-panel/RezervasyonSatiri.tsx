@@ -119,6 +119,7 @@ export default function RezervasyonSatiri({
             {new Date(tarihSaat).toLocaleString("tr-TR", {
               dateStyle: "medium",
               timeStyle: "short",
+              timeZone: "Europe/Istanbul",
             })}{" "}
             · {kisiSayisi} kişi
           </p>

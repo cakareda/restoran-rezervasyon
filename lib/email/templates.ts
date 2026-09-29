@@ -165,7 +165,7 @@ export function misafirIptalOnayEpostasi(params: {
     konu: `Rezervasyonunuz iptal edildi — ${params.restoranAd}`,
     html: epostaSarmalayici({
       icerikHtml: `
-        ${baslik("İptaliniz alındı")}
+        ${baslik("Rezervasyonunuz iptal edildi")}
         <p style="margin:0;"><strong>${params.restoranAd}</strong> için ${tarihSaatFormatla(
           params.tarihSaat
         )} tarihli rezervasyonunuzu iptal ettiniz.</p>

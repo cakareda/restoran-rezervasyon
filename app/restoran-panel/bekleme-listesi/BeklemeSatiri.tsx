@@ -39,9 +39,10 @@ export default function BeklemeSatiri({ kayit }: { kayit: BeklemeKaydi }) {
           <p className="font-bold text-foreground">{kayit.ad_soyad}</p>
           <p className="text-sm text-muted">{kayit.eposta}</p>
           <p className="mt-1.5 text-sm font-medium text-foreground">
-            {new Date(`${kayit.tarih}T00:00:00`).toLocaleDateString("tr-TR", {
+            {new Date(kayit.tarih).toLocaleDateString("tr-TR", {
               day: "numeric",
               month: "long",
+              timeZone: "UTC",
             })}{" "}
             · {kayit.saat.slice(0, 5)} · {kayit.kisi_sayisi} kişi
           </p>

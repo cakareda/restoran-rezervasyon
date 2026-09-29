@@ -59,7 +59,12 @@ export default function RezervasyonFormu({
 
     if (secilen.getTime() === bugun.getTime()) return t("tarihBugun");
     if (secilen.getTime() === yarin.getTime()) return t("tarihYarin");
-    return secilen.toLocaleDateString(locale, { day: "numeric", month: "long", weekday: "long" });
+    return secilen.toLocaleDateString(locale, {
+      day: "numeric",
+      month: "long",
+      weekday: "long",
+      timeZone: "Europe/Istanbul",
+    });
   }
 
   const gununSaati = useMemo(

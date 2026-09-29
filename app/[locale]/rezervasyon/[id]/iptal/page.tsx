@@ -65,6 +65,7 @@ export default async function RezervasyonIptal({
                 {new Date(rezervasyon.tarih_saat).toLocaleString(locale, {
                   dateStyle: "long",
                   timeStyle: "short",
+                  timeZone: "Europe/Istanbul",
                 })}{" "}
                 · {t("kisiSayisi", { sayi: rezervasyon.kisi_sayisi })}
               </p>
