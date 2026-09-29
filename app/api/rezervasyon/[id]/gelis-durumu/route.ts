@@ -23,7 +23,7 @@ export async function POST(
     .update({ geldi_mi: geldiMi })
     .eq("id", id)
     .eq("durum", "onaylandi")
-    .select("id, kullanici_id, restoran_id")
+    .select("id, kullanici_id, restoran_id, misafir_dili")
     .single();
 
   if (guncelHata || !rezervasyon) {
@@ -48,6 +48,7 @@ export async function POST(
       const { konu, html } = yorumDavetiEpostasi({
         restoranAd: restoran.ad,
         yorumUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/yorum/${rezervasyon.id}`,
+        dil: rezervasyon.misafir_dili,
       });
       await bildirimGonderVeKaydet({
         rezervasyonId: rezervasyon.id,

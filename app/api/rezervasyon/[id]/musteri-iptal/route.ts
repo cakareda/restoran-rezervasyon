@@ -12,7 +12,7 @@ export async function POST(
 
   const { data: rezervasyon } = await supabase
     .from("rezervasyonlar")
-    .select("id, tarih_saat, kisi_sayisi, durum, restoran_id, kullanicilar(ad_soyad, eposta)")
+    .select("id, tarih_saat, kisi_sayisi, durum, restoran_id, misafir_dili, kullanicilar(ad_soyad, eposta)")
     .eq("id", id)
     .single();
 
@@ -67,6 +67,7 @@ export async function POST(
       restoranAd: restoran.ad,
       tarihSaat: rezervasyon.tarih_saat,
       kisiSayisi: rezervasyon.kisi_sayisi,
+      dil: rezervasyon.misafir_dili,
     });
     await bildirimGonderVeKaydet({
       rezervasyonId: rezervasyon.id,

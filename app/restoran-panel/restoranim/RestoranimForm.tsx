@@ -1,7 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { OLANAK_ETIKETLERI, MUTFAK_TURLERI, type Restoran, type Masa } from "@/lib/types";
+import {
+  OLANAK_ETIKETLERI,
+  ATMOSFER_ETIKETLERI,
+  MUTFAK_TURLERI,
+  type Restoran,
+  type Masa,
+} from "@/lib/types";
 import { fiyatTemizle } from "@/lib/format";
 import { calismaSaatleriYikle, type CalismaSaatleri } from "@/lib/calismaSaatleri";
 import OlanakIkonu from "@/components/OlanakIkonu";
@@ -46,6 +52,8 @@ export default function RestoranimForm({
   );
   const [degisti, setDegisti] = useState(false);
   const [menuUrl, setMenuUrl] = useState(restoran?.menu_url ?? "");
+  const [lat, setLat] = useState<number | null>(restoran?.lat ?? null);
+  const [lng, setLng] = useState<number | null>(restoran?.lng ?? null);
 
   useEffect(() => {
     function ayrilmaUyarisi(e: BeforeUnloadEvent) {
@@ -62,6 +70,9 @@ export default function RestoranimForm({
     if (sonuc.telefon) setTelefon(sonuc.telefon);
     if (sonuc.sehir) setSehir(sonuc.sehir);
     if (sonuc.semt) setSemt(sonuc.semt);
+    if (sonuc.lat !== null) setLat(sonuc.lat);
+    if (sonuc.lng !== null) setLng(sonuc.lng);
+    setDegisti(true);
   }, []);
 
   function olanakDegis(deger: string, isaretli: boolean) {
@@ -70,7 +81,10 @@ export default function RestoranimForm({
     );
   }
 
-  const bilinenOlanakDegerleri = OLANAK_ETIKETLERI.map((o) => o.deger) as string[];
+  const bilinenOlanakDegerleri = [
+    ...OLANAK_ETIKETLERI.map((o) => o.deger),
+    ...ATMOSFER_ETIKETLERI.map((o) => o.deger),
+  ] as string[];
   const ozelOlanaklar = olanaklar.filter((o) => !bilinenOlanakDegerleri.includes(o));
 
   function ozelOlanakEkle() {
@@ -221,6 +235,14 @@ export default function RestoranimForm({
             placeholder="Tam adres (haritada ve detay sayfasında gösterilir)"
             className={girdiStil}
           />
+          <input type="hidden" name="lat" value={lat ?? ""} />
+          <input type="hidden" name="lng" value={lng ?? ""} />
+          {lat === null && (
+            <p className="mt-1 text-xs text-amber-700">
+              Konum koordinatı yok — restoranınız harita görünümünde çıkmayacak. Yukarıdan
+              Google&apos;da arayıp seçin.
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -343,6 +365,28 @@ export default function RestoranimForm({
                 />
                 <OlanakIkonu deger={olanak.deger} className="h-4 w-4 text-muted" />
                 {olanak.etiket}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label className={etiketStil}>Atmosfer</label>
+          <div className="grid grid-cols-2 gap-2">
+            {ATMOSFER_ETIKETLERI.map((atmosfer) => (
+              <label
+                key={atmosfer.deger}
+                className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-foreground has-[:checked]:border-brand has-[:checked]:bg-brand-light"
+              >
+                <input
+                  type="checkbox"
+                  name="olanaklar"
+                  value={atmosfer.deger}
+                  checked={olanaklar.includes(atmosfer.deger)}
+                  onChange={(e) => olanakDegis(atmosfer.deger, e.target.checked)}
+                  className="accent-brand"
+                />
+                {atmosfer.etiket}
               </label>
             ))}
           </div>

@@ -27,6 +27,8 @@ export interface Restoran {
   en_erken_rezervasyon_saat: number;
   en_gec_rezervasyon_gun: number;
   maksimum_kisi_sayisi: number;
+  lat: number | null;
+  lng: number | null;
   olusturulma: string;
 }
 
@@ -66,6 +68,22 @@ export const OLANAK_ETIKETLERI = [
   { deger: "engelli_erisimi", etiket: "Engelli erişimi" },
   { deger: "vegan_helal", etiket: "Vegan / Helal seçenekler" },
   { deger: "ingilizce_konusan_garson", etiket: "Garson İngilizce konuşuyor" },
+  { deger: "vale", etiket: "Vale" },
+  { deger: "rooftop", etiket: "Rooftop" },
+  { deger: "deniz_manzarasi", etiket: "Deniz manzarası" },
+  { deger: "bar", etiket: "Bar" },
+  { deger: "ozel_oda", etiket: "Özel oda" },
+  { deger: "vejetaryen", etiket: "Vejetaryen seçenekler" },
+  { deger: "glutensiz", etiket: "Glutensiz seçenekler" },
+] as const;
+
+export const ATMOSFER_ETIKETLERI = [
+  { deger: "romantik", etiket: "Romantik" },
+  { deger: "aile_dostu", etiket: "Aile dostu" },
+  { deger: "is_yemegi", etiket: "İş yemeği" },
+  { deger: "ilk_bulusma", etiket: "İlk buluşma" },
+  { deger: "kutlama", etiket: "Kutlama" },
+  { deger: "arkadas_grubu", etiket: "Arkadaş grubu" },
 ] as const;
 
 export const MUTFAK_TURLERI = [

@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
-import type { Restoran } from "@/lib/types";
+import { ATMOSFER_ETIKETLERI, type Restoran } from "@/lib/types";
 import { restoranBazindaPuanla } from "@/lib/puanlama";
 import { fiyatSeviyesi } from "@/lib/format";
 import { musaitlikHesapla } from "@/lib/kapasite";
@@ -8,7 +8,10 @@ import { istanbulTarihSaat, bugununTarihi } from "@/lib/tarih";
 import { dilAlternatifleri, ogLocale } from "@/lib/seo";
 import RestoranKarti from "@/components/RestoranKarti";
 import SaatSecici from "@/components/SaatSecici";
+import RestoranHaritasi from "@/components/RestoranHaritasi";
 import { TakvimIkonu, KisiIkonu } from "@/components/icons";
+import { restoranYolu } from "@/lib/slug";
+import { Link } from "@/i18n/navigation";
 
 export async function generateMetadata({
   params,
@@ -36,7 +39,19 @@ type AramaParams = {
   saat?: string;
   kisi?: string;
   sirala?: string;
+  atmosfer?: string | string[];
+  gorunum?: string;
 };
+
+function gorunumLinki(mevcut: AramaParams, hedefGorunum: string) {
+  const params: Record<string, string | string[]> = {};
+  for (const [anahtar, deger] of Object.entries(mevcut)) {
+    if (deger === undefined || anahtar === "gorunum") continue;
+    params[anahtar] = deger;
+  }
+  params.gorunum = hedefGorunum;
+  return params;
+}
 
 export default async function RestoranlarSayfasi({
   searchParams,
@@ -44,9 +59,24 @@ export default async function RestoranlarSayfasi({
   searchParams: Promise<AramaParams>;
 }) {
   const t = await getTranslations("RestoranlarSayfasi");
-  const { sehir, semt, mutfakTuru, ara, minPuan, fiyatSeviye, tarih, saat, kisi, sirala } =
-    await searchParams;
+  const searchParamsGirdi = await searchParams;
+  const {
+    sehir,
+    semt,
+    mutfakTuru,
+    ara,
+    minPuan,
+    fiyatSeviye,
+    tarih,
+    saat,
+    kisi,
+    sirala,
+    atmosfer,
+    gorunum,
+  } = searchParamsGirdi;
+  const haritaGorunumu = gorunum === "harita";
   const supabase = await createClient();
+  const secilenAtmosferler = atmosfer ? (Array.isArray(atmosfer) ? atmosfer : [atmosfer]) : [];
 
   let sorgu = supabase.from("restoranlar").select("*").order("ad");
 
@@ -54,6 +84,7 @@ export default async function RestoranlarSayfasi({
   if (semt) sorgu = sorgu.ilike("semt", `%${semt}%`);
   if (mutfakTuru) sorgu = sorgu.ilike("mutfak_turu", `%${mutfakTuru}%`);
   if (ara) sorgu = sorgu.ilike("ad", `%${ara}%`);
+  if (secilenAtmosferler.length > 0) sorgu = sorgu.contains("olanaklar", secilenAtmosferler);
 
   const [{ data: tumRestoranlar }, { data: yorumlar }] = await Promise.all([
     sorgu,
@@ -120,7 +151,7 @@ export default async function RestoranlarSayfasi({
   ).sort();
 
   const filtreliMi = Boolean(
-    sehir || semt || mutfakTuru || ara || minPuan || fiyatSeviye || musaitlikAktif
+    sehir || semt || mutfakTuru || ara || minPuan || fiyatSeviye || musaitlikAktif || secilenAtmosferler.length
   );
 
   return (
@@ -248,34 +279,81 @@ export default async function RestoranlarSayfasi({
                 {t("araBtn")}
               </button>
             </div>
+
+            <div className="flex flex-wrap gap-2 pt-1">
+              {ATMOSFER_ETIKETLERI.map((a) => (
+                <label
+                  key={a.deger}
+                  className="flex cursor-pointer items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-foreground has-[:checked]:border-brand has-[:checked]:bg-brand-light has-[:checked]:text-brand-dark"
+                >
+                  <input
+                    type="checkbox"
+                    name="atmosfer"
+                    value={a.deger}
+                    defaultChecked={secilenAtmosferler.includes(a.deger)}
+                    className="accent-brand"
+                  />
+                  {a.etiket}
+                </label>
+              ))}
+            </div>
           </form>
         </div>
       </section>
 
       <section className="mx-auto max-w-5xl px-6 py-12">
-        <h2 className="text-xl font-bold text-foreground">
-          {filtreliMi ? t("aramaSonuclari") : t("tumRestoranlar")}
-        </h2>
-
-        <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {restoranlar && restoranlar.length > 0 ? (
-            restoranlar.map((restoran: Restoran) => {
-              const puan = puanlar.get(restoran.id);
-              return (
-                <RestoranKarti
-                  key={restoran.id}
-                  restoran={restoran}
-                  ortalamaPuan={puan?.ortalama ?? null}
-                  yorumSayisi={puan?.sayi ?? 0}
-                />
-              );
-            })
-          ) : (
-            <p className="col-span-full rounded-2xl border border-dashed border-border py-16 text-center text-muted">
-              {t("bulunamadi")}
-            </p>
-          )}
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-foreground">
+            {filtreliMi ? t("aramaSonuclari") : t("tumRestoranlar")}
+          </h2>
+          <div className="flex gap-1 rounded-full bg-zinc-100 p-1 text-sm font-semibold">
+            <Link
+              href={{ pathname: "/restoranlar", query: gorunumLinki(searchParamsGirdi, "liste") }}
+              className={`rounded-full px-3.5 py-1.5 ${!haritaGorunumu ? "bg-white text-foreground shadow-sm" : "text-muted"}`}
+            >
+              Liste
+            </Link>
+            <Link
+              href={{ pathname: "/restoranlar", query: gorunumLinki(searchParamsGirdi, "harita") }}
+              className={`rounded-full px-3.5 py-1.5 ${haritaGorunumu ? "bg-white text-foreground shadow-sm" : "text-muted"}`}
+            >
+              Harita
+            </Link>
+          </div>
         </div>
+
+        {haritaGorunumu ? (
+          <div className="mt-6">
+            <RestoranHaritasi
+              restoranlar={restoranlar
+                .filter(
+                  (r): r is Restoran & { lat: number; lng: number } =>
+                    typeof r.lat === "number" && typeof r.lng === "number"
+                )
+                .map((r) => ({ id: r.id, ad: r.ad, lat: r.lat, lng: r.lng, href: restoranYolu(r) }))}
+            />
+          </div>
+        ) : (
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {restoranlar && restoranlar.length > 0 ? (
+              restoranlar.map((restoran: Restoran) => {
+                const puan = puanlar.get(restoran.id);
+                return (
+                  <RestoranKarti
+                    key={restoran.id}
+                    restoran={restoran}
+                    ortalamaPuan={puan?.ortalama ?? null}
+                    yorumSayisi={puan?.sayi ?? 0}
+                  />
+                );
+              })
+            ) : (
+              <p className="col-span-full rounded-2xl border border-dashed border-border py-16 text-center text-muted">
+                {t("bulunamadi")}
+              </p>
+            )}
+          </div>
+        )}
       </section>
     </div>
   );

@@ -1,9 +1,11 @@
+import { EPOSTA_CEVIRILERI, EPOSTA_LOCALE_MAP, epostaDiliCoz, type EpostaDili } from "./ceviriler";
+
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://masadaki.com";
 const MARKA = "#7a1f2b";
 const ARKA_PLAN = "#f5f1ea";
 
-function tarihSaatFormatla(tarihSaatIso: string) {
-  return new Date(tarihSaatIso).toLocaleString("tr-TR", {
+function tarihSaatFormatla(tarihSaatIso: string, dil: EpostaDili) {
+  return new Date(tarihSaatIso).toLocaleString(EPOSTA_LOCALE_MAP[dil], {
     dateStyle: "long",
     timeStyle: "short",
     timeZone: "Europe/Istanbul",
@@ -12,18 +14,19 @@ function tarihSaatFormatla(tarihSaatIso: string) {
 
 /** Tüm e-postaları saran ortak, logolu ve markalı kabuk. Tablo tabanlı düzen
  *  Outlook dahil e-posta istemcilerinde daha güvenilir render olur. */
-function epostaSarmalayici(params: { ustEtiket?: string; icerikHtml: string }) {
-  const { ustEtiket, icerikHtml } = params;
+function epostaSarmalayici(params: { ustEtiket?: string; icerikHtml: string; dil: EpostaDili }) {
+  const { ustEtiket, icerikHtml, dil } = params;
+  const rtl = dil === "ar";
   return `
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="${dil}" dir="${rtl ? "rtl" : "ltr"}">
   <body style="margin:0;padding:0;background:${ARKA_PLAN};font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${ARKA_PLAN};padding:32px 16px;">
       <tr>
         <td align="center">
-          <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+          <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08);" dir="${rtl ? "rtl" : "ltr"}">
             <tr>
-              <td style="background:#ffffff;padding:20px 28px;border-bottom:3px solid ${MARKA};" align="left">
+              <td style="background:#ffffff;padding:20px 28px;border-bottom:3px solid ${MARKA};" align="${rtl ? "right" : "left"}">
                 <img
                   src="${SITE_URL}/masadaki-logo.png"
                   alt="Masadaki"
@@ -79,6 +82,8 @@ function buton(href: string, metin: string, renk = MARKA) {
   return `<a href="${href}" style="display:inline-block;margin-top:8px;padding:11px 20px;background:${renk};color:#ffffff;text-decoration:none;border-radius:10px;font-size:14px;font-weight:600;">${metin}</a>`;
 }
 
+/** Restorana giden bildirimler (yeni talep, misafirin iptali) her zaman Türkçe —
+ *  restoran sahipleri Türkiye'de, panel de Türkçe. */
 export function yeniTalepEpostasi(params: {
   restoranAd: string;
   misafirAd: string;
@@ -89,48 +94,16 @@ export function yeniTalepEpostasi(params: {
   return {
     konu: `Yeni rezervasyon talebi — ${params.misafirAd}`,
     html: epostaSarmalayici({
+      dil: "tr",
       icerikHtml: `
         ${baslik("Yeni bir rezervasyon talebiniz var")}
         <p style="margin:0;">${params.restoranAd} için yeni bir rezervasyon talebi geldi.</p>
         ${detayListesi([
           `<strong>Misafir:</strong> ${params.misafirAd}`,
-          `<strong>Tarih/Saat:</strong> ${tarihSaatFormatla(params.tarihSaat)}`,
+          `<strong>Tarih/Saat:</strong> ${tarihSaatFormatla(params.tarihSaat, "tr")}`,
           `<strong>Kişi Sayısı:</strong> ${params.kisiSayisi}`,
         ])}
         ${buton(params.panelUrl, "Panelde görüntüle")}
-      `,
-    }),
-  };
-}
-
-export function onayEpostasi(params: {
-  restoranAd: string;
-  tarihSaat: string;
-  kisiSayisi: number;
-  iptalUrl?: string;
-  degistirUrl?: string;
-}) {
-  return {
-    konu: `Rezervasyonunuz onaylandı — ${params.restoranAd}`,
-    html: epostaSarmalayici({
-      icerikHtml: `
-        ${baslik("Rezervasyonunuz onaylandı")}
-        <p style="margin:0;"><strong>${params.restoranAd}</strong> rezervasyon talebinizi onayladı.</p>
-        ${detayListesi([
-          `<strong>Tarih/Saat:</strong> ${tarihSaatFormatla(params.tarihSaat)}`,
-          `<strong>Kişi Sayısı:</strong> ${params.kisiSayisi}`,
-        ])}
-        <p style="margin:0;">Sizi ağırlamaktan mutluluk duyacaklar. Afiyet olsun!</p>
-        ${
-          params.iptalUrl || params.degistirUrl
-            ? `<p style="margin-top:20px;font-size:13px;color:#6b7280;">
-                Planların değişti mi?
-                ${params.degistirUrl ? `<a href="${params.degistirUrl}" style="color:${MARKA};">Tarihi değiştir</a>` : ""}
-                ${params.iptalUrl && params.degistirUrl ? " · " : ""}
-                ${params.iptalUrl ? `<a href="${params.iptalUrl}" style="color:#dc2626;">Rezervasyonu iptal et</a>` : ""}
-              </p>`
-            : ""
-        }
       `,
     }),
   };
@@ -144,13 +117,53 @@ export function musteriIptalEpostasi(params: {
   return {
     konu: `Rezervasyon iptal edildi — ${params.misafirAd}`,
     html: epostaSarmalayici({
+      dil: "tr",
       icerikHtml: `
         ${baslik("Bir rezervasyon iptal edildi")}
         <p style="margin:0;"><strong>${params.misafirAd}</strong>, aşağıdaki rezervasyonunu iptal etti.</p>
         ${detayListesi([
-          `<strong>Tarih/Saat:</strong> ${tarihSaatFormatla(params.tarihSaat)}`,
+          `<strong>Tarih/Saat:</strong> ${tarihSaatFormatla(params.tarihSaat, "tr")}`,
           `<strong>Kişi Sayısı:</strong> ${params.kisiSayisi}`,
         ])}
+      `,
+    }),
+  };
+}
+
+// --- Aşağıdaki şablonlar misafire gider, misafirin kayıtlı dilinde (misafir_dili) gönderilir. ---
+
+export function onayEpostasi(params: {
+  restoranAd: string;
+  tarihSaat: string;
+  kisiSayisi: number;
+  iptalUrl?: string;
+  degistirUrl?: string;
+  dil?: string | null;
+}) {
+  const dil = epostaDiliCoz(params.dil);
+  const c = EPOSTA_CEVIRILERI[dil];
+  return {
+    konu: c.onayKonu(params.restoranAd),
+    html: epostaSarmalayici({
+      dil,
+      icerikHtml: `
+        ${baslik(c.onayBaslik)}
+        <p style="margin:0;">${c.onayP1(params.restoranAd)}</p>
+        ${detayListesi([
+          `<strong>${c.tarihSaatEtiketi}:</strong> ${tarihSaatFormatla(params.tarihSaat, dil)}`,
+          `<strong>${c.kisiSayisiEtiketi}:</strong> ${params.kisiSayisi}`,
+        ])}
+        <p style="margin:0;">${c.onayNot} ${c.afiyetOlsun}</p>
+        ${
+          params.iptalUrl || params.degistirUrl
+            ? `<p style="margin-top:20px;font-size:13px;color:#6b7280;">
+                ${c.planlarDegistiMi}
+                ${params.degistirUrl ? `<a href="${params.degistirUrl}" style="color:${MARKA};">${c.tarihiDegistir}</a>` : ""}
+                ${params.iptalUrl && params.degistirUrl ? " · " : ""}
+                ${params.iptalUrl ? `<a href="${params.iptalUrl}" style="color:#dc2626;">${c.rezervasyonuIptalEt}</a>` : ""}
+              </p>`
+            : ""
+        }
       `,
     }),
   };
@@ -160,32 +173,35 @@ export function misafirIptalOnayEpostasi(params: {
   restoranAd: string;
   tarihSaat: string;
   kisiSayisi: number;
+  dil?: string | null;
 }) {
+  const dil = epostaDiliCoz(params.dil);
+  const c = EPOSTA_CEVIRILERI[dil];
   return {
-    konu: `Rezervasyonunuz iptal edildi — ${params.restoranAd}`,
+    konu: c.misafirIptalKonu(params.restoranAd),
     html: epostaSarmalayici({
+      dil,
       icerikHtml: `
-        ${baslik("Rezervasyonunuz iptal edildi")}
-        <p style="margin:0;"><strong>${params.restoranAd}</strong> için ${tarihSaatFormatla(
-          params.tarihSaat
-        )} tarihli rezervasyonunuzu iptal ettiniz.</p>
-        ${detayListesi([`<strong>Kişi Sayısı:</strong> ${params.kisiSayisi}`])}
-        <p style="margin:0;">Görüşmek üzere!</p>
+        ${baslik(c.misafirIptalBaslik)}
+        <p style="margin:0;">${c.misafirIptalP1(params.restoranAd, tarihSaatFormatla(params.tarihSaat, dil))}</p>
+        ${detayListesi([`<strong>${c.kisiSayisiEtiketi}:</strong> ${params.kisiSayisi}`])}
+        <p style="margin:0;">${c.gorusmekUzere}</p>
       `,
     }),
   };
 }
 
-export function redEpostasi(params: { restoranAd: string; tarihSaat: string }) {
+export function redEpostasi(params: { restoranAd: string; tarihSaat: string; dil?: string | null }) {
+  const dil = epostaDiliCoz(params.dil);
+  const c = EPOSTA_CEVIRILERI[dil];
   return {
-    konu: `Rezervasyon talebiniz için güncelleme — ${params.restoranAd}`,
+    konu: c.retKonu(params.restoranAd),
     html: epostaSarmalayici({
+      dil,
       icerikHtml: `
-        ${baslik("Talebiniz bu saat için onaylanamadı")}
-        <p style="margin:0;"><strong>${params.restoranAd}</strong>, ${tarihSaatFormatla(
-          params.tarihSaat
-        )} için talebinizi bu sefer onaylayamadı.</p>
-        <p style="margin:12px 0 0 0;">Farklı bir tarih/saat seçerek tekrar deneyebilirsiniz.</p>
+        ${baslik(c.retBaslik)}
+        <p style="margin:0;">${c.retP1(params.restoranAd, tarihSaatFormatla(params.tarihSaat, dil))}</p>
+        <p style="margin:12px 0 0 0;">${c.retP2}</p>
       `,
     }),
   };
@@ -197,26 +213,30 @@ export function hatirlatmaEpostasi(params: {
   kisiSayisi: number;
   iptalUrl?: string;
   degistirUrl?: string;
+  dil?: string | null;
 }) {
+  const dil = epostaDiliCoz(params.dil);
+  const c = EPOSTA_CEVIRILERI[dil];
   return {
-    konu: `Hatırlatma: Bugün ${params.restoranAd}'da yer ayırttınız`,
+    konu: c.hatirlatmaKonu(params.restoranAd),
     html: epostaSarmalayici({
-      ustEtiket: "Masadaki'den otomatik hatırlatma",
+      dil,
+      ustEtiket: c.hatirlatmaUstEtiket,
       icerikHtml: `
-        ${baslik("Rezervasyonunuz yaklaşıyor")}
-        <p style="margin:0;"><strong>${params.restoranAd}</strong>'da yeriniz hazır olacak.</p>
+        ${baslik(c.hatirlatmaBaslik)}
+        <p style="margin:0;">${c.hatirlatmaP1(params.restoranAd)}</p>
         ${detayListesi([
-          `<strong>Tarih/Saat:</strong> ${tarihSaatFormatla(params.tarihSaat)}`,
-          `<strong>Kişi Sayısı:</strong> ${params.kisiSayisi}`,
+          `<strong>${c.tarihSaatEtiketi}:</strong> ${tarihSaatFormatla(params.tarihSaat, dil)}`,
+          `<strong>${c.kisiSayisiEtiketi}:</strong> ${params.kisiSayisi}`,
         ])}
-        <p style="margin:0;">Afiyet olsun!</p>
+        <p style="margin:0;">${c.afiyetOlsun}</p>
         ${
           params.iptalUrl || params.degistirUrl
             ? `<p style="margin-top:20px;font-size:13px;color:#6b7280;">
-                Gelemeyecek misiniz?
-                ${params.degistirUrl ? `<a href="${params.degistirUrl}" style="color:${MARKA};">Tarihi değiştir</a>` : ""}
+                ${c.gelemeyecekMisiniz}
+                ${params.degistirUrl ? `<a href="${params.degistirUrl}" style="color:${MARKA};">${c.tarihiDegistir}</a>` : ""}
                 ${params.iptalUrl && params.degistirUrl ? " · " : ""}
-                ${params.iptalUrl ? `<a href="${params.iptalUrl}" style="color:#dc2626;">Rezervasyonu iptal et</a>` : ""}
+                ${params.iptalUrl ? `<a href="${params.iptalUrl}" style="color:#dc2626;">${c.rezervasyonuIptalEt}</a>` : ""}
               </p>`
             : ""
         }
@@ -229,30 +249,35 @@ export function restoranIptalEpostasi(params: {
   restoranAd: string;
   tarihSaat: string;
   kisiSayisi: number;
+  dil?: string | null;
 }) {
+  const dil = epostaDiliCoz(params.dil);
+  const c = EPOSTA_CEVIRILERI[dil];
   return {
-    konu: `Rezervasyonunuz iptal edildi — ${params.restoranAd}`,
+    konu: c.restoranIptalKonu(params.restoranAd),
     html: epostaSarmalayici({
+      dil,
       icerikHtml: `
-        ${baslik("Rezervasyonunuz iptal edildi")}
-        <p style="margin:0;"><strong>${params.restoranAd}</strong>, ${tarihSaatFormatla(
-          params.tarihSaat
-        )} tarihli rezervasyonunuzu iptal etti.</p>
-        ${detayListesi([`<strong>Kişi Sayısı:</strong> ${params.kisiSayisi}`])}
-        <p style="margin:0;">Sorularınız için doğrudan restoranla iletişime geçebilirsiniz.</p>
+        ${baslik(c.restoranIptalBaslik)}
+        <p style="margin:0;">${c.restoranIptalP1(params.restoranAd, tarihSaatFormatla(params.tarihSaat, dil))}</p>
+        ${detayListesi([`<strong>${c.kisiSayisiEtiketi}:</strong> ${params.kisiSayisi}`])}
+        <p style="margin:0;">${c.restoranIptalP2}</p>
       `,
     }),
   };
 }
 
-export function yorumDavetiEpostasi(params: { restoranAd: string; yorumUrl: string }) {
+export function yorumDavetiEpostasi(params: { restoranAd: string; yorumUrl: string; dil?: string | null }) {
+  const dil = epostaDiliCoz(params.dil);
+  const c = EPOSTA_CEVIRILERI[dil];
   return {
-    konu: `${params.restoranAd} deneyiminizi puanlayın`,
+    konu: c.yorumKonu(params.restoranAd),
     html: epostaSarmalayici({
+      dil,
       icerikHtml: `
-        ${baslik("Nasıl geçti?")}
-        <p style="margin:0;"><strong>${params.restoranAd}</strong>'daki deneyiminizi diğer misafirlerle paylaşmak ister misiniz?</p>
-        ${buton(params.yorumUrl, "Yorum bırak")}
+        ${baslik(c.yorumBaslik)}
+        <p style="margin:0;">${c.yorumP1(params.restoranAd)}</p>
+        ${buton(params.yorumUrl, c.yorumButon)}
       `,
     }),
   };

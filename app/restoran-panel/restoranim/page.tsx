@@ -45,6 +45,8 @@ async function kaydet(formData: FormData) {
       instagram_url: String(formData.get("instagramUrl") ?? "").trim() || null,
       menu_url: String(formData.get("menuUrl") ?? "").trim() || null,
       iptal_politikasi: String(formData.get("iptalPolitikasi") ?? "").trim() || null,
+      lat: formData.get("lat") ? Number(formData.get("lat")) : null,
+      lng: formData.get("lng") ? Number(formData.get("lng")) : null,
       oturma_suresi_dk: formData.get("oturmaSuresiDk")
         ? Number(formData.get("oturmaSuresiDk"))
         : 90,

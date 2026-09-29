@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { getLocale } from "next-intl/server";
 import "./globals.css";
 import { SITE_ADI, SITE_SLOGAN } from "@/lib/config";
+import { RTL_DILLER } from "@/i18n/routing";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://masadaki.com"),
@@ -19,9 +21,12 @@ export const metadata: Metadata = {
   other: { "color-scheme": "light" },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const locale = await getLocale();
+  const yon = RTL_DILLER.includes(locale) ? "rtl" : "ltr";
+
   return (
-    <html lang="tr" className="h-full antialiased">
+    <html lang={locale} dir={yon} className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-background text-foreground">{children}</body>
     </html>
   );

@@ -23,7 +23,7 @@ export async function GET(request: Request) {
 
   const { data: rezervasyonlar, error } = await supabase
     .from("rezervasyonlar")
-    .select("id, tarih_saat, kisi_sayisi, restoran_id, kullanici_id, kullanicilar(eposta)")
+    .select("id, tarih_saat, kisi_sayisi, restoran_id, kullanici_id, misafir_dili, kullanicilar(eposta)")
     .eq("durum", "onaylandi")
     .eq("hatirlatma_gonderildi", false)
     .not("kullanici_id", "is", null)
@@ -52,6 +52,7 @@ export async function GET(request: Request) {
       tarihSaat: r.tarih_saat,
       kisiSayisi: r.kisi_sayisi,
       iptalUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/rezervasyon/${r.id}/iptal`,
+      dil: r.misafir_dili,
     });
 
     await bildirimGonderVeKaydet({

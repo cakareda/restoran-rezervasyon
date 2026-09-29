@@ -21,7 +21,7 @@ export async function POST(
     .from("rezervasyonlar")
     .update({ durum: "iptal_edildi" })
     .eq("id", id)
-    .select("id, tarih_saat, kisi_sayisi, kullanici_id, restoran_id")
+    .select("id, tarih_saat, kisi_sayisi, kullanici_id, restoran_id, misafir_dili")
     .single();
 
   if (guncelHata || !rezervasyon) {
@@ -40,6 +40,7 @@ export async function POST(
       restoranAd: restoran.ad,
       tarihSaat: rezervasyon.tarih_saat,
       kisiSayisi: rezervasyon.kisi_sayisi,
+      dil: rezervasyon.misafir_dili,
     });
     await bildirimGonderVeKaydet({
       rezervasyonId: rezervasyon.id,

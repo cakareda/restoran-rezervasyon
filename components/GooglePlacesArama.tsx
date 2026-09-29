@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AramaIkonu } from "@/components/icons";
+import { googleMapsYukle, type GoogleAutocomplete, type GoogleAdresBileseni } from "@/lib/googleMaps";
 
 export type GooglePlaceSonucu = {
   ad: string;
@@ -9,48 +10,9 @@ export type GooglePlaceSonucu = {
   telefon: string;
   sehir: string;
   semt: string;
+  lat: number | null;
+  lng: number | null;
 };
-
-type GoogleAdresBileseni = { long_name: string; types: string[] };
-type GooglePlace = {
-  name?: string;
-  formatted_address?: string;
-  international_phone_number?: string;
-  address_components?: GoogleAdresBileseni[];
-};
-type GoogleAutocomplete = {
-  addListener: (olay: string, geriCagirma: () => void) => void;
-  getPlace: () => GooglePlace;
-};
-type GoogleMapsNamespace = {
-  maps: {
-    places: { Autocomplete: new (el: HTMLInputElement, secenekler: object) => GoogleAutocomplete };
-    event: { clearInstanceListeners: (nesne: unknown) => void };
-  };
-};
-
-declare global {
-  interface Window {
-    google?: GoogleMapsNamespace;
-    __googleMapsYukleniyor?: Promise<void>;
-  }
-}
-
-function googleMapsYukle(apiKey: string) {
-  if (window.google?.maps?.places) return Promise.resolve();
-  if (window.__googleMapsYukleniyor) return window.__googleMapsYukleniyor;
-
-  window.__googleMapsYukleniyor = new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&language=tr&region=TR`;
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Google Maps yüklenemedi"));
-    document.head.appendChild(script);
-  });
-
-  return window.__googleMapsYukleniyor;
-}
 
 function bilesenBul(bilesenler: GoogleAdresBileseni[], tur: string) {
   return bilesenler.find((b) => b.types.includes(tur))?.long_name ?? "";
@@ -72,13 +34,19 @@ export default function GooglePlacesArama({
 
     let autocomplete: GoogleAutocomplete | undefined;
 
-    googleMapsYukle(apiKey)
+    googleMapsYukle(apiKey, "places")
       .then(() => {
         if (!inputRef.current || !window.google) return;
         autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, {
           types: ["establishment"],
           componentRestrictions: { country: "tr" },
-          fields: ["name", "formatted_address", "international_phone_number", "address_components"],
+          fields: [
+            "name",
+            "formatted_address",
+            "international_phone_number",
+            "address_components",
+            "geometry",
+          ],
         });
 
         autocomplete.addListener("place_changed", () => {
@@ -98,6 +66,8 @@ export default function GooglePlacesArama({
             telefon: yer.international_phone_number ?? "",
             sehir,
             semt,
+            lat: yer.geometry?.location?.lat() ?? null,
+            lng: yer.geometry?.location?.lng() ?? null,
           });
         });
 

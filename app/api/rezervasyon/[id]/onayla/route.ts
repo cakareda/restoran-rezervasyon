@@ -21,7 +21,7 @@ export async function POST(
     .from("rezervasyonlar")
     .update({ durum: "onaylandi" })
     .eq("id", id)
-    .select("id, tarih_saat, kisi_sayisi, kullanici_id, restoran_id")
+    .select("id, tarih_saat, kisi_sayisi, kullanici_id, restoran_id, misafir_dili")
     .single();
 
   if (guncelHata || !rezervasyon) {
@@ -48,6 +48,7 @@ export async function POST(
       kisiSayisi: rezervasyon.kisi_sayisi,
       iptalUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/rezervasyon/${rezervasyon.id}/iptal`,
       degistirUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/rezervasyon/${rezervasyon.id}/iptal?degistir=1`,
+      dil: rezervasyon.misafir_dili,
     });
     await bildirimGonderVeKaydet({
       rezervasyonId: rezervasyon.id,

@@ -21,7 +21,7 @@ export async function POST(
     .from("rezervasyonlar")
     .update({ durum: "reddedildi" })
     .eq("id", id)
-    .select("id, tarih_saat, kullanici_id, restoran_id")
+    .select("id, tarih_saat, kullanici_id, restoran_id, misafir_dili")
     .single();
 
   if (guncelHata || !rezervasyon) {
@@ -45,6 +45,7 @@ export async function POST(
     const { konu, html } = redEpostasi({
       restoranAd: restoran.ad,
       tarihSaat: rezervasyon.tarih_saat,
+      dil: rezervasyon.misafir_dili,
     });
     await bildirimGonderVeKaydet({
       rezervasyonId: rezervasyon.id,
