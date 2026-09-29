@@ -23,6 +23,7 @@ export interface Restoran {
   instagram_url: string | null;
   menu_url: string | null;
   iptal_politikasi: string | null;
+  hatirlatma_epostasi_aktif: boolean;
   olusturulma: string;
 }
 
@@ -107,6 +108,7 @@ export interface Rezervasyon {
   misafir_ad_soyad: string | null;
   misafir_telefon: string | null;
   misafir_dili: string | null;
+  restoran_notu: string | null;
   olusturulma: string;
 }
 

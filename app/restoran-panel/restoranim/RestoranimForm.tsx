@@ -8,6 +8,7 @@ import OlanakIkonu from "@/components/OlanakIkonu";
 import GooglePlacesArama, { type GooglePlaceSonucu } from "@/components/GooglePlacesArama";
 import FotoYukleyici from "@/components/FotoYukleyici";
 import MasaEnvanteri from "@/components/MasaEnvanteri";
+import MenuYukleyici from "@/components/MenuYukleyici";
 import CalismaSaatleriDuzenleyici from "@/components/CalismaSaatleriDuzenleyici";
 import RestoranOnizleme from "@/components/RestoranOnizleme";
 import { restoranYolu } from "@/lib/slug";
@@ -41,6 +42,7 @@ export default function RestoranimForm({
     calismaSaatleriYikle(restoran?.calisma_saatleri)
   );
   const [degisti, setDegisti] = useState(false);
+  const [menuUrl, setMenuUrl] = useState(restoran?.menu_url ?? "");
 
   useEffect(() => {
     function ayrilmaUyarisi(e: BeforeUnloadEvent) {
@@ -225,10 +227,21 @@ export default function RestoranimForm({
             <label className={etiketStil}>Menü linki (PDF veya sayfa)</label>
             <input
               name="menuUrl"
-              defaultValue={restoran?.menu_url ?? ""}
+              value={menuUrl}
+              onChange={(e) => setMenuUrl(e.target.value)}
               placeholder="https://..."
               className={girdiStil}
             />
+            <div className="mt-2">
+              <MenuYukleyici
+                restoranId={restoran?.id ?? null}
+                mevcutUrl={menuUrl}
+                onDegis={(url) => {
+                  setMenuUrl(url);
+                  setDegisti(true);
+                }}
+              />
+            </div>
           </div>
         </div>
         <div>

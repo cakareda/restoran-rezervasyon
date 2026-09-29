@@ -42,10 +42,10 @@ export async function GET(request: Request) {
 
     const { data: restoran } = await supabase
       .from("restoranlar")
-      .select("ad")
+      .select("ad, hatirlatma_epostasi_aktif")
       .eq("id", r.restoran_id)
       .single();
-    if (!restoran) continue;
+    if (!restoran || restoran.hatirlatma_epostasi_aktif === false) continue;
 
     const { konu, html } = hatirlatmaEpostasi({
       restoranAd: restoran.ad,

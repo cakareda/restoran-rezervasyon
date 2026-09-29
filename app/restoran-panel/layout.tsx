@@ -8,6 +8,7 @@ import {
   MasaIkonu,
   AyarlarIkonu,
   BildirimIkonu,
+  RaporIkonu,
 } from "@/components/icons";
 
 export default async function RestoranPanelLayout({
@@ -66,18 +67,18 @@ export default async function RestoranPanelLayout({
           >
             Restoranım
           </PanelLink>
-          <div className="mt-1 flex cursor-not-allowed items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-muted/50">
-            <MasaIkonu className="h-4 w-4" /> Masalar
-            <span className="ml-auto rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-muted">
-              Yakında
-            </span>
-          </div>
-          <div className="mt-1 flex cursor-not-allowed items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-muted/50">
-            <AyarlarIkonu className="h-4 w-4" /> Ayarlar
-            <span className="ml-auto rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-muted">
-              Yakında
-            </span>
-          </div>
+          <PanelLink
+            href="/restoran-panel/bekleme-listesi"
+            ikon={<MasaIkonu className="h-4 w-4" />}
+          >
+            Bekleme Listesi
+          </PanelLink>
+          <PanelLink href="/restoran-panel/raporlar" ikon={<RaporIkonu className="h-4 w-4" />}>
+            Raporlar
+          </PanelLink>
+          <PanelLink href="/restoran-panel/ayarlar" ikon={<AyarlarIkonu className="h-4 w-4" />}>
+            Ayarlar
+          </PanelLink>
         </nav>
 
         <main className="flex-1 px-5 py-6 sm:px-8">

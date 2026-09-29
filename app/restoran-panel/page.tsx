@@ -10,6 +10,7 @@ import { AsagiOkIkonu } from "@/components/icons";
 
 type RezervasyonSatirVerisi = {
   id: string;
+  kullanici_id: string | null;
   tarih_saat: string;
   kisi_sayisi: number;
   durum: RezervasyonDurum;
@@ -19,6 +20,7 @@ type RezervasyonSatirVerisi = {
   misafir_ad_soyad: string | null;
   misafir_telefon: string | null;
   misafir_dili: string | null;
+  restoran_notu: string | null;
   kullanicilar: { ad_soyad: string; eposta: string; telefon: string | null } | null;
 };
 
@@ -101,7 +103,7 @@ export default async function RestoranPaneli({
   let sorgu = supabase
     .from("rezervasyonlar")
     .select(
-      "id, tarih_saat, kisi_sayisi, durum, geldi_mi, kaynak, notlar, misafir_ad_soyad, misafir_telefon, misafir_dili, kullanicilar(ad_soyad, eposta, telefon)"
+      "id, kullanici_id, tarih_saat, kisi_sayisi, durum, geldi_mi, kaynak, notlar, restoran_notu, misafir_ad_soyad, misafir_telefon, misafir_dili, kullanicilar(ad_soyad, eposta, telefon)"
     )
     .eq("restoran_id", restoran.id)
     .order("tarih_saat", { ascending: true });
@@ -115,6 +117,23 @@ export default async function RestoranPaneli({
 
   const { data: rezervasyonlar } = await sorgu;
   const tumListe = (rezervasyonlar ?? []) as unknown as RezervasyonSatirVerisi[];
+
+  const { data: gecmisGelmemeler } = await supabase
+    .from("rezervasyonlar")
+    .select("misafir_telefon, kullanici_id")
+    .eq("restoran_id", restoran.id)
+    .eq("geldi_mi", false);
+
+  const gelmemeSayisi = new Map<string, number>();
+  for (const g of gecmisGelmemeler ?? []) {
+    const anahtar = g.kullanici_id ?? g.misafir_telefon;
+    if (!anahtar) continue;
+    gelmemeSayisi.set(anahtar, (gelmemeSayisi.get(anahtar) ?? 0) + 1);
+  }
+  function hayaletMi(r: RezervasyonSatirVerisi) {
+    const anahtar = r.kullanici_id ?? r.misafir_telefon;
+    return Boolean(anahtar && (gelmemeSayisi.get(anahtar) ?? 0) >= 2);
+  }
 
   const aramaKucuk = (ara ?? "").trim().toLocaleLowerCase("tr");
   const liste = aramaKucuk
@@ -273,6 +292,8 @@ export default async function RestoranPaneli({
               durum={r.durum}
               geldiMi={r.geldi_mi}
               notlar={r.notlar}
+              restoranNotu={r.restoran_notu}
+              hayaletUyarisi={hayaletMi(r)}
             />
           ))
         ) : liste.length > 0 ? (

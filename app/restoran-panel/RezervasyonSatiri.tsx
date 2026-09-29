@@ -47,6 +47,8 @@ export default function RezervasyonSatiri({
   durum,
   geldiMi,
   notlar,
+  restoranNotu,
+  hayaletUyarisi,
 }: {
   id: string;
   misafirAd: string;
@@ -59,9 +61,26 @@ export default function RezervasyonSatiri({
   durum: RezervasyonDurum;
   geldiMi: boolean | null;
   notlar?: string | null;
+  restoranNotu?: string | null;
+  hayaletUyarisi?: boolean;
 }) {
   const router = useRouter();
   const [yukleniyor, setYukleniyor] = useState(false);
+  const [notDuzenleniyor, setNotDuzenleniyor] = useState(false);
+  const [notMetni, setNotMetni] = useState(restoranNotu ?? "");
+  const [notKaydediliyor, setNotKaydediliyor] = useState(false);
+
+  async function notuKaydet() {
+    setNotKaydediliyor(true);
+    await fetch(`/api/rezervasyon/${id}/restoran-notu`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ not: notMetni }),
+    });
+    setNotKaydediliyor(false);
+    setNotDuzenleniyor(false);
+    router.refresh();
+  }
 
   async function eylemCagir(url: string, gövde?: object) {
     setYukleniyor(true);
@@ -80,6 +99,14 @@ export default function RezervasyonSatiri({
         <div>
           <p className="flex items-center gap-1.5 font-bold text-foreground">
             {misafirAd}
+            {hayaletUyarisi && (
+              <span
+                title="Bu misafir daha önce en az 2 kez gelmedi"
+                className="rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-700"
+              >
+                👻 Sık gelmiyor
+              </span>
+            )}
             {misafirDili && misafirDili !== "tr" && (
               <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700">
                 {DIL_ADLARI[misafirDili as keyof typeof DIL_ADLARI] ?? misafirDili}
@@ -99,6 +126,38 @@ export default function RezervasyonSatiri({
             <p className="mt-2 inline-flex max-w-md items-start gap-1.5 rounded-lg bg-amber-50 px-2.5 py-1.5 text-xs font-medium text-amber-800">
               📝 {notlar}
             </p>
+          )}
+
+          {notDuzenleniyor ? (
+            <div className="mt-2 flex max-w-md items-center gap-1.5">
+              <input
+                value={notMetni}
+                onChange={(e) => setNotMetni(e.target.value)}
+                placeholder="Restoran notu (yalnızca size görünür)"
+                className="w-full rounded-lg border-0 px-2.5 py-1.5 text-xs outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+              />
+              <button
+                onClick={notuKaydet}
+                disabled={notKaydediliyor}
+                className="shrink-0 rounded-lg bg-brand px-2.5 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
+              >
+                Kaydet
+              </button>
+            </div>
+          ) : restoranNotu ? (
+            <button
+              onClick={() => setNotDuzenleniyor(true)}
+              className="mt-2 inline-flex max-w-md items-start gap-1.5 rounded-lg bg-blue-50 px-2.5 py-1.5 text-left text-xs font-medium text-blue-800 hover:bg-blue-100"
+            >
+              🔒 {restoranNotu}
+            </button>
+          ) : (
+            <button
+              onClick={() => setNotDuzenleniyor(true)}
+              className="mt-2 text-xs font-semibold text-muted hover:text-brand-dark"
+            >
+              + Not ekle
+            </button>
           )}
         </div>
         <div className="flex items-center gap-2">

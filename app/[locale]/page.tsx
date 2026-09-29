@@ -168,7 +168,10 @@ export default async function AnaSayfa() {
       )}
 
       {/* Nasıl çalışır */}
-      <section id="nasil-calisir" className="mx-auto max-w-5xl px-6 py-14 text-center">
+      <section
+        id="nasil-calisir"
+        className="mx-auto max-w-5xl scroll-mt-20 px-6 py-14 text-center"
+      >
         <p className="text-xs font-bold uppercase tracking-wide text-brand">{t("nasilCalisirEtiket")}</p>
         <h2 className="mt-1 text-2xl font-extrabold text-foreground">{t("nasilCalisirBaslik")}</h2>
         <p className="mx-auto mt-2 max-w-md text-sm text-muted">{t("nasilCalisirAciklama")}</p>
