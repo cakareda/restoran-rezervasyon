@@ -147,6 +147,12 @@ export default async function RestoranDetay({
       )}
 
       <div className="mx-auto max-w-5xl px-6 py-10">
+        {restoran.duyuru && (
+          <div className="mb-5 rounded-xl bg-brand-light px-4 py-3 text-sm font-medium text-brand-dark">
+            🎉 {restoran.duyuru}
+          </div>
+        )}
+
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight text-foreground">

@@ -29,6 +29,7 @@ export interface Restoran {
   maksimum_kisi_sayisi: number;
   lat: number | null;
   lng: number | null;
+  duyuru: string | null;
   olusturulma: string;
 }
 
@@ -113,6 +114,12 @@ export const OZEL_GUN_SECENEKLERI = [
   { deger: "yil_donumu", etiket: "Yıl dönümü" },
   { deger: "is_yemegi", etiket: "İş yemeği" },
   { deger: "kutlama", etiket: "Kutlama" },
+  { deger: "iftar", etiket: "İftar" },
+  { deger: "yilbasi", etiket: "Yılbaşı" },
+  { deger: "sevgililer_gunu", etiket: "Sevgililer Günü" },
+  { deger: "anneler_gunu", etiket: "Anneler Günü" },
+  { deger: "babalar_gunu", etiket: "Babalar Günü" },
+  { deger: "mezuniyet", etiket: "Mezuniyet" },
 ] as const;
 
 export interface Rezervasyon {

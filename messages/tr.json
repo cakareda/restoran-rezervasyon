@@ -136,7 +136,13 @@
       "dogum_gunu": "Doğum günü",
       "yil_donumu": "Yıl dönümü",
       "is_yemegi": "İş yemeği",
-      "kutlama": "Kutlama"
+      "kutlama": "Kutlama",
+      "iftar": "İftar",
+      "yilbasi": "Yılbaşı",
+      "sevgililer_gunu": "Sevgililer Günü",
+      "anneler_gunu": "Anneler Günü",
+      "babalar_gunu": "Babalar Günü",
+      "mezuniyet": "Mezuniyet"
     },
     "gonderBtn": "Rezervasyon Talebi Gönder",
     "gonderiliyor": "Gönderiliyor...",

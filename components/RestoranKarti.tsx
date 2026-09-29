@@ -38,6 +38,11 @@ export default function RestoranKarti({
         )}
       </div>
       <div className="p-4">
+        {restoran.duyuru && (
+          <p className="mb-1.5 line-clamp-1 text-xs font-semibold text-brand">
+            🎉 {restoran.duyuru}
+          </p>
+        )}
         <h3 className="font-bold text-foreground group-hover:text-brand">{restoran.ad}</h3>
         <p className="mt-1 text-sm text-muted">
           {restoran.semt}, {restoran.sehir} · {restoran.mutfak_turu}

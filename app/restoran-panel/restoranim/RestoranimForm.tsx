@@ -287,6 +287,20 @@ export default function RestoranimForm({
           />
         </div>
 
+        <div>
+          <label className={etiketStil}>Duyuru / kampanya (opsiyonel)</label>
+          <input
+            name="duyuru"
+            defaultValue={restoran?.duyuru ?? ""}
+            placeholder="Örn: Yılbaşı özel menümüz hazır, detaylar için arayın."
+            className={girdiStil}
+          />
+          <p className="mt-1 text-xs text-muted">
+            Sezonluk kampanya, özel gün menüsü gibi duyurular restoran sayfanızın en üstünde
+            gösterilir.
+          </p>
+        </div>
+
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className={etiketStil}>Açılış saati</label>
