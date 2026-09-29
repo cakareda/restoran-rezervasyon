@@ -27,9 +27,9 @@ function epostaSarmalayici(params: { ustEtiket?: string; icerikHtml: string }) {
                 <img
                   src="${SITE_URL}/masadaki-logo.png"
                   alt="Masadaki"
-                  width="112"
-                  height="32"
-                  style="display:block;width:112px;height:32px;border:0;"
+                  width="175"
+                  height="50"
+                  style="display:block;width:175px;height:50px;border:0;"
                 />
               </td>
             </tr>
