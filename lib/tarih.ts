@@ -1,7 +1,12 @@
+// İstanbul UTC+3 sabit; sunucunun (genelde UTC) kendi saat dilimini kullanırsak
+// akşam saatlerinde sunucu ile tarayıcı "bugün"ü farklı hesaplar ve bu da
+// hydration uyuşmazlığına yol açar — bu yüzden runtime'ın local saatine değil
+// her zaman İstanbul saatine göre hesaplıyoruz.
 export function yerelTarih(tarih: Date) {
-  const yil = tarih.getFullYear();
-  const ay = String(tarih.getMonth() + 1).padStart(2, "0");
-  const gun = String(tarih.getDate()).padStart(2, "0");
+  const istanbul = new Date(tarih.getTime() + 3 * 60 * 60 * 1000);
+  const yil = istanbul.getUTCFullYear();
+  const ay = String(istanbul.getUTCMonth() + 1).padStart(2, "0");
+  const gun = String(istanbul.getUTCDate()).padStart(2, "0");
   return `${yil}-${ay}-${gun}`;
 }
 

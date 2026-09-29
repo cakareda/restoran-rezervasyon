@@ -27,14 +27,12 @@ export default function CalismaSaatleriDuzenleyici({
   });
 
   function guncelle(gun: (typeof GUNLER)[number]["key"], degisiklik: Partial<GunSaati>) {
-    setSaatler((mevcut) => {
-      const yeni = {
-        ...mevcut,
-        [gun]: { ...mevcut[gun], ...degisiklik } as GunSaati,
-      };
-      onDegis(yeni);
-      return yeni;
-    });
+    const yeni: CalismaSaatleri = {
+      ...saatler,
+      [gun]: { ...saatler[gun], ...degisiklik } as GunSaati,
+    };
+    setSaatler(yeni);
+    onDegis(yeni);
   }
 
   return (
