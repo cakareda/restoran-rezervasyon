@@ -51,14 +51,13 @@ export default function RezervasyonFormu({
   const [doluSaatler, setDoluSaatler] = useState<string[]>([]);
 
   function tarihEtiketi(tarihStr: string) {
-    const secilen = new Date(`${tarihStr}T00:00:00`);
-    const bugun = new Date();
-    bugun.setHours(0, 0, 0, 0);
-    const yarin = new Date(bugun);
-    yarin.setDate(yarin.getDate() + 1);
+    const bugunStr = yerelTarih(new Date());
+    const yarinStr = yerelTarih(new Date(new Date().getTime() + 24 * 60 * 60 * 1000));
 
-    if (secilen.getTime() === bugun.getTime()) return t("tarihBugun");
-    if (secilen.getTime() === yarin.getTime()) return t("tarihYarin");
+    if (tarihStr === bugunStr) return t("tarihBugun");
+    if (tarihStr === yarinStr) return t("tarihYarin");
+
+    const secilen = new Date(`${tarihStr}T00:00:00Z`);
     return secilen.toLocaleDateString(locale, {
       day: "numeric",
       month: "long",
@@ -131,8 +130,11 @@ export default function RezervasyonFormu({
     let dilimler = zamanDilimleri.filter((dilim) => !doluSaatler.includes(dilim));
 
     if (tarih === bugun) {
-      const simdi = new Date();
-      const simdiDk = simdi.getHours() * 60 + simdi.getMinutes();
+      // İstanbul UTC+3 sabit; sunucu (genelde UTC) ile tarayıcı farklı "şimdi"
+      // hesaplamasın diye runtime'ın local saatine değil İstanbul saatine göre
+      // filtreliyoruz (aksi halde SSR/hydration'da farklı buton listesi çıkar).
+      const simdiIstanbul = new Date(new Date().getTime() + 3 * 60 * 60 * 1000);
+      const simdiDk = simdiIstanbul.getUTCHours() * 60 + simdiIstanbul.getUTCMinutes();
       dilimler = dilimler.filter((dilim) => {
         const [saatStr, dakikaStr] = dilim.split(":");
         return Number(saatStr) * 60 + Number(dakikaStr) > simdiDk;
