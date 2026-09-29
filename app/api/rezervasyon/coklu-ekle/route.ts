@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
+import { musaitlikHesapla, type AktifRezervasyon } from "@/lib/kapasite";
 
 type SatirGirdi = {
   adSoyad: string;
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
   const supabase = createServiceRoleClient();
   const { data: restoran } = await supabase
     .from("restoranlar")
-    .select("id")
+    .select("id, oturma_suresi_dk")
     .eq("auth_user_id", user.id)
     .single();
 
@@ -34,8 +35,26 @@ export async function POST(request: Request) {
     return NextResponse.json({ hata: "Restoran bulunamadı." }, { status: 404 });
   }
 
+  const { data: masalar } = await supabase
+    .from("masalar")
+    .select("kapasite, adet")
+    .eq("restoran_id", restoran.id);
+
+  // Gelecekteki (henüz gerçekleşmemiş) satırlar için canlı takvimle çakışma kontrolü
+  // yapılır ve masa atanır; geçmiş tarihli satırlar (Quandoo'dan taşınan geçmiş misafir
+  // kayıtları gibi) yalnızca kayıt amaçlı eklenir, masa/müsaitlik kontrolüne girmez.
+  const { data: mevcutAktifler } = await supabase
+    .from("rezervasyonlar")
+    .select("tarih_saat, masa_kapasitesi")
+    .eq("restoran_id", restoran.id)
+    .in("durum", ["beklemede", "onaylandi"])
+    .gte("tarih_saat", new Date().toISOString());
+
+  const simulasyonListesi: AktifRezervasyon[] = [...(mevcutAktifler ?? [])];
+
   let eklenen = 0;
   let atlanan = 0;
+  let musaitDegil = 0;
 
   for (const satir of satirlar) {
     if (!satir.adSoyad || !satir.tarihSaat || !satir.kisiSayisi) {
@@ -47,6 +66,27 @@ export async function POST(request: Request) {
       atlanan++;
       continue;
     }
+
+    const gelecekteMi = tarih.getTime() > Date.now();
+    let atanacakKapasite: number | null = null;
+
+    if (gelecekteMi) {
+      const { musait, atanacakKapasite: kapasite } = musaitlikHesapla({
+        istenenBaslangic: tarih,
+        kisiSayisi: satir.kisiSayisi,
+        oturmaSuresiDk: restoran.oturma_suresi_dk ?? 90,
+        masalar: masalar ?? [],
+        aktifRezervasyonlar: simulasyonListesi,
+      });
+
+      if (!musait) {
+        musaitDegil++;
+        continue;
+      }
+      atanacakKapasite = kapasite;
+      simulasyonListesi.push({ tarih_saat: tarih.toISOString(), masa_kapasitesi: atanacakKapasite });
+    }
+
     const { error } = await supabase.from("rezervasyonlar").insert({
       restoran_id: restoran.id,
       kullanici_id: null,
@@ -56,11 +96,11 @@ export async function POST(request: Request) {
       kisi_sayisi: satir.kisiSayisi,
       durum: "onaylandi",
       kaynak: "telefon",
-      masa_kapasitesi: null,
+      masa_kapasitesi: atanacakKapasite,
     });
     if (error) atlanan++;
     else eklenen++;
   }
 
-  return NextResponse.json({ basari: true, eklenen, atlanan });
+  return NextResponse.json({ basari: true, eklenen, atlanan, musaitDegil });
 }

@@ -21,9 +21,11 @@ const etiketStil = "block text-sm font-medium text-foreground mb-1";
 export default function RestoranimForm({
   restoran,
   kaydet,
+  semtSecenekleri,
 }: {
   restoran: Restoran | null;
   kaydet: (formData: FormData) => void;
+  semtSecenekleri: string[];
 }) {
   const [ad, setAd] = useState(restoran?.ad ?? "");
   const [sehir, setSehir] = useState(restoran?.sehir ?? "");
@@ -119,8 +121,15 @@ export default function RestoranimForm({
               value={semt}
               onChange={(e) => setSemt(e.target.value)}
               required
+              list="semt-secenekleri"
+              autoComplete="off"
               className={girdiStil}
             />
+            <datalist id="semt-secenekleri">
+              {semtSecenekleri.map((s) => (
+                <option key={s} value={s} />
+              ))}
+            </datalist>
           </div>
         </div>
         <div>

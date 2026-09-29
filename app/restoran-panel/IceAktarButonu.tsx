@@ -74,7 +74,10 @@ export default function IceAktarButonu() {
       setSonuc(govde.hata ?? "Yükleme başarısız oldu.");
       return;
     }
-    setSonuc(`${govde.eklenen} rezervasyon eklendi${govde.atlanan ? `, ${govde.atlanan} satır atlandı` : ""}.`);
+    const parcalar = [`${govde.eklenen} rezervasyon eklendi`];
+    if (govde.musaitDegil) parcalar.push(`${govde.musaitDegil} satır müsait masa olmadığı için atlandı`);
+    if (govde.atlanan) parcalar.push(`${govde.atlanan} satır hatalı/eksik olduğu için atlandı`);
+    setSonuc(parcalar.join(", ") + ".");
     router.refresh();
   }
 

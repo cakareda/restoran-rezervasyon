@@ -78,6 +78,11 @@ export default async function Restoranim({
     .eq("auth_user_id", user!.id)
     .maybeSingle();
 
+  const { data: tumRestoranlar } = await supabase.from("restoranlar").select("semt");
+  const semtSecenekleri = Array.from(
+    new Set((tumRestoranlar ?? []).map((r) => r.semt).filter(Boolean))
+  ).sort();
+
   return (
     <div>
       <h1 className="text-2xl font-extrabold text-foreground">Restoranım</h1>
@@ -96,7 +101,7 @@ export default async function Restoranim({
         </p>
       )}
 
-      <RestoranimForm restoran={restoran} kaydet={kaydet} />
+      <RestoranimForm restoran={restoran} kaydet={kaydet} semtSecenekleri={semtSecenekleri} />
     </div>
   );
 }
