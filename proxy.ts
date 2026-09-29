@@ -9,12 +9,15 @@ export async function proxy(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/restoran-panel")) {
     return await updateSession(request);
   }
+  if (request.nextUrl.pathname.startsWith("/widget")) {
+    return;
+  }
   return dilYonlendirmesi(request);
 }
 
 export const config = {
   matcher: [
     "/restoran-panel/:path*",
-    "/((?!api|auth|_next|restoran-panel|restoran-girisi|restoran-kayit|restoranlar-icin|.*\\..*).*)",
+    "/((?!api|auth|_next|restoran-panel|restoran-girisi|restoran-kayit|restoranlar-icin|widget|.*\\..*).*)",
   ],
 };

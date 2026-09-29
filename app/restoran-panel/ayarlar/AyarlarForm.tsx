@@ -3,9 +3,15 @@
 export default function AyarlarForm({
   kaydet,
   hatirlatmaAktif,
+  enErkenSaat,
+  enGecGun,
+  maksimumKisi,
 }: {
   kaydet: (formData: FormData) => void;
   hatirlatmaAktif: boolean;
+  enErkenSaat: number;
+  enGecGun: number;
+  maksimumKisi: number;
 }) {
   return (
     <form
@@ -27,6 +33,53 @@ export default function AyarlarForm({
           className="h-5 w-5 accent-brand"
         />
       </label>
+
+      <p className="border-t border-border pt-4 text-sm font-semibold text-foreground">
+        Rezervasyon kuralları
+      </p>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="mb-1 block text-xs font-semibold text-muted">
+            En erken (kaç saat öncesinden)
+          </label>
+          <input
+            type="number"
+            name="enErkenSaat"
+            min={0}
+            defaultValue={enErkenSaat}
+            className="w-full rounded-lg border-0 px-2.5 py-1.5 text-sm ring-1 ring-border"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-semibold text-muted">
+            En geç (kaç gün ileriye)
+          </label>
+          <input
+            type="number"
+            name="enGecGun"
+            min={1}
+            defaultValue={enGecGun}
+            className="w-full rounded-lg border-0 px-2.5 py-1.5 text-sm ring-1 ring-border"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label className="mb-1 block text-xs font-semibold text-muted">
+          Online rezervasyonda maksimum kişi sayısı
+        </label>
+        <input
+          type="number"
+          name="maksimumKisi"
+          min={1}
+          defaultValue={maksimumKisi}
+          className="w-32 rounded-lg border-0 px-2.5 py-1.5 text-sm ring-1 ring-border"
+        />
+        <p className="mt-1 text-xs text-muted">
+          Bunun üzerindeki gruplar için misafire telefonla arama önerilir.
+        </p>
+      </div>
 
       <button
         type="submit"

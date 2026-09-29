@@ -15,7 +15,7 @@ const SAHIP_FOTO =
 export const metadata: Metadata = {
   title: "Restoranlar için",
   description:
-    "Rezervasyon taleplerini tek panelden yönet, telefon trafiğini azalt. Ücretsiz kayıt ol, komisyon yok.",
+    "Rezervasyon taleplerini tek panelden yönet, telefon trafiğini azalt. Kayıt ve kurulum ücretsiz.",
 };
 
 export default function RestoranlarIcin() {
@@ -60,7 +60,8 @@ export default function RestoranlarIcin() {
           </h1>
           <p className="mt-3 max-w-md text-white/85">
             Rezervasyon taleplerini tek panelden yönet, misafirlerine saniyeler içinde yanıt ver.
-            Kurulum ücretsiz, komisyon yok.
+            Kendi müşterinden komisyon almayız — yalnızca Masadaki&apos;nin getirdiği yeni
+            misafirden, o da gerçekten geldiğinde.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <Link

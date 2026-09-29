@@ -24,6 +24,9 @@ export interface Restoran {
   menu_url: string | null;
   iptal_politikasi: string | null;
   hatirlatma_epostasi_aktif: boolean;
+  en_erken_rezervasyon_saat: number;
+  en_gec_rezervasyon_gun: number;
+  maksimum_kisi_sayisi: number;
   olusturulma: string;
 }
 

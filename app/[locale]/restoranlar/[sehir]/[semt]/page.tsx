@@ -23,7 +23,7 @@ export async function generateMetadata({
   const semtAd = eslesen?.semt ?? semt;
 
   const baslik = `${semtAd}, ${sehirAd} Restoranları — Masadaki`;
-  const aciklama = `${semtAd} bölgesindeki restoranları keşfet, anında online rezervasyon yap.`;
+  const aciklama = `${semtAd} bölgesindeki restoranları keşfet, anında online rezervasyon talebi gönder.`;
 
   return {
     title: baslik,
@@ -62,7 +62,7 @@ export default async function SemtSayfasi({
             {semtAd}, {sehirAd} Restoranları
           </h1>
           <p className="mt-2 text-sm text-muted">
-            {semtAd} bölgesindeki restoranları keşfet, anında online rezervasyon yap.
+            {semtAd} bölgesindeki restoranları keşfet, anında online rezervasyon talebi gönder.
           </p>
           <Link
             href="/restoranlar"

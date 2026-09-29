@@ -13,10 +13,18 @@ async function kaydet(formData: FormData) {
   if (!user) return;
 
   const hatirlatmaAktif = formData.get("hatirlatmaEpostasi") === "on";
+  const enErkenSaat = Math.max(0, Number(formData.get("enErkenSaat") ?? 1));
+  const enGecGun = Math.max(1, Number(formData.get("enGecGun") ?? 60));
+  const maksimumKisi = Math.max(1, Number(formData.get("maksimumKisi") ?? 20));
 
   await supabase
     .from("restoranlar")
-    .update({ hatirlatma_epostasi_aktif: hatirlatmaAktif })
+    .update({
+      hatirlatma_epostasi_aktif: hatirlatmaAktif,
+      en_erken_rezervasyon_saat: enErkenSaat,
+      en_gec_rezervasyon_gun: enGecGun,
+      maksimum_kisi_sayisi: maksimumKisi,
+    })
     .eq("auth_user_id", user.id);
 
   revalidatePath("/restoran-panel/ayarlar");
@@ -36,7 +44,9 @@ export default async function Ayarlar({
 
   const { data: restoran } = await supabase
     .from("restoranlar")
-    .select("eposta, hatirlatma_epostasi_aktif")
+    .select(
+      "eposta, hatirlatma_epostasi_aktif, en_erken_rezervasyon_saat, en_gec_rezervasyon_gun, maksimum_kisi_sayisi"
+    )
     .eq("auth_user_id", user!.id)
     .maybeSingle();
 
@@ -66,7 +76,13 @@ export default async function Ayarlar({
         </div>
       </div>
 
-      <AyarlarForm kaydet={kaydet} hatirlatmaAktif={restoran?.hatirlatma_epostasi_aktif ?? true} />
+      <AyarlarForm
+        kaydet={kaydet}
+        hatirlatmaAktif={restoran?.hatirlatma_epostasi_aktif ?? true}
+        enErkenSaat={restoran?.en_erken_rezervasyon_saat ?? 1}
+        enGecGun={restoran?.en_gec_rezervasyon_gun ?? 60}
+        maksimumKisi={restoran?.maksimum_kisi_sayisi ?? 20}
+      />
     </div>
   );
 }

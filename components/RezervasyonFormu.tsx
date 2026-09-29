@@ -30,11 +30,13 @@ export default function RezervasyonFormu({
   acilisSaati,
   kapanisSaati,
   calismaSaatleriJson,
+  maksimumKisi = 20,
 }: {
   restoranId: string;
   acilisSaati: string;
   kapanisSaati: string;
   calismaSaatleriJson?: string | null;
+  maksimumKisi?: number;
 }) {
   const t = useTranslations("RezervasyonFormu");
   const locale = useLocale();
@@ -220,7 +222,7 @@ export default function RezervasyonFormu({
           <span className="w-4 text-center font-bold text-foreground">{kisiSayisi}</span>
           <button
             type="button"
-            onClick={() => setKisiSayisi((n) => Math.min(20, n + 1))}
+            onClick={() => setKisiSayisi((n) => Math.min(maksimumKisi, n + 1))}
             className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-brand-dark shadow-sm hover:bg-brand hover:text-white"
           >
             +

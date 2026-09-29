@@ -11,6 +11,7 @@ import MasaEnvanteri from "@/components/MasaEnvanteri";
 import MenuYukleyici from "@/components/MenuYukleyici";
 import CalismaSaatleriDuzenleyici from "@/components/CalismaSaatleriDuzenleyici";
 import RestoranOnizleme from "@/components/RestoranOnizleme";
+import WidgetKoduKutusu from "@/components/WidgetKoduKutusu";
 import { restoranYolu } from "@/lib/slug";
 
 const girdiStil =
@@ -446,6 +447,19 @@ export default function RestoranimForm({
             >
               masadaki.com{restoranYolu(restoran)}
             </a>
+          </div>
+        )}
+
+        {restoran && (
+          <div className="mt-4 rounded-2xl border border-border bg-white p-4">
+            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-muted">
+              Kendi sitene rezervasyon widget&apos;ı ekle
+            </p>
+            <p className="mb-2 text-xs text-muted">
+              Bu kodu kendi web sitenin HTML&apos;ine yapıştır, misafirler siteden ayrılmadan
+              rezervasyon talebi gönderebilsin.
+            </p>
+            <WidgetKoduKutusu restoranId={restoran.id} />
           </div>
         )}
       </div>

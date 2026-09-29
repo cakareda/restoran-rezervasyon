@@ -20,7 +20,7 @@ export async function generateMetadata({
   const turAd = eslesen?.mutfak_turu ?? tur;
 
   const baslik = `${turAd} Restoranları — Masadaki`;
-  const aciklama = `En iyi ${turAd} restoranlarını keşfet, anında online rezervasyon yap.`;
+  const aciklama = `En iyi ${turAd} restoranlarını keşfet, anında online rezervasyon talebi gönder.`;
 
   return {
     title: baslik,
@@ -54,7 +54,7 @@ export default async function MutfakSayfasi({ params }: { params: Promise<{ tur:
             {turAd} Restoranları
           </h1>
           <p className="mt-2 text-sm text-muted">
-            En iyi {turAd} restoranlarını keşfet, anında online rezervasyon yap.
+            En iyi {turAd} restoranlarını keşfet, anında online rezervasyon talebi gönder.
           </p>
           <Link
             href="/restoranlar"

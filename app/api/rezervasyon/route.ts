@@ -17,7 +17,9 @@ export async function POST(request: Request) {
 
   const { data: restoran, error: restoranHata } = await supabase
     .from("restoranlar")
-    .select("id, ad, eposta, oturma_suresi_dk")
+    .select(
+      "id, ad, eposta, oturma_suresi_dk, en_erken_rezervasyon_saat, en_gec_rezervasyon_gun, maksimum_kisi_sayisi"
+    )
     .eq("id", restoranId)
     .single();
 
@@ -25,8 +27,38 @@ export async function POST(request: Request) {
     return NextResponse.json({ hata: "Restoran bulunamadı." }, { status: 404 });
   }
 
+  if (kisiSayisi > (restoran.maksimum_kisi_sayisi ?? 20)) {
+    return NextResponse.json(
+      {
+        hata: `Bu restoran online rezervasyonda en fazla ${restoran.maksimum_kisi_sayisi} kişiyi kabul ediyor. Daha kalabalık gruplar için lütfen restoranı arayın.`,
+      },
+      { status: 400 }
+    );
+  }
+
   // Sunucu tarafında da müsaitliği doğrula (yarış durumlarına karşı) ve masa ata.
   const istenenBaslangic = new Date(tarihSaat);
+
+  const enErkenSaat = restoran.en_erken_rezervasyon_saat ?? 1;
+  if (enErkenSaat > 0) {
+    const enErkenMs = Date.now() + enErkenSaat * 60 * 60 * 1000;
+    if (istenenBaslangic.getTime() < enErkenMs) {
+      return NextResponse.json(
+        { hata: `Bu restoran en az ${enErkenSaat} saat öncesinden rezervasyon alıyor.` },
+        { status: 400 }
+      );
+    }
+  }
+
+  const enGecGun = restoran.en_gec_rezervasyon_gun ?? 60;
+  const enGecMs = Date.now() + enGecGun * 24 * 60 * 60 * 1000;
+  if (istenenBaslangic.getTime() > enGecMs) {
+    return NextResponse.json(
+      { hata: `Bu restoran en fazla ${enGecGun} gün ileriye rezervasyon alıyor.` },
+      { status: 400 }
+    );
+  }
+
   const gunBaslangic = new Date(istenenBaslangic);
   gunBaslangic.setUTCHours(0, 0, 0, 0);
   const gunBitis = new Date(istenenBaslangic);

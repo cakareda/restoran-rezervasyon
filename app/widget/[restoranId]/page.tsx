@@ -1,0 +1,39 @@
+import { NextIntlClientProvider } from "next-intl";
+import { notFound } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import RezervasyonFormu from "@/components/RezervasyonFormu";
+import trMesajlar from "@/messages/tr.json";
+
+export default async function WidgetSayfasi({
+  params,
+}: {
+  params: Promise<{ restoranId: string }>;
+}) {
+  const { restoranId } = await params;
+  const supabase = await createClient();
+
+  const { data: restoran } = await supabase
+    .from("restoranlar")
+    .select("id, ad, acilis_saati, kapanis_saati, calisma_saatleri, maksimum_kisi_sayisi")
+    .eq("id", restoranId)
+    .maybeSingle();
+
+  if (!restoran) notFound();
+
+  return (
+    <NextIntlClientProvider locale="tr" messages={trMesajlar}>
+      <div className="min-h-screen bg-transparent p-3">
+        <p className="mb-2 text-center text-xs font-semibold text-muted">
+          {restoran.ad} — Masadaki üzerinden rezervasyon
+        </p>
+        <RezervasyonFormu
+          restoranId={restoran.id}
+          acilisSaati={restoran.acilis_saati.slice(0, 5)}
+          kapanisSaati={restoran.kapanis_saati.slice(0, 5)}
+          calismaSaatleriJson={restoran.calisma_saatleri}
+          maksimumKisi={restoran.maksimum_kisi_sayisi}
+        />
+      </div>
+    </NextIntlClientProvider>
+  );
+}
