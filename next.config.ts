@@ -13,7 +13,7 @@ const CSP = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data: blob: https://*.supabase.co https://maps.googleapis.com https://maps.gstatic.com https://*.gstatic.com https://images.unsplash.com https://api.qrserver.com",
-  "connect-src 'self' https://*.supabase.co https://maps.googleapis.com",
+  "connect-src 'self' https://*.supabase.co https://maps.googleapis.com https://nominatim.openstreetmap.org",
   "frame-src 'self' https://www.google.com",
   "frame-ancestors 'self'",
   "form-action 'self'",
@@ -23,7 +23,7 @@ const CSP = [
 const GUVENLIK_BASLIKLARI = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=()" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(self), payment=()" },
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
   { key: "Content-Security-Policy", value: CSP },
 ];

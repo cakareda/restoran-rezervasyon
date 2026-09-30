@@ -6,11 +6,11 @@ import { Link, useRouter } from "@/i18n/navigation";
 
 export default function IptalKarti({
   id,
-  restoranId,
+  restoranHref,
   degistir,
 }: {
   id: string;
-  restoranId: string;
+  restoranHref: string;
   degistir: boolean;
 }) {
   const t = useTranslations("RezervasyonIptal");
@@ -36,7 +36,7 @@ export default function IptalKarti({
     setIptalEdildi(true);
 
     if (degistir) {
-      router.push(`/restoran/${restoranId}`);
+      router.push(restoranHref);
     }
   }
 
@@ -63,7 +63,7 @@ export default function IptalKarti({
       </button>
 
       <Link
-        href="/"
+        href="/hesap/profil"
         className="block text-center text-sm font-medium text-muted hover:text-brand-dark"
       >
         {t("vazgec")}

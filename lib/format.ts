@@ -1,5 +1,8 @@
 export function fiyatTemizle(deger: string) {
-  return deger.replace(/^\s*(₺|TL)\s*/i, "").replace(/\s*TL\s*$/i, "");
+  return deger
+    .replace(/^\s*(₺|TL)\s*/i, "")
+    .replace(/\s*TL\s*$/i, "")
+    .replace(/\s*-\s*/g, "–");
 }
 
 export function fiyatGoster(deger: string | null | undefined) {

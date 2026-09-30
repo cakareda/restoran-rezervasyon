@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
+import { restoranYolu } from "@/lib/slug";
 import IptalKarti from "./IptalKarti";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -11,7 +12,7 @@ type RezervasyonDetay = {
   kisi_sayisi: number;
   durum: string;
   restoran_id: string;
-  restoranlar: { ad: string } | null;
+  restoranlar: { ad: string; sehir: string; semt: string } | null;
 };
 
 export default async function RezervasyonIptal({
@@ -29,11 +30,19 @@ export default async function RezervasyonIptal({
 
   const { data: rezervasyon } = (await supabase
     .from("rezervasyonlar")
-    .select("id, tarih_saat, kisi_sayisi, durum, restoran_id, restoranlar(ad)")
+    .select("id, tarih_saat, kisi_sayisi, durum, restoran_id, restoranlar(ad, sehir, semt)")
     .eq("id", id)
     .single()) as { data: RezervasyonDetay | null };
 
   const restoranAd = rezervasyon?.restoranlar?.ad ?? "Restaurant";
+  const restoranHref = rezervasyon?.restoranlar
+    ? restoranYolu({
+        id: rezervasyon.restoran_id,
+        ad: rezervasyon.restoranlar.ad,
+        sehir: rezervasyon.restoranlar.sehir,
+        semt: rezervasyon.restoranlar.semt,
+      })
+    : "/";
   const gecmisMi = rezervasyon ? new Date(rezervasyon.tarih_saat) < new Date() : false;
   const aktifMi =
     rezervasyon && rezervasyon.durum !== "iptal_edildi" && rezervasyon.durum !== "reddedildi";
@@ -70,7 +79,7 @@ export default async function RezervasyonIptal({
                 · {t("kisiSayisi", { sayi: rezervasyon.kisi_sayisi })}
               </p>
             </div>
-            <IptalKarti id={rezervasyon.id} restoranId={rezervasyon.restoran_id} degistir={!!degistir} />
+            <IptalKarti id={rezervasyon.id} restoranHref={restoranHref} degistir={!!degistir} />
           </>
         )}
       </div>

@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { RezervasyonDurum } from "@/lib/types";
 import { TakvimIkonu } from "@/components/icons";
 import UrlTemizle from "@/components/UrlTemizle";
+import { telefonGecerliMi } from "@/lib/telefon";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -19,11 +20,16 @@ async function kaydet(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) return;
 
+  const telefon = String(formData.get("telefon") ?? "") || null;
+  if (!telefonGecerliMi(telefon)) {
+    redirect({ href: "/hesap/profil?hata=1", locale: await getLocale() });
+  }
+
   const { error } = await supabase
     .from("kullanicilar")
     .update({
       ad_soyad: String(formData.get("adSoyad")),
-      telefon: String(formData.get("telefon") ?? "") || null,
+      telefon,
     })
     .eq("auth_user_id", user.id);
 

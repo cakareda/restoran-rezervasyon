@@ -3,5 +3,5 @@
 export function telefonGecerliMi(telefon: string | null | undefined): boolean {
   if (!telefon) return true;
   const rakamlar = telefon.replace(/\D/g, "");
-  return rakamlar.length >= 10;
+  return rakamlar.length >= 10 && rakamlar.length <= 15;
 }
