@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import type { RezervasyonDurum, RezervasyonKaynagi } from "@/lib/types";
 import { bugununTarihi, yerelTarih } from "@/lib/tarih";
@@ -8,6 +9,8 @@ import DisaAktarButonu from "./DisaAktarButonu";
 import IceAktarButonu from "./IceAktarButonu";
 import { AsagiOkIkonu } from "@/components/icons";
 import { restoranYolu } from "@/lib/slug";
+
+export const metadata: Metadata = { title: "Rezervasyonlar" };
 
 type RezervasyonSatirVerisi = {
   id: string;

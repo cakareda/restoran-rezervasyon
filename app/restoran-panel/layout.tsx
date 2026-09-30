@@ -51,7 +51,9 @@ export default async function RestoranPanelLayout({
               {restoran.semt && <span className="font-normal text-brand-dark/70">· {restoran.semt}</span>}
             </span>
           )}
-          <BildirimIkonu className="h-5 w-5 text-muted" />
+          <button type="button" aria-label="Bildirimler" className="text-muted hover:text-foreground">
+            <BildirimIkonu className="h-5 w-5" />
+          </button>
           <CikisYapButonu />
         </div>
       </header>
@@ -81,11 +83,49 @@ export default async function RestoranPanelLayout({
           </PanelLink>
         </nav>
 
-        <main className="flex-1 px-5 py-6 sm:px-8">
+        <main className="flex-1 px-5 py-6 pb-24 sm:px-8 sm:pb-6">
           <div className="mx-auto max-w-4xl">{children}</div>
         </main>
       </div>
+
+      <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-border bg-white sm:hidden">
+        <MobilPanelLink href="/restoran-panel" ikon={<TakvimIkonu className="h-5 w-5" />}>
+          Rezervasyon
+        </MobilPanelLink>
+        <MobilPanelLink href="/restoran-panel/restoranim" ikon={<RestoranIkonu className="h-5 w-5" />}>
+          Restoranım
+        </MobilPanelLink>
+        <MobilPanelLink href="/restoran-panel/bekleme-listesi" ikon={<MasaIkonu className="h-5 w-5" />}>
+          Bekleme
+        </MobilPanelLink>
+        <MobilPanelLink href="/restoran-panel/raporlar" ikon={<RaporIkonu className="h-5 w-5" />}>
+          Rapor
+        </MobilPanelLink>
+        <MobilPanelLink href="/restoran-panel/ayarlar" ikon={<AyarlarIkonu className="h-5 w-5" />}>
+          Ayarlar
+        </MobilPanelLink>
+      </nav>
     </div>
+  );
+}
+
+function MobilPanelLink({
+  href,
+  ikon,
+  children,
+}: {
+  href: string;
+  ikon: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      className="flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[10px] font-semibold text-muted hover:text-brand-dark"
+    >
+      {ikon}
+      {children}
+    </Link>
   );
 }
 

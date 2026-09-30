@@ -234,6 +234,7 @@
   "RezervasyonBasarili": {
     "baslik": "Talebiniz alındı",
     "aciklama": "Rezervasyon talebiniz restorana iletildi. Onaylandığında veya reddedildiğinde e-posta ile bilgilendirileceksiniz.",
+    "kisiSayisi": "{sayi} kişi",
     "anaSayfayaDon": "Ana sayfaya dön"
   },
   "RezervasyonIptal": {

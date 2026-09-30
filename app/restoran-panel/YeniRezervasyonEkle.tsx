@@ -128,7 +128,9 @@ export default function YeniRezervasyonEkle({
       return;
     }
 
+    const eklenenTarih = tarih;
     kapat();
+    router.push(`/restoran-panel?tarih=${eklenenTarih}&sekme=onayli`);
     router.refresh();
   }
 

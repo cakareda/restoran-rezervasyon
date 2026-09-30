@@ -1,7 +1,11 @@
+import type { Metadata } from "next";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import AyarlarForm from "./AyarlarForm";
+import UrlTemizle from "@/components/UrlTemizle";
+
+export const metadata: Metadata = { title: "Ayarlar" };
 
 async function kaydet(formData: FormData) {
   "use server";
@@ -56,9 +60,12 @@ export default async function Ayarlar({
       <p className="mt-1 text-sm text-muted">Hesap ve bildirim tercihlerini yönet.</p>
 
       {kaydedildi && (
-        <p className="mt-4 rounded-xl bg-green-50 px-4 py-2.5 text-sm font-medium text-green-700">
-          ✓ Kaydedildi.
-        </p>
+        <>
+          <UrlTemizle parametreler={["kaydedildi"]} />
+          <p className="mt-4 rounded-xl bg-green-50 px-4 py-2.5 text-sm font-medium text-green-700">
+            ✓ Kaydedildi.
+          </p>
+        </>
       )}
 
       <div className="mt-6 max-w-lg space-y-4 rounded-2xl border border-border bg-white p-6 shadow-sm">

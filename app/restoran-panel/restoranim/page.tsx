@@ -1,7 +1,11 @@
+import type { Metadata } from "next";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import RestoranimForm from "./RestoranimForm";
+import UrlTemizle from "@/components/UrlTemizle";
+
+export const metadata: Metadata = { title: "Restoranım" };
 
 async function kaydet(formData: FormData) {
   "use server";
@@ -93,6 +97,7 @@ export default async function Restoranim({
         Bu bilgiler kullanıcı sitesinde restoranınızın görüneceği şekliyle gösterilir.
       </p>
 
+      {(kaydedildi || hata) && <UrlTemizle parametreler={["kaydedildi", "hata"]} />}
       {kaydedildi && (
         <p className="mt-4 rounded-xl bg-green-50 px-4 py-2.5 text-sm font-medium text-green-700">
           ✓ Kaydedildi.

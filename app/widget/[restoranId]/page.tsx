@@ -30,6 +30,7 @@ export default async function WidgetSayfasi({
         </p>
         <RezervasyonFormu
           restoranId={restoran.id}
+          restoranAd={restoran.ad}
           acilisSaati={restoran.acilis_saati.slice(0, 5)}
           kapanisSaati={restoran.kapanis_saati.slice(0, 5)}
           calismaSaatleriJson={restoran.calisma_saatleri}

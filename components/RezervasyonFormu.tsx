@@ -27,6 +27,7 @@ function zamanDilimleriUret(acilisSaati: string, kapanisSaati: string) {
 
 export default function RezervasyonFormu({
   restoranId,
+  restoranAd,
   acilisSaati,
   kapanisSaati,
   calismaSaatleriJson,
@@ -35,6 +36,7 @@ export default function RezervasyonFormu({
   enGecGun = 60,
 }: {
   restoranId: string;
+  restoranAd: string;
   acilisSaati: string;
   kapanisSaati: string;
   calismaSaatleriJson?: string | null;
@@ -210,7 +212,13 @@ export default function RezervasyonFormu({
       return;
     }
 
-    router.push("/rezervasyon-basarili");
+    const ozet = new URLSearchParams({
+      restoran: restoranAd,
+      tarih,
+      saat,
+      kisi: String(kisiSayisi),
+    });
+    router.push(`/rezervasyon-basarili?${ozet.toString()}`);
   }
 
   return (
@@ -357,6 +365,18 @@ export default function RezervasyonFormu({
               <p className="font-semibold text-foreground">{profil.adSoyad}</p>
               <p className="text-muted">{profil.eposta}</p>
               {profil.telefon && <p className="text-muted">{profil.telefon}</p>}
+              {!profil.telefon && (
+                <div className="mt-2 space-y-1">
+                  <label className="block text-xs font-medium text-foreground">
+                    {t("telefonEtiket")}
+                  </label>
+                  <TelefonGirdisi
+                    value={telefon}
+                    onChange={setTelefon}
+                    girdiSinifi="rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+                  />
+                </div>
+              )}
             </div>
           ) : (
             <>

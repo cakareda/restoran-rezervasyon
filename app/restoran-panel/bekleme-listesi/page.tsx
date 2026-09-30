@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import type { BeklemeKaydi } from "@/lib/types";
 import BeklemeSatiri from "./BeklemeSatiri";
+
+export const metadata: Metadata = { title: "Bekleme Listesi" };
 
 export default async function BeklemeListesi() {
   const supabase = await createClient();

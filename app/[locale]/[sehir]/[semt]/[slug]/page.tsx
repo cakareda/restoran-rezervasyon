@@ -261,6 +261,7 @@ export default async function RestoranDetay({
         <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_1.2fr]">
           <RezervasyonFormu
             restoranId={restoran.id}
+            restoranAd={restoran.ad}
             acilisSaati={restoran.acilis_saati.slice(0, 5)}
             kapanisSaati={restoran.kapanis_saati.slice(0, 5)}
             calismaSaatleriJson={restoran.calisma_saatleri}

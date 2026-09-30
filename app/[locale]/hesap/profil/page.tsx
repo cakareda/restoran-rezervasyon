@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { RezervasyonDurum } from "@/lib/types";
 import { TakvimIkonu } from "@/components/icons";
+import UrlTemizle from "@/components/UrlTemizle";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -81,6 +82,7 @@ export default async function Profilim({
       <h1 className="text-2xl font-extrabold text-foreground">{t("baslik")}</h1>
       <p className="mt-1 text-sm text-muted">{t("altYazi")}</p>
 
+      {(kaydedildi || hata) && <UrlTemizle parametreler={["kaydedildi", "hata"]} />}
       {kaydedildi && (
         <p className="mt-4 rounded-xl bg-green-50 px-4 py-2.5 text-sm font-medium text-green-700">
           {t("kaydedildi")}

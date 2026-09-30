@@ -69,6 +69,10 @@ export default function RezervasyonSatiri({
   const [notDuzenleniyor, setNotDuzenleniyor] = useState(false);
   const [notMetni, setNotMetni] = useState(restoranNotu ?? "");
   const [notKaydediliyor, setNotKaydediliyor] = useState(false);
+  const [onayModali, setOnayModali] = useState<{
+    baslik: string;
+    url: string;
+  } | null>(null);
 
   async function notuKaydet() {
     setNotKaydediliyor(true);
@@ -90,6 +94,7 @@ export default function RezervasyonSatiri({
       body: gövde ? JSON.stringify(gövde) : undefined,
     });
     setYukleniyor(false);
+    setOnayModali(null);
     router.refresh();
   }
 
@@ -184,11 +189,12 @@ export default function RezervasyonSatiri({
             </button>
             <button
               disabled={yukleniyor}
-              onClick={() => {
-                if (confirm("Bu rezervasyon talebini reddetmek istediğine emin misin?")) {
-                  eylemCagir(`/api/rezervasyon/${id}/reddet`);
-                }
-              }}
+              onClick={() =>
+                setOnayModali({
+                  baslik: "Bu rezervasyon talebini reddetmek istediğine emin misin?",
+                  url: `/api/rezervasyon/${id}/reddet`,
+                })
+              }
               className="rounded-lg border border-border px-3.5 py-1.5 text-sm font-semibold text-foreground hover:bg-zinc-50 disabled:opacity-50"
             >
               Reddet
@@ -240,25 +246,62 @@ export default function RezervasyonSatiri({
         )}
 
         {durum === "onaylandi" && geldiMi !== null && (
-          <span className="text-sm text-muted">
+          <span className="flex items-center gap-2 text-sm text-muted">
             {geldiMi ? "✓ Misafir geldi" : "✗ Misafir gelmedi"}
+            <button
+              disabled={yukleniyor}
+              onClick={() => eylemCagir(`/api/rezervasyon/${id}/gelis-durumu`, { geldiMi: null })}
+              className="text-xs font-semibold text-brand hover:underline disabled:opacity-50"
+            >
+              Geri al
+            </button>
           </span>
         )}
 
         {durum === "onaylandi" && (
           <button
             disabled={yukleniyor}
-            onClick={() => {
-              if (confirm("Bu rezervasyonu iptal etmek istediğine emin misin? Misafire e-posta gidecek.")) {
-                eylemCagir(`/api/rezervasyon/${id}/restoran-iptal`);
-              }
-            }}
+            onClick={() =>
+              setOnayModali({
+                baslik: "Bu rezervasyonu iptal etmek istediğine emin misin? Misafire e-posta gidecek.",
+                url: `/api/rezervasyon/${id}/restoran-iptal`,
+              })
+            }
             className="rounded-lg border border-border px-3.5 py-1.5 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
           >
             İptal Et
           </button>
         )}
       </div>
+
+      {onayModali && (
+        <div
+          className="fixed inset-0 z-40 flex items-center justify-center bg-black/30 p-4"
+          onClick={() => setOnayModali(null)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="text-sm font-medium text-foreground">{onayModali.baslik}</p>
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                onClick={() => setOnayModali(null)}
+                className="rounded-lg border border-border px-3.5 py-1.5 text-sm font-semibold text-foreground hover:bg-zinc-50"
+              >
+                Vazgeç
+              </button>
+              <button
+                disabled={yukleniyor}
+                onClick={() => eylemCagir(onayModali.url)}
+                className="rounded-lg bg-red-600 px-3.5 py-1.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+              >
+                Evet, onayla
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
