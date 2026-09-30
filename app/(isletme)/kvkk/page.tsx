@@ -24,12 +24,11 @@ export default function KvkkSayfasi() {
       <p className="mt-2 text-sm text-muted">Son güncelleme: {new Date().toLocaleDateString("tr-TR")}</p>
 
       <p className={p}>
-        masadaki.com platformunu (&quot;<strong>Platform</strong>&quot;) tek başına işleten gerçek
-        kişi olan Eda Çakar (&quot;<strong>Masadaki</strong>&quot; veya &quot;<strong>biz</strong>
-        &quot;), henüz bir şirket kurulmadığı için 6698 sayılı Kişisel Verilerin Korunması Kanunu
-        (&quot;<strong>KVKK</strong>&quot;) uyarınca veri sorumlusu sıfatıyla, Platform üzerinden
-        elde ettiğimiz kişisel verilerinizi aşağıda açıklanan kapsamda işlemekteyiz. Platformu
-        kimin işlettiği hakkında daha fazla bilgi için{" "}
+        masadaki.com Platformu&apos;nu tek başına işleten gerçek kişi olan Eda Çakar, henüz bir
+        şirket kurulmadığı için 6698 sayılı Kişisel Verilerin Korunması Kanunu uyarınca veri
+        sorumlusu sıfatıyla, Platform üzerinden elde ettiğimiz kişisel verilerinizi aşağıda
+        açıklanan kapsamda işlemekteyiz. Platformu kimin işlettiği hakkında daha fazla bilgi
+        için{" "}
         <Link href="/hakkimizda" className="font-semibold text-brand hover:underline">
           Hakkımızda
         </Link>{" "}
