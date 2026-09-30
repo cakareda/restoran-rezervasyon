@@ -85,7 +85,7 @@ export default function MusteriKayit() {
           <div className="h-px flex-1 bg-border" />
         </div>
 
-        <form onSubmit={kayitOl} className="space-y-3">
+        <form method="post" onSubmit={kayitOl} className="space-y-3">
           <input
             name="adSoyad"
             type="text"

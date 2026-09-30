@@ -135,6 +135,7 @@ export interface Rezervasyon {
   ozel_gun: string | null;
   misafir_ad_soyad: string | null;
   misafir_telefon: string | null;
+  misafir_eposta: string | null;
   misafir_dili: string | null;
   restoran_notu: string | null;
   olusturulma: string;

@@ -75,7 +75,7 @@ export default function RestoranKayitClient() {
         profilini doldur.
       </p>
 
-      <form onSubmit={kayitOl} className="mt-6 space-y-3">
+      <form method="post" onSubmit={kayitOl} className="mt-6 space-y-3">
         <input
           name="eposta"
           type="email"

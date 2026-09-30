@@ -63,7 +63,7 @@ export default function RestoranGirisiClient() {
         Rezervasyon taleplerinizi yönetmek için giriş yapın.
       </p>
 
-      <form onSubmit={girisYap} className="mt-6 space-y-3">
+      <form method="post" onSubmit={girisYap} className="mt-6 space-y-3">
         <input
           name="eposta"
           type="email"

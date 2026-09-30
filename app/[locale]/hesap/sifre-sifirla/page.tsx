@@ -58,7 +58,7 @@ export default function SifreSifirla() {
               {t("baslik")}
             </h1>
 
-            <form onSubmit={kaydet} className="mt-6 space-y-3">
+            <form method="post" onSubmit={kaydet} className="mt-6 space-y-3">
               <div className="relative">
                 <input
                   name="sifre"

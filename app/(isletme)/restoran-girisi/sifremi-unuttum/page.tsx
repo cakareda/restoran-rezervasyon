@@ -54,7 +54,7 @@ export default function RestoranSifremiUnuttum() {
             Restoran hesabının e-postasını gir, sana sıfırlama bağlantısı gönderelim.
           </p>
 
-          <form onSubmit={gonder} className="mt-6 space-y-3">
+          <form method="post" onSubmit={gonder} className="mt-6 space-y-3">
             <input
               name="eposta"
               type="email"

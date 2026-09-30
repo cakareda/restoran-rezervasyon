@@ -52,7 +52,7 @@ export default function SifremiUnuttum() {
             </h1>
             <p className="mt-1 text-center text-sm text-muted">{t("aciklama")}</p>
 
-            <form onSubmit={gonder} className="mt-6 space-y-3">
+            <form method="post" onSubmit={gonder} className="mt-6 space-y-3">
               <input
                 name="eposta"
                 type="email"

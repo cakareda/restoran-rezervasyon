@@ -2,9 +2,11 @@ import { NextResponse } from "next/server";
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { musaitlikHesapla } from "@/lib/kapasite";
 import { telefonGecerliMi } from "@/lib/telefon";
+import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
+import { onayEpostasi } from "@/lib/email/templates";
 
 export async function POST(request: Request) {
-  const { adSoyad, telefon, tarihSaat, kisiSayisi } = await request.json();
+  const { adSoyad, telefon, eposta, tarihSaat, kisiSayisi, notlar, ozelGun } = await request.json();
 
   if (!adSoyad || !tarihSaat || !kisiSayisi) {
     return NextResponse.json({ hata: "Ad soyad, tarih/saat ve kişi sayısı gerekli." }, { status: 400 });
@@ -26,7 +28,7 @@ export async function POST(request: Request) {
 
   const { data: restoran } = await supabase
     .from("restoranlar")
-    .select("id, oturma_suresi_dk")
+    .select("id, ad, oturma_suresi_dk")
     .eq("auth_user_id", user.id)
     .single();
 
@@ -73,6 +75,9 @@ export async function POST(request: Request) {
       kullanici_id: null,
       misafir_ad_soyad: adSoyad,
       misafir_telefon: telefon ?? null,
+      misafir_eposta: eposta ?? null,
+      notlar: notlar ? String(notlar).slice(0, 300) : null,
+      ozel_gun: ozelGun ?? null,
       tarih_saat: tarihSaat,
       kisi_sayisi: kisiSayisi,
       durum: "onaylandi",
@@ -84,6 +89,21 @@ export async function POST(request: Request) {
 
   if (error || !rezervasyon) {
     return NextResponse.json({ hata: "Rezervasyon eklenemedi." }, { status: 500 });
+  }
+
+  if (eposta && restoran) {
+    const { konu, html } = onayEpostasi({
+      restoranAd: restoran.ad,
+      tarihSaat,
+      kisiSayisi,
+    });
+    await bildirimGonderVeKaydet({
+      rezervasyonId: rezervasyon.id,
+      aliciEposta: eposta,
+      tur: "onay",
+      konu,
+      html,
+    });
   }
 
   return NextResponse.json({ basari: true, rezervasyonId: rezervasyon.id });

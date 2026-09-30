@@ -86,10 +86,15 @@ export default async function RestoranlarSayfasi({
   if (ara) sorgu = sorgu.ilike("ad", `%${ara}%`);
   if (secilenAtmosferler.length > 0) sorgu = sorgu.contains("olanaklar", secilenAtmosferler);
 
-  const [{ data: tumRestoranlar }, { data: yorumlar }] = await Promise.all([
-    sorgu,
-    supabase.from("yorumlar").select("restoran_id, puan_yemek, puan_servis, puan_ortam"),
-  ]);
+  const [{ data: tumRestoranlar }, { data: yorumlar }, { data: filtreSecenekleriKaynagi }] =
+    await Promise.all([
+      sorgu,
+      supabase.from("yorumlar").select("restoran_id, puan_yemek, puan_servis, puan_ortam"),
+      // Filtre dropdown'larının seçenekleri, aktif aramadan/filtreden bağımsız
+      // olarak TÜM restoranlardan üretilmeli — yoksa arama sonucu boşaldığında
+      // semt/mutfak seçenekleri de kaybolur.
+      supabase.from("restoranlar").select("sehir, semt, mutfak_turu"),
+    ]);
 
   const puanlar = restoranBazindaPuanla(yorumlar ?? []);
   const minPuanSayi = minPuan ? Number(minPuan) : 0;
@@ -153,10 +158,10 @@ export default async function RestoranlarSayfasi({
   }
 
   const mutfakSecenekleri = harfDuyarsizBenzersiz(
-    (tumRestoranlar ?? []).map((r) => r.mutfak_turu).filter(Boolean)
+    (filtreSecenekleriKaynagi ?? []).map((r) => r.mutfak_turu).filter(Boolean)
   );
   const semtSecenekleri = harfDuyarsizBenzersiz(
-    (tumRestoranlar ?? []).map((r) => r.semt).filter(Boolean)
+    (filtreSecenekleriKaynagi ?? []).map((r) => r.semt).filter(Boolean)
   );
 
   const filtreliMi = Boolean(

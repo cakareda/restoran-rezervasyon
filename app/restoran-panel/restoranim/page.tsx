@@ -29,7 +29,7 @@ async function kaydet(formData: FormData) {
   const { error } = await supabase.from("restoranlar").upsert(
     {
       auth_user_id: user.id,
-      ad: String(formData.get("ad")),
+      ad: String(formData.get("ad")).slice(0, 100),
       sehir: String(formData.get("sehir")),
       semt: String(formData.get("semt")),
       mutfak_turu: String(formData.get("mutfakTuru")),
@@ -37,19 +37,19 @@ async function kaydet(formData: FormData) {
       telefon: String(formData.get("telefon") ?? ""),
       kapasite: formData.get("kapasite") ? Number(formData.get("kapasite")) : null,
       ortalama_fiyat: String(formData.get("ortalamaFiyat") ?? ""),
-      aciklama: String(formData.get("aciklama") ?? ""),
+      aciklama: String(formData.get("aciklama") ?? "").slice(0, 600),
       adres: String(formData.get("adres") ?? ""),
       acilis_saati: String(formData.get("acilisSaati") ?? "12:00"),
       kapanis_saati: String(formData.get("kapanisSaati") ?? "23:00"),
       calisma_saatleri: calismaSaatleriGecerli,
       instagram_url: String(formData.get("instagramUrl") ?? "").trim() || null,
       menu_url: String(formData.get("menuUrl") ?? "").trim() || null,
-      iptal_politikasi: String(formData.get("iptalPolitikasi") ?? "").trim() || null,
-      duyuru: String(formData.get("duyuru") ?? "").trim() || null,
+      iptal_politikasi: String(formData.get("iptalPolitikasi") ?? "").trim().slice(0, 300) || null,
+      duyuru: String(formData.get("duyuru") ?? "").trim().slice(0, 140) || null,
       lat: formData.get("lat") ? Number(formData.get("lat")) : null,
       lng: formData.get("lng") ? Number(formData.get("lng")) : null,
       oturma_suresi_dk: formData.get("oturmaSuresiDk")
-        ? Number(formData.get("oturmaSuresiDk"))
+        ? Math.min(480, Math.max(30, Number(formData.get("oturmaSuresiDk"))))
         : 90,
       olanaklar,
       fotograflar,

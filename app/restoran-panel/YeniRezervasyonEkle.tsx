@@ -6,6 +6,7 @@ import { bugununTarihi, istanbulTarihSaat } from "@/lib/tarih";
 import { KapatIkonu, KisiIkonu, TakvimIkonu } from "@/components/icons";
 import TelefonGirdisi from "@/components/TelefonGirdisi";
 import { gununSaatleri } from "@/lib/calismaSaatleri";
+import { OZEL_GUN_SECENEKLERI } from "@/lib/types";
 
 function zamanDilimleriUret(acilisSaati: string, kapanisSaati: string) {
   const [acilisSaat, acilisDakika] = acilisSaati.split(":").map(Number);
@@ -39,6 +40,9 @@ export default function YeniRezervasyonEkle({
   const [hata, setHata] = useState<string | null>(null);
   const [adSoyad, setAdSoyad] = useState("");
   const [telefon, setTelefon] = useState("");
+  const [eposta, setEposta] = useState("");
+  const [notlar, setNotlar] = useState("");
+  const [ozelGun, setOzelGun] = useState("");
   const [kisiSayisi, setKisiSayisi] = useState(2);
   const [tarih, setTarih] = useState(bugununTarihi());
   const [saat, setSaat] = useState<string | null>(null);
@@ -85,6 +89,9 @@ export default function YeniRezervasyonEkle({
     setAcik(false);
     setAdSoyad("");
     setTelefon("");
+    setEposta("");
+    setNotlar("");
+    setOzelGun("");
     setKisiSayisi(2);
     setSaat(null);
     setHata(null);
@@ -105,6 +112,9 @@ export default function YeniRezervasyonEkle({
       body: JSON.stringify({
         adSoyad,
         telefon: telefon || null,
+        eposta: eposta || null,
+        notlar: notlar || null,
+        ozelGun: ozelGun || null,
         tarihSaat: istanbulTarihSaat(tarih, saat).toISOString(),
         kisiSayisi,
       }),
@@ -153,7 +163,7 @@ export default function YeniRezervasyonEkle({
               </button>
             </div>
 
-            <form onSubmit={gonder} className="mt-6 space-y-4">
+            <form method="post" onSubmit={gonder} className="mt-6 space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-foreground">Ad Soyad</label>
                 <input
@@ -174,6 +184,51 @@ export default function YeniRezervasyonEkle({
                     girdiSinifi="rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-foreground">
+                  E-posta (opsiyonel)
+                </label>
+                <input
+                  value={eposta}
+                  onChange={(e) => setEposta(e.target.value)}
+                  type="email"
+                  placeholder="Onay e-postası göndermek için"
+                  className="mt-1 w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-foreground">
+                  Özel gün (opsiyonel)
+                </label>
+                <select
+                  value={ozelGun}
+                  onChange={(e) => setOzelGun(e.target.value)}
+                  className="mt-1 w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+                >
+                  <option value="">Yok</option>
+                  {OZEL_GUN_SECENEKLERI.map((o) => (
+                    <option key={o.deger} value={o.deger}>
+                      {o.etiket}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-foreground">
+                  Not (opsiyonel)
+                </label>
+                <textarea
+                  value={notlar}
+                  onChange={(e) => setNotlar(e.target.value)}
+                  rows={2}
+                  maxLength={300}
+                  placeholder="Alerji, masa tercihi vb."
+                  className="mt-1 w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+                />
               </div>
 
               <div>

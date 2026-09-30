@@ -116,7 +116,7 @@ export async function POST(request: Request) {
       tarih_saat: tarihSaat,
       kisi_sayisi: kisiSayisi,
       durum: "beklemede",
-      notlar: notlar ?? null,
+      notlar: notlar ? String(notlar).slice(0, 300) : null,
       ozel_gun: ozelGun ?? null,
       masa_kapasitesi: atanacakKapasite,
       misafir_dili: misafirDili ?? null,

@@ -124,6 +124,7 @@ export default function MasaEnvanteri({
           <input
             type="number"
             min={1}
+            max={50}
             value={yeniKapasite}
             onChange={(e) => setYeniKapasite(Number(e.target.value))}
             className="w-20 rounded-lg border-0 px-2.5 py-1.5 text-sm ring-1 ring-border"
@@ -134,6 +135,7 @@ export default function MasaEnvanteri({
           <input
             type="number"
             min={1}
+            max={100}
             value={yeniAdet}
             onChange={(e) => setYeniAdet(Number(e.target.value))}
             className="w-20 rounded-lg border-0 px-2.5 py-1.5 text-sm ring-1 ring-border"

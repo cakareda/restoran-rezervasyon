@@ -134,7 +134,7 @@ export default function RestoranlarIcin() {
               no: "02",
               Ikon: KisiIkonu,
               baslik: "Bilgilerini doldur",
-              aciklama: "Çalışma saatleri, adres ve fotoğraflarını Google'dan otomatik çek.",
+              aciklama: "Adres ve iletişim bilgilerini Google'dan otomatik çek, çalışma saatlerini ve fotoğraflarını ekle.",
             },
             {
               no: "03",

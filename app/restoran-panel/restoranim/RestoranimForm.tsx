@@ -114,6 +114,7 @@ export default function RestoranimForm({
             value={ad}
             onChange={(e) => setAd(e.target.value)}
             required
+            maxLength={100}
             className={girdiStil}
           />
         </div>
@@ -222,6 +223,7 @@ export default function RestoranimForm({
             defaultValue={restoran?.aciklama ?? ""}
             placeholder="Restoranınız hakkında kısa açıklama"
             rows={4}
+            maxLength={600}
             className={girdiStil}
           />
         </div>
@@ -283,6 +285,7 @@ export default function RestoranimForm({
             defaultValue={restoran?.iptal_politikasi ?? ""}
             placeholder="Örn: Rezervasyonunuzu en az 2 saat öncesinden iptal edebilirsiniz."
             rows={2}
+            maxLength={300}
             className={girdiStil}
           />
         </div>
@@ -293,6 +296,7 @@ export default function RestoranimForm({
             name="duyuru"
             defaultValue={restoran?.duyuru ?? ""}
             placeholder="Örn: Yılbaşı özel menümüz hazır, detaylar için arayın."
+            maxLength={140}
             className={girdiStil}
           />
           <p className="mt-1 text-xs text-muted">
@@ -347,6 +351,7 @@ export default function RestoranimForm({
             name="oturmaSuresiDk"
             type="number"
             min={30}
+            max={480}
             step={15}
             defaultValue={restoran?.oturma_suresi_dk ?? 90}
             className={girdiStil}

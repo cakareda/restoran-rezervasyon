@@ -32,6 +32,7 @@ export default function RezervasyonFormu({
   calismaSaatleriJson,
   maksimumKisi = 20,
   enErkenSaat = 1,
+  enGecGun = 60,
 }: {
   restoranId: string;
   acilisSaati: string;
@@ -39,6 +40,7 @@ export default function RezervasyonFormu({
   calismaSaatleriJson?: string | null;
   maksimumKisi?: number;
   enErkenSaat?: number;
+  enGecGun?: number;
 }) {
   const t = useTranslations("RezervasyonFormu");
   const locale = useLocale();
@@ -96,6 +98,10 @@ export default function RezervasyonFormu({
   const [beklemeGonderiliyor, setBeklemeGonderiliyor] = useState(false);
 
   const bugun = useMemo(() => yerelTarih(new Date()), []);
+  const enGecTarih = useMemo(
+    () => yerelTarih(new Date(new Date().getTime() + enGecGun * 24 * 60 * 60 * 1000)),
+    [enGecGun]
+  );
 
   useEffect(() => {
     async function doluSaatleriYukle() {
@@ -209,6 +215,7 @@ export default function RezervasyonFormu({
 
   return (
     <form
+      method="post"
       onSubmit={gonder}
       className="h-fit space-y-5 rounded-2xl border border-border bg-white p-6 shadow-sm"
     >
@@ -229,13 +236,19 @@ export default function RezervasyonFormu({
           <span className="w-4 text-center font-bold text-foreground">{kisiSayisi}</span>
           <button
             type="button"
+            disabled={kisiSayisi >= maksimumKisi}
             onClick={() => setKisiSayisi((n) => Math.min(maksimumKisi, n + 1))}
-            className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-brand-dark shadow-sm hover:bg-brand hover:text-white"
+            className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-brand-dark shadow-sm hover:bg-brand hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
           >
             +
           </button>
         </div>
       </div>
+      {kisiSayisi >= maksimumKisi && (
+        <p className="-mt-3 text-xs text-muted">
+          {maksimumKisi} üzeri kalabalık gruplar için lütfen restoranı doğrudan arayın.
+        </p>
+      )}
 
       <div className="rounded-xl bg-brand-light px-4 py-3">
         <label className="flex items-center justify-between text-sm font-semibold text-foreground">
@@ -246,6 +259,7 @@ export default function RezervasyonFormu({
             type="date"
             required
             min={bugun}
+            max={enGecTarih}
             value={tarih}
             onChange={(e) => {
               setTarih(e.target.value);
@@ -416,6 +430,7 @@ export default function RezervasyonFormu({
               value={notlar}
               onChange={(e) => setNotlar(e.target.value)}
               rows={2}
+              maxLength={300}
               placeholder={t("notPlaceholder")}
               className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
             />

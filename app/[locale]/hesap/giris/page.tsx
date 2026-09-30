@@ -55,7 +55,7 @@ export default function MusteriGiris() {
           <div className="h-px flex-1 bg-border" />
         </div>
 
-        <form onSubmit={girisYap} className="space-y-3">
+        <form method="post" onSubmit={girisYap} className="space-y-3">
           <input
             name="eposta"
             type="email"

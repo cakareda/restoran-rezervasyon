@@ -134,6 +134,7 @@ export default function RezervasyonSatiri({
               <input
                 value={notMetni}
                 onChange={(e) => setNotMetni(e.target.value)}
+                maxLength={300}
                 placeholder="Restoran notu (yalnızca size görünür)"
                 className="w-full rounded-lg border-0 px-2.5 py-1.5 text-xs outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
               />
