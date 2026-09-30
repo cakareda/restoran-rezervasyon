@@ -112,7 +112,9 @@
     "yemekEtiket": "Yemek",
     "servisEtiket": "Servis",
     "ortamEtiket": "Ortam",
-    "yorumAdet": "{sayi} yorum"
+    "yorumAdet": "{sayi} yorum",
+    "araBtn": "Ara",
+    "whatsappBtn": "WhatsApp'tan yaz"
   },
   "RezervasyonFormu": {
     "baslik": "Rezervasyon talebi oluştur",
@@ -132,6 +134,13 @@
     "notPlaceholder": "Alerji, özel istek vb.",
     "ozelGunEtiket": "Özel gün (opsiyonel)",
     "ozelGunYok": "Yok",
+    "alanTercihiEtiket": "Alan tercihi (opsiyonel)",
+    "alanTercihiYok": "Fark etmez",
+    "alanAdlari": {
+      "salon": "Salon",
+      "bahce": "Bahçe",
+      "teras": "Teras"
+    },
     "ozelGun": {
       "dogum_gunu": "Doğum günü",
       "yil_donumu": "Yıl dönümü",

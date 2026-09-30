@@ -5,10 +5,10 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import type { Restoran, Yorum } from "@/lib/types";
 import { OLANAK_ETIKETLERI } from "@/lib/types";
-import { fiyatGoster, fiyatSeviyesi } from "@/lib/format";
+import { fiyatGoster, fiyatSeviyesi, whatsappNumarasi } from "@/lib/format";
 import { slugYap } from "@/lib/slug";
 import { dilAlternatifleri, ogLocale } from "@/lib/seo";
-import { KonumIkonu, SaatIkonu, TabakIkonu } from "@/components/icons";
+import { KonumIkonu, SaatIkonu, TabakIkonu, TelefonIkonu, WhatsappIkonu } from "@/components/icons";
 import OlanakIkonu from "@/components/OlanakIkonu";
 import RezervasyonFormu from "@/components/RezervasyonFormu";
 
@@ -74,6 +74,14 @@ export default async function RestoranDetay({
     .eq("restoran_id", restoran.id)
     .order("olusturulma", { ascending: false });
 
+  const { data: masaVerisi } = await supabase
+    .from("masalar")
+    .select("alan")
+    .eq("restoran_id", restoran.id);
+  const alanlar = Array.from(
+    new Set((masaVerisi ?? []).map((m: { alan: string }) => m.alan).filter(Boolean))
+  ).sort();
+
   const ortalamaPuan =
     yorumlar && yorumlar.length > 0
       ? (
@@ -103,7 +111,9 @@ export default async function RestoranDetay({
     url: `${siteUrl}/${sehir}/${semt}/${slug}`,
     image: fotograflar.length > 0 ? fotograflar : undefined,
     servesCuisine: restoran.mutfak_turu || undefined,
-    priceRange: fiyatGoster(restoran.ortalama_fiyat) || undefined,
+    priceRange:
+      fiyatGoster(restoran.ortalama_fiyat) ||
+      (restoran.fiyat_seviyesi ? "₺".repeat(restoran.fiyat_seviyesi) : undefined),
     telephone: restoran.telefon || undefined,
     address: {
       "@type": "PostalAddress",
@@ -178,17 +188,12 @@ export default async function RestoranDetay({
         )}
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          {fiyatGoster(restoran.ortalama_fiyat) && (
+          {fiyatSeviyesi(restoran.ortalama_fiyat, restoran.fiyat_seviyesi) && (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-light px-3 py-1 text-sm font-semibold text-brand-dark">
-              {fiyatGoster(restoran.ortalama_fiyat)}
-              {fiyatSeviyesi(restoran.ortalama_fiyat) && (
-                <span aria-hidden className="text-xs">
-                  <span>{"₺".repeat(fiyatSeviyesi(restoran.ortalama_fiyat)!)}</span>
-                  <span className="text-brand-dark/30">
-                    {"₺".repeat(4 - fiyatSeviyesi(restoran.ortalama_fiyat)!)}
-                  </span>
-                </span>
-              )}
+              <span>{"₺".repeat(fiyatSeviyesi(restoran.ortalama_fiyat, restoran.fiyat_seviyesi)!)}</span>
+              <span className="text-brand-dark/30">
+                {"₺".repeat(4 - fiyatSeviyesi(restoran.ortalama_fiyat, restoran.fiyat_seviyesi)!)}
+              </span>
             </span>
           )}
           {secilenOlanaklar.map((o) => (
@@ -227,8 +232,28 @@ export default async function RestoranDetay({
           </p>
         </div>
 
-        {(restoran.instagram_url || restoran.menu_url) && (
+        {(restoran.telefon || restoran.instagram_url || restoran.menu_url) && (
           <div className="mt-4 flex flex-wrap gap-3">
+            {restoran.telefon && (
+              <a
+                href={`tel:${restoran.telefon}`}
+                className="inline-flex items-center gap-1.5 rounded-full border border-border px-3.5 py-1.5 text-sm font-semibold text-foreground hover:bg-brand-light"
+              >
+                <TelefonIkonu className="h-4 w-4" />
+                {t("araBtn")}
+              </a>
+            )}
+            {restoran.telefon && (
+              <a
+                href={`https://wa.me/${whatsappNumarasi(restoran.telefon)}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full border border-border px-3.5 py-1.5 text-sm font-semibold text-foreground hover:bg-brand-light"
+              >
+                <WhatsappIkonu className="h-4 w-4" />
+                {t("whatsappBtn")}
+              </a>
+            )}
             {restoran.instagram_url && (
               <a
                 href={restoran.instagram_url}
@@ -265,6 +290,8 @@ export default async function RestoranDetay({
             acilisSaati={restoran.acilis_saati.slice(0, 5)}
             kapanisSaati={restoran.kapanis_saati.slice(0, 5)}
             calismaSaatleriJson={restoran.calisma_saatleri}
+            ozelGunlerJson={restoran.ozel_gunler}
+            alanlar={alanlar}
             maksimumKisi={restoran.maksimum_kisi_sayisi}
             enErkenSaat={restoran.en_erken_rezervasyon_saat}
             enGecGun={restoran.en_gec_rezervasyon_gun}

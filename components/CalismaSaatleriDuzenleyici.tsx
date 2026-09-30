@@ -71,6 +71,44 @@ export default function CalismaSaatleriDuzenleyici({
                   onChange={(e) => guncelle(g.key, { kapanis: e.target.value })}
                   className="rounded-lg border-0 px-2.5 py-1.5 text-sm ring-1 ring-border"
                 />
+
+                {gunSaati.aralik2Acilis || gunSaati.aralik2Kapanis ? (
+                  <>
+                    <span className="text-xs font-semibold text-brand-dark">+ 2. servis</span>
+                    <input
+                      type="time"
+                      value={gunSaati.aralik2Acilis ?? ""}
+                      onChange={(e) => guncelle(g.key, { aralik2Acilis: e.target.value })}
+                      className="rounded-lg border-0 px-2.5 py-1.5 text-sm ring-1 ring-border"
+                    />
+                    <span className="text-muted">—</span>
+                    <input
+                      type="time"
+                      value={gunSaati.aralik2Kapanis ?? ""}
+                      onChange={(e) => guncelle(g.key, { aralik2Kapanis: e.target.value })}
+                      className="rounded-lg border-0 px-2.5 py-1.5 text-sm ring-1 ring-border"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        guncelle(g.key, { aralik2Acilis: undefined, aralik2Kapanis: undefined })
+                      }
+                      className="text-xs font-semibold text-muted hover:text-red-600"
+                    >
+                      Kaldır
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      guncelle(g.key, { aralik2Acilis: "18:00", aralik2Kapanis: gunSaati.kapanis })
+                    }
+                    className="text-xs font-semibold text-brand hover:underline"
+                  >
+                    + Öğle/akşam ayrı servis ekle
+                  </button>
+                )}
               </>
             )}
           </div>

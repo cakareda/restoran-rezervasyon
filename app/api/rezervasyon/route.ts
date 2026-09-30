@@ -7,8 +7,18 @@ import { telefonGecerliMi } from "@/lib/telefon";
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { restoranId, adSoyad, eposta, telefon, tarihSaat, kisiSayisi, notlar, ozelGun, misafirDili } =
-    body;
+  const {
+    restoranId,
+    adSoyad,
+    eposta,
+    telefon,
+    tarihSaat,
+    kisiSayisi,
+    notlar,
+    ozelGun,
+    alanTercihi,
+    misafirDili,
+  } = body;
 
   if (!restoranId || !adSoyad || !eposta || !tarihSaat || !kisiSayisi) {
     return NextResponse.json({ hata: "Eksik bilgi." }, { status: 400 });
@@ -118,6 +128,7 @@ export async function POST(request: Request) {
       durum: "beklemede",
       notlar: notlar ? String(notlar).slice(0, 300) : null,
       ozel_gun: ozelGun ?? null,
+      alan_tercihi: alanTercihi ?? null,
       masa_kapasitesi: atanacakKapasite,
       misafir_dili: misafirDili ?? null,
     })

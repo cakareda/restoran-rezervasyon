@@ -30,6 +30,13 @@ async function kaydet(formData: FormData) {
   const calismaSaatleriGecerli =
     calismaSaatleriHam !== "{}" && calismaSaatleriHam.trim() !== "" ? calismaSaatleriHam : null;
 
+  const ozelGunlerHam = String(formData.get("ozelGunler") ?? "[]");
+  const ozelGunlerGecerli = ozelGunlerHam !== "[]" && ozelGunlerHam.trim() !== "" ? ozelGunlerHam : null;
+
+  const fiyatSeviyesiHam = formData.get("fiyatSeviyesi");
+  const fiyatSeviyesi =
+    fiyatSeviyesiHam && String(fiyatSeviyesiHam).trim() !== "" ? Number(fiyatSeviyesiHam) : null;
+
   const { error } = await supabase.from("restoranlar").upsert(
     {
       auth_user_id: user.id,
@@ -41,11 +48,13 @@ async function kaydet(formData: FormData) {
       telefon: String(formData.get("telefon") ?? ""),
       kapasite: formData.get("kapasite") ? Number(formData.get("kapasite")) : null,
       ortalama_fiyat: String(formData.get("ortalamaFiyat") ?? ""),
+      fiyat_seviyesi: fiyatSeviyesi,
       aciklama: String(formData.get("aciklama") ?? "").slice(0, 600),
       adres: String(formData.get("adres") ?? ""),
       acilis_saati: String(formData.get("acilisSaati") ?? "12:00"),
       kapanis_saati: String(formData.get("kapanisSaati") ?? "23:00"),
       calisma_saatleri: calismaSaatleriGecerli,
+      ozel_gunler: ozelGunlerGecerli,
       instagram_url: String(formData.get("instagramUrl") ?? "").trim() || null,
       menu_url: String(formData.get("menuUrl") ?? "").trim() || null,
       iptal_politikasi: String(formData.get("iptalPolitikasi") ?? "").trim().slice(0, 300) || null,

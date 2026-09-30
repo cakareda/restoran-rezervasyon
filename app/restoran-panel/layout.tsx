@@ -1,15 +1,26 @@
 import Link from "next/link";
+import type { Metadata, Viewport } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import CikisYapButonu from "./CikisYapButonu";
+import BildirimZili from "./BildirimZili";
+import PwaKaydi from "./PwaKaydi";
 import {
   TakvimIkonu,
   RestoranIkonu,
   MasaIkonu,
   AyarlarIkonu,
-  BildirimIkonu,
   RaporIkonu,
 } from "@/components/icons";
+
+export const metadata: Metadata = {
+  manifest: "/manifest.json",
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "Masadaki Panel" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#faf7f4",
+};
 
 export default async function RestoranPanelLayout({
   children,
@@ -25,12 +36,13 @@ export default async function RestoranPanelLayout({
 
   const { data: restoran } = await supabase
     .from("restoranlar")
-    .select("ad, semt")
+    .select("id, ad, semt")
     .eq("auth_user_id", user.id)
     .maybeSingle();
 
   return (
     <div className="flex min-h-screen flex-col bg-[#faf7f4]">
+      <PwaKaydi />
       <header className="flex items-center justify-between border-b border-border bg-white px-5 py-3">
         <Link href="/restoran-panel" className="flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -51,9 +63,7 @@ export default async function RestoranPanelLayout({
               {restoran.semt && <span className="font-normal text-brand-dark/70">· {restoran.semt}</span>}
             </span>
           )}
-          <button type="button" aria-label="Bildirimler" className="text-muted hover:text-foreground">
-            <BildirimIkonu className="h-5 w-5" />
-          </button>
+          {restoran && <BildirimZili restoranId={restoran.id} />}
           <CikisYapButonu />
         </div>
       </header>

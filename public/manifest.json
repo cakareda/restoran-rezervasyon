@@ -1,0 +1,15 @@
+{
+  "name": "Masadaki Restoran Paneli",
+  "short_name": "Masadaki Panel",
+  "description": "Rezervasyonlarını yönet, yeni talepleri anında gör.",
+  "start_url": "/restoran-panel",
+  "scope": "/restoran-panel",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#faf7f4",
+  "theme_color": "#faf7f4",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/masadaki-app-icon.png", "sizes": "250x230", "type": "image/png" }
+  ]
+}

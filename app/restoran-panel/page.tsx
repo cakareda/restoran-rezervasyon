@@ -21,6 +21,7 @@ type RezervasyonSatirVerisi = {
   geldi_mi: boolean | null;
   kaynak: RezervasyonKaynagi;
   notlar: string | null;
+  alan_tercihi: string | null;
   misafir_ad_soyad: string | null;
   misafir_telefon: string | null;
   misafir_eposta: string | null;
@@ -89,7 +90,7 @@ export default async function RestoranPaneli({
 
   const { data: restoran } = await supabase
     .from("restoranlar")
-    .select("id, ad, sehir, semt, acilis_saati, kapanis_saati, calisma_saatleri")
+    .select("id, ad, sehir, semt, acilis_saati, kapanis_saati, calisma_saatleri, grup_esigi")
     .eq("auth_user_id", user!.id)
     .maybeSingle();
 
@@ -108,7 +109,7 @@ export default async function RestoranPaneli({
   let sorgu = supabase
     .from("rezervasyonlar")
     .select(
-      "id, kullanici_id, tarih_saat, kisi_sayisi, durum, geldi_mi, kaynak, notlar, restoran_notu, misafir_ad_soyad, misafir_telefon, misafir_eposta, misafir_dili, kullanicilar(ad_soyad, eposta, telefon)"
+      "id, kullanici_id, tarih_saat, kisi_sayisi, durum, geldi_mi, kaynak, notlar, alan_tercihi, restoran_notu, misafir_ad_soyad, misafir_telefon, misafir_eposta, misafir_dili, kullanicilar(ad_soyad, eposta, telefon)"
     )
     .eq("restoran_id", restoran.id)
     .order("tarih_saat", { ascending: true });
@@ -297,8 +298,10 @@ export default async function RestoranPaneli({
               durum={r.durum}
               geldiMi={r.geldi_mi}
               notlar={r.notlar}
+              alanTercihi={r.alan_tercihi}
               restoranNotu={r.restoran_notu}
               hayaletUyarisi={hayaletMi(r)}
+              grupUyarisi={Boolean(restoran.grup_esigi) && r.kisi_sayisi >= restoran.grup_esigi!}
             />
           ))
         ) : liste.length > 0 ? (
@@ -341,9 +344,31 @@ export default async function RestoranPaneli({
             />
           </div>
         ) : (
-          <p className="rounded-2xl border border-dashed border-border bg-white p-8 text-center text-muted">
-            Bu tarihte rezervasyon yok.
-          </p>
+          <div className="space-y-3 rounded-2xl border border-dashed border-border bg-white p-8 text-center">
+            <p className="text-muted">Bu tarihte rezervasyon yok.</p>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <YeniRezervasyonEkle
+                restoranId={restoran.id}
+                acilisSaati={restoran.acilis_saati.slice(0, 5)}
+                kapanisSaati={restoran.kapanis_saati.slice(0, 5)}
+                calismaSaatleriJson={restoran.calisma_saatleri}
+              />
+              <a
+                href={`https://masadaki.com${restoranYolu(restoran)}`}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-xl border border-border px-4 py-2 text-sm font-semibold text-foreground hover:bg-brand-light"
+              >
+                Rezervasyon sayfanı gör
+              </a>
+              <Link
+                href="/restoran-panel/restoranim"
+                className="rounded-xl border border-border px-4 py-2 text-sm font-semibold text-foreground hover:bg-brand-light"
+              >
+                Widget / QR kodu al
+              </Link>
+            </div>
+          </div>
         )}
       </div>
     </div>

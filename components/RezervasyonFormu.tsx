@@ -10,6 +10,8 @@ import { KisiIkonu, TakvimIkonu, SaatIkonu } from "@/components/icons";
 import TelefonGirdisi from "@/components/TelefonGirdisi";
 import { gununSaatleri } from "@/lib/calismaSaatleri";
 
+const ALAN_CEVIRI_ANAHTARLARI = ["salon", "bahce", "teras"];
+
 function zamanDilimleriUret(acilisSaati: string, kapanisSaati: string) {
   const [acilisSaat, acilisDakika] = acilisSaati.split(":").map(Number);
   const [kapanisSaat, kapanisDakika] = kapanisSaati.split(":").map(Number);
@@ -31,6 +33,8 @@ export default function RezervasyonFormu({
   acilisSaati,
   kapanisSaati,
   calismaSaatleriJson,
+  ozelGunlerJson,
+  alanlar = [],
   maksimumKisi = 20,
   enErkenSaat = 1,
   enGecGun = 60,
@@ -40,6 +44,8 @@ export default function RezervasyonFormu({
   acilisSaati: string;
   kapanisSaati: string;
   calismaSaatleriJson?: string | null;
+  ozelGunlerJson?: string | null;
+  alanlar?: string[];
   maksimumKisi?: number;
   enErkenSaat?: number;
   enGecGun?: number;
@@ -79,15 +85,18 @@ export default function RezervasyonFormu({
         calismaSaatleriJson,
         varsayilanAcilis: acilisSaati,
         varsayilanKapanis: kapanisSaati,
+        ozelGunlerJson,
       }),
-    [tarih, calismaSaatleriJson, acilisSaati, kapanisSaati]
+    [tarih, calismaSaatleriJson, acilisSaati, kapanisSaati, ozelGunlerJson]
   );
 
-  const zamanDilimleri = useMemo(
-    () =>
-      gununSaati.kapali ? [] : zamanDilimleriUret(gununSaati.acilis, gununSaati.kapanis),
-    [gununSaati]
-  );
+  const zamanDilimleri = useMemo(() => {
+    if (gununSaati.kapali) return [];
+    const birinciAralik = zamanDilimleriUret(gununSaati.acilis, gununSaati.kapanis);
+    if (!gununSaati.aralik2Acilis || !gununSaati.aralik2Kapanis) return birinciAralik;
+    const ikinciAralik = zamanDilimleriUret(gununSaati.aralik2Acilis, gununSaati.aralik2Kapanis);
+    return [...birinciAralik, ...ikinciAralik];
+  }, [gununSaati]);
   const [profil, setProfil] = useState<{ adSoyad: string; eposta: string; telefon: string } | null>(
     null
   );
@@ -96,6 +105,7 @@ export default function RezervasyonFormu({
   const [telefon, setTelefon] = useState("");
   const [notlar, setNotlar] = useState("");
   const [ozelGun, setOzelGun] = useState("");
+  const [alanTercihi, setAlanTercihi] = useState("");
   const [beklemeEklendi, setBeklemeEklendi] = useState(false);
   const [beklemeGonderiliyor, setBeklemeGonderiliyor] = useState(false);
 
@@ -200,6 +210,7 @@ export default function RezervasyonFormu({
         kisiSayisi,
         notlar: notlar.trim() || null,
         ozelGun: ozelGun || null,
+        alanTercihi: alanTercihi || null,
         misafirDili: locale,
       }),
     });
@@ -443,6 +454,26 @@ export default function RezervasyonFormu({
               ))}
             </select>
           </div>
+
+          {alanlar.length > 1 && (
+            <div className="space-y-1">
+              <label className="block text-sm font-medium text-foreground">
+                {t("alanTercihiEtiket")}
+              </label>
+              <select
+                value={alanTercihi}
+                onChange={(e) => setAlanTercihi(e.target.value)}
+                className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+              >
+                <option value="">{t("alanTercihiYok")}</option>
+                {alanlar.map((alan) => (
+                  <option key={alan} value={alan}>
+                    {ALAN_CEVIRI_ANAHTARLARI.includes(alan) ? t(`alanAdlari.${alan}`) : alan}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="space-y-1">
             <label className="block text-sm font-medium text-foreground">{t("notEtiket")}</label>

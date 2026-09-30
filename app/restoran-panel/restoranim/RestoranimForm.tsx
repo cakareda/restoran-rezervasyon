@@ -5,17 +5,19 @@ import {
   OLANAK_ETIKETLERI,
   ATMOSFER_ETIKETLERI,
   MUTFAK_TURLERI,
+  FIYAT_ARALIKLARI,
   type Restoran,
   type Masa,
 } from "@/lib/types";
-import { fiyatTemizle } from "@/lib/format";
-import { calismaSaatleriYikle, type CalismaSaatleri } from "@/lib/calismaSaatleri";
+import { fiyatSeviyesi as fiyatSeviyesiHesapla } from "@/lib/format";
+import { calismaSaatleriYikle, ozelGunlerYikle, type CalismaSaatleri, type OzelGun } from "@/lib/calismaSaatleri";
 import OlanakIkonu from "@/components/OlanakIkonu";
 import GooglePlacesArama, { type GooglePlaceSonucu } from "@/components/GooglePlacesArama";
 import FotoYukleyici from "@/components/FotoYukleyici";
 import MasaEnvanteri from "@/components/MasaEnvanteri";
 import MenuYukleyici from "@/components/MenuYukleyici";
 import CalismaSaatleriDuzenleyici from "@/components/CalismaSaatleriDuzenleyici";
+import OzelGunlerDuzenleyici from "@/components/OzelGunlerDuzenleyici";
 import RestoranOnizleme from "@/components/RestoranOnizleme";
 import WidgetKoduKutusu from "@/components/WidgetKoduKutusu";
 import { restoranYolu } from "@/lib/slug";
@@ -36,10 +38,16 @@ export default function RestoranimForm({
   const [ad, setAd] = useState(restoran?.ad ?? "");
   const [sehir, setSehir] = useState(restoran?.sehir ?? "");
   const [semt, setSemt] = useState(restoran?.semt ?? "");
+  const [semtSerbestMi, setSemtSerbestMi] = useState(
+    semtSecenekleri.length === 0 || (restoran?.semt ? !semtSecenekleri.includes(restoran.semt) : true)
+  );
   const [telefon, setTelefon] = useState(restoran?.telefon ?? "");
   const [adres, setAdres] = useState(restoran?.adres ?? "");
   const [mutfakTuru, setMutfakTuru] = useState(restoran?.mutfak_turu ?? "");
-  const [ortalamaFiyat, setOrtalamaFiyat] = useState(fiyatTemizle(restoran?.ortalama_fiyat ?? ""));
+  const baslangicFiyatSeviyesi = fiyatSeviyesiHesapla(restoran?.ortalama_fiyat, restoran?.fiyat_seviyesi);
+  const [ortalamaFiyat, setOrtalamaFiyat] = useState(
+    FIYAT_ARALIKLARI.find((f) => f.seviye === baslangicFiyatSeviyesi)?.aralik ?? ""
+  );
   const [acilisSaati, setAcilisSaati] = useState(restoran?.acilis_saati?.slice(0, 5) ?? "12:00");
   const [kapanisSaati, setKapanisSaati] = useState(restoran?.kapanis_saati?.slice(0, 5) ?? "23:00");
   const [olanaklar, setOlanaklar] = useState<string[]>(restoran?.olanaklar ?? []);
@@ -49,6 +57,12 @@ export default function RestoranimForm({
   const hesaplananKapasite = masalar.reduce((toplam, m) => toplam + m.kapasite * m.adet, 0);
   const [calismaSaatleri, setCalismaSaatleri] = useState<CalismaSaatleri | null>(() =>
     calismaSaatleriYikle(restoran?.calisma_saatleri)
+  );
+  const [ozelGunler, setOzelGunler] = useState<OzelGun[]>(() =>
+    ozelGunlerYikle(restoran?.ozel_gunler)
+  );
+  const [fiyatSeviyesi, setFiyatSeviyesi] = useState(
+    baslangicFiyatSeviyesi ? String(baslangicFiyatSeviyesi) : ""
   );
   const [degisti, setDegisti] = useState(false);
   const [menuUrl, setMenuUrl] = useState(restoran?.menu_url ?? "");
@@ -131,20 +145,57 @@ export default function RestoranimForm({
           </div>
           <div>
             <label className={etiketStil}>Semt</label>
-            <input
-              name="semt"
-              value={semt}
-              onChange={(e) => setSemt(e.target.value)}
-              required
-              list="semt-secenekleri"
-              autoComplete="off"
-              className={girdiStil}
-            />
-            <datalist id="semt-secenekleri">
-              {semtSecenekleri.map((s) => (
-                <option key={s} value={s} />
-              ))}
-            </datalist>
+            {semtSerbestMi ? (
+              <div className="flex gap-1.5">
+                <input
+                  name="semt"
+                  value={semt}
+                  onChange={(e) => setSemt(e.target.value)}
+                  required
+                  autoFocus
+                  placeholder="Yeni semt adı"
+                  className={girdiStil}
+                />
+                {semtSecenekleri.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSemtSerbestMi(false);
+                      setSemt(semtSecenekleri[0] ?? "");
+                    }}
+                    className="shrink-0 rounded-xl border border-border px-3 text-xs font-medium text-muted hover:text-foreground"
+                  >
+                    Listeden seç
+                  </button>
+                )}
+              </div>
+            ) : (
+              <select
+                name="semt"
+                value={semt}
+                onChange={(e) => {
+                  if (e.target.value === "__yeni__") {
+                    setSemtSerbestMi(true);
+                    setSemt("");
+                  } else {
+                    setSemt(e.target.value);
+                  }
+                }}
+                required
+                className={girdiStil}
+              >
+                <option value="" disabled>
+                  Seçin
+                </option>
+                {semt && !semtSecenekleri.includes(semt) && <option value={semt}>{semt}</option>}
+                {semtSecenekleri.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+                <option value="__yeni__">+ Yeni semt ekle</option>
+              </select>
+            )}
           </div>
         </div>
         <div>
@@ -201,19 +252,28 @@ export default function RestoranimForm({
             </div>
           </div>
           <div>
-            <label className={etiketStil}>Ortalama fiyat</label>
-            <div className="relative">
-              <span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-sm text-muted">
-                ₺
-              </span>
-              <input
-                name="ortalamaFiyat"
-                value={ortalamaFiyat}
-                onChange={(e) => setOrtalamaFiyat(e.target.value)}
-                placeholder="örn. 500-800"
-                className={`${girdiStil} pl-7`}
-              />
-            </div>
+            <label className={etiketStil}>Fiyat aralığı</label>
+            <input type="hidden" name="ortalamaFiyat" value={ortalamaFiyat} />
+            <select
+              name="fiyatSeviyesi"
+              value={fiyatSeviyesi}
+              onChange={(e) => {
+                setFiyatSeviyesi(e.target.value);
+                const secilen = FIYAT_ARALIKLARI.find((f) => String(f.seviye) === e.target.value);
+                setOrtalamaFiyat(secilen?.aralik ?? "");
+              }}
+              required
+              className={girdiStil}
+            >
+              <option value="" disabled>
+                Seçin
+              </option>
+              {FIYAT_ARALIKLARI.map((f) => (
+                <option key={f.seviye} value={f.seviye}>
+                  {f.etiket}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
         <div>
@@ -343,6 +403,12 @@ export default function RestoranimForm({
             varsayilanKapanis={kapanisSaati}
             onDegis={setCalismaSaatleri}
           />
+        </div>
+
+        <div>
+          <label className={etiketStil}>Bayram / özel gün istisnaları (opsiyonel)</label>
+          <input type="hidden" name="ozelGunler" value={JSON.stringify(ozelGunler)} />
+          <OzelGunlerDuzenleyici baslangicDeger={ozelGunler} onDegis={setOzelGunler} />
         </div>
 
         <div>
@@ -489,7 +555,7 @@ export default function RestoranimForm({
           sehir={sehir}
           semt={semt}
           mutfakTuru={mutfakTuru}
-          ortalamaFiyat={ortalamaFiyat}
+          fiyatSeviyesi={fiyatSeviyesi ? Number(fiyatSeviyesi) : null}
           adres={adres}
           acilisSaati={acilisSaati}
           kapanisSaati={kapanisSaati}

@@ -18,6 +18,21 @@ export default function MasaEnvanteri({
   const [yeniAdet, setYeniAdet] = useState(1);
   const [yeniAlan, setYeniAlan] = useState("");
   const [hata, setHata] = useState<string | null>(null);
+  const [duzenlenenId, setDuzenlenenId] = useState<string | null>(null);
+
+  function duzenlemeyeBasla(m: Masa) {
+    setDuzenlenenId(m.id);
+    setYeniKapasite(m.kapasite);
+    setYeniAdet(m.adet);
+    setYeniAlan(m.alan ?? "");
+  }
+
+  function duzenlemeyiIptalEt() {
+    setDuzenlenenId(null);
+    setYeniKapasite(2);
+    setYeniAdet(1);
+    setYeniAlan("");
+  }
 
   useEffect(() => {
     if (!restoranId) return;
@@ -38,6 +53,31 @@ export default function MasaEnvanteri({
   async function ekle() {
     if (!restoranId) return;
     setHata(null);
+
+    if (duzenlenenId) {
+      const { data, error } = await supabase
+        .from("masalar")
+        .update({ kapasite: yeniKapasite, adet: yeniAdet, alan: yeniAlan })
+        .eq("id", duzenlenenId)
+        .select()
+        .single();
+
+      if (error) {
+        setHata("Güncellenemedi — bu kapasite/alan kombinasyonu zaten var olabilir.");
+        return;
+      }
+
+      setMasalar((mevcut) => {
+        const yeni = mevcut
+          .map((m) => (m.id === duzenlenenId ? data : m))
+          .sort((a, b) => a.kapasite - b.kapasite);
+        onDegis?.(yeni);
+        return yeni;
+      });
+      duzenlemeyiIptalEt();
+      return;
+    }
+
     const { data, error } = await supabase
       .from("masalar")
       .upsert(
@@ -91,7 +131,9 @@ export default function MasaEnvanteri({
           {masalar.map((m) => (
             <div
               key={m.id}
-              className="flex items-center justify-between rounded-xl border border-border px-3.5 py-2.5 text-sm"
+              className={`flex items-center justify-between rounded-xl border px-3.5 py-2.5 text-sm ${
+                duzenlenenId === m.id ? "border-brand bg-brand-light/40" : "border-border"
+              }`}
             >
               <span className="font-medium text-foreground">
                 {m.adet} masa × {m.kapasite} kişilik
@@ -101,13 +143,22 @@ export default function MasaEnvanteri({
                   </span>
                 )}
               </span>
-              <button
-                type="button"
-                onClick={() => sil(m.id)}
-                className="text-xs font-semibold text-muted hover:text-red-600"
-              >
-                Sil
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => duzenlemeyeBasla(m)}
+                  className="text-xs font-semibold text-muted hover:text-brand-dark"
+                >
+                  Düzenle
+                </button>
+                <button
+                  type="button"
+                  onClick={() => sil(m.id)}
+                  className="text-xs font-semibold text-muted hover:text-red-600"
+                >
+                  Sil
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -118,6 +169,14 @@ export default function MasaEnvanteri({
         </p>
       )}
 
+      {duzenlenenId && (
+        <p className="text-xs font-semibold text-brand-dark">
+          Masa düzenleniyor —{" "}
+          <button type="button" onClick={duzenlemeyiIptalEt} className="underline">
+            vazgeç
+          </button>
+        </p>
+      )}
       <div className="flex items-end gap-2 rounded-xl bg-brand-light p-3">
         <div>
           <label className="mb-1 block text-xs font-semibold text-muted">Kaç kişilik</label>
@@ -160,7 +219,7 @@ export default function MasaEnvanteri({
           onClick={ekle}
           className="rounded-lg bg-brand px-3.5 py-1.5 text-sm font-semibold text-white hover:bg-brand-dark"
         >
-          Ekle / Güncelle
+          {duzenlenenId ? "Kaydet" : "Ekle"}
         </button>
       </div>
       {hata && <p className="text-sm font-medium text-red-600">{hata}</p>}

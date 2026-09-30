@@ -112,7 +112,9 @@
 "yemekEtiket": "Essen",
 "servisEtiket": "Service",
 "ortamEtiket": "Ambiente",
-"yorumAdet": "{sayi} Bewertungen"
+"yorumAdet": "{sayi} Bewertungen",
+"araBtn": "Anrufen",
+"whatsappBtn": "Per WhatsApp schreiben"
 },
 "RezervasyonFormu": {
 "baslik": "Reservierungsanfrage erstellen",
@@ -132,6 +134,13 @@
 "notPlaceholder": "Allergien, besondere Wünsche usw.",
 "ozelGunEtiket": "Besonderer Anlass (optional)",
 "ozelGunYok": "Keiner",
+"alanTercihiEtiket": "Sitzplatzwunsch (optional)",
+"alanTercihiYok": "Keine Präferenz",
+"alanAdlari": {
+"salon": "Innenbereich",
+"bahce": "Garten",
+"teras": "Terrasse"
+},
 "ozelGun": {
 "dogum_gunu": "Geburtstag",
 "yil_donumu": "Jahrestag",

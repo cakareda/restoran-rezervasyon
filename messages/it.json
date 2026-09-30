@@ -112,7 +112,9 @@
     "yemekEtiket": "Cucina",
     "servisEtiket": "Servizio",
     "ortamEtiket": "Atmosfera",
-    "yorumAdet": "{sayi} recensioni"
+    "yorumAdet": "{sayi} recensioni",
+    "araBtn": "Chiama",
+    "whatsappBtn": "Scrivi su WhatsApp"
   },
   "RezervasyonFormu": {
     "baslik": "Crea una richiesta di prenotazione",
@@ -132,6 +134,13 @@
     "notPlaceholder": "Allergie, richieste particolari, ecc.",
     "ozelGunEtiket": "Occasione speciale (facoltativa)",
     "ozelGunYok": "Nessuna",
+    "alanTercihiEtiket": "Preferenza di posto (opzionale)",
+    "alanTercihiYok": "Nessuna preferenza",
+    "alanAdlari": {
+      "salon": "Interno",
+      "bahce": "Giardino",
+      "teras": "Terrazza"
+    },
     "ozelGun": {
       "dogum_gunu": "Compleanno",
       "yil_donumu": "Anniversario",

@@ -15,12 +15,20 @@ export default async function WidgetSayfasi({
   const { data: restoran } = await supabase
     .from("restoranlar")
     .select(
-      "id, ad, acilis_saati, kapanis_saati, calisma_saatleri, maksimum_kisi_sayisi, en_erken_rezervasyon_saat, en_gec_rezervasyon_gun"
+      "id, ad, acilis_saati, kapanis_saati, calisma_saatleri, ozel_gunler, maksimum_kisi_sayisi, en_erken_rezervasyon_saat, en_gec_rezervasyon_gun"
     )
     .eq("id", restoranId)
     .maybeSingle();
 
   if (!restoran) notFound();
+
+  const { data: masaVerisi } = await supabase
+    .from("masalar")
+    .select("alan")
+    .eq("restoran_id", restoranId);
+  const alanlar = Array.from(
+    new Set((masaVerisi ?? []).map((m: { alan: string }) => m.alan).filter(Boolean))
+  ).sort();
 
   return (
     <NextIntlClientProvider locale="tr" messages={trMesajlar}>
@@ -34,6 +42,8 @@ export default async function WidgetSayfasi({
           acilisSaati={restoran.acilis_saati.slice(0, 5)}
           kapanisSaati={restoran.kapanis_saati.slice(0, 5)}
           calismaSaatleriJson={restoran.calisma_saatleri}
+          ozelGunlerJson={restoran.ozel_gunler}
+          alanlar={alanlar}
           maksimumKisi={restoran.maksimum_kisi_sayisi}
           enErkenSaat={restoran.en_erken_rezervasyon_saat}
           enGecGun={restoran.en_gec_rezervasyon_gun}

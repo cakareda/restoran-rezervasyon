@@ -112,7 +112,9 @@
 "yemekEtiket": "الطعام",
 "servisEtiket": "الخدمة",
 "ortamEtiket": "الأجواء",
-"yorumAdet": "{sayi} تقييم"
+"yorumAdet": "{sayi} تقييم",
+"araBtn": "اتصال",
+"whatsappBtn": "راسلنا عبر واتساب"
 },
 "RezervasyonFormu": {
 "baslik": "إنشاء طلب حجز",
@@ -132,6 +134,13 @@
 "notPlaceholder": "حساسية، طلب خاص، إلخ.",
 "ozelGunEtiket": "مناسبة خاصة (اختياري)",
 "ozelGunYok": "لا يوجد",
+"alanTercihiEtiket": "تفضيل الجلوس (اختياري)",
+"alanTercihiYok": "لا يهم",
+"alanAdlari": {
+"salon": "داخلي",
+"bahce": "حديقة",
+"teras": "تراس"
+},
 "ozelGun": {
 "dogum_gunu": "عيد ميلاد",
 "yil_donumu": "ذكرى سنوية",

@@ -1,5 +1,4 @@
 import { OLANAK_ETIKETLERI } from "@/lib/types";
-import { fiyatGoster } from "@/lib/format";
 import { KonumIkonu, SaatIkonu, TabakIkonu } from "@/components/icons";
 import OlanakIkonu from "@/components/OlanakIkonu";
 
@@ -8,7 +7,7 @@ export default function RestoranOnizleme({
   sehir,
   semt,
   mutfakTuru,
-  ortalamaFiyat,
+  fiyatSeviyesi,
   adres,
   acilisSaati,
   kapanisSaati,
@@ -19,7 +18,7 @@ export default function RestoranOnizleme({
   sehir: string;
   semt: string;
   mutfakTuru: string;
-  ortalamaFiyat: string;
+  fiyatSeviyesi: number | null;
   adres: string;
   acilisSaati: string;
   kapanisSaati: string;
@@ -45,9 +44,10 @@ export default function RestoranOnizleme({
           {semt || "Semt"}, {sehir || "Şehir"} · {mutfakTuru || "Mutfak türü"}
         </p>
 
-        {fiyatGoster(ortalamaFiyat) && (
+        {fiyatSeviyesi && (
           <span className="mt-2 inline-block rounded-full bg-brand-light px-2.5 py-1 text-xs font-semibold text-brand-dark">
-            {fiyatGoster(ortalamaFiyat)}
+            <span>{"₺".repeat(fiyatSeviyesi)}</span>
+            <span className="text-brand-dark/30">{"₺".repeat(4 - fiyatSeviyesi)}</span>
           </span>
         )}
 

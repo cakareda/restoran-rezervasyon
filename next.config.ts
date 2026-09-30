@@ -4,7 +4,8 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 // CSP'yi gerçek entegrasyonlara göre kısıtlıyoruz: Google Maps/Places, Supabase
-// (auth + storage), QR kod servisi, Unsplash stok görselleri. next/script ve
+// (auth + storage + realtime — panel bildirim zili için wss:// gerekli), QR kod
+// servisi, Unsplash stok görselleri. next/script ve
 // Tailwind'in ürettiği satır içi stiller için 'unsafe-inline' gerekiyor; nonce
 // bazlı katı CSP bu ölçekte gereksiz karmaşıklık katardı.
 const CSP = [
@@ -13,7 +14,7 @@ const CSP = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data: blob: https://*.supabase.co https://maps.googleapis.com https://maps.gstatic.com https://*.gstatic.com https://images.unsplash.com https://api.qrserver.com",
-  "connect-src 'self' https://*.supabase.co https://maps.googleapis.com https://nominatim.openstreetmap.org",
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://maps.googleapis.com https://nominatim.openstreetmap.org",
   "frame-src 'self' https://www.google.com",
   "frame-ancestors 'self'",
   "form-action 'self'",

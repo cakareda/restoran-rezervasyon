@@ -102,7 +102,8 @@ export default async function RestoranlarSayfasi({
 
   let restoranlar = (tumRestoranlar ?? []).filter((r) => {
     if ((puanlar.get(r.id)?.ortalama ?? 0) < minPuanSayi) return false;
-    if (fiyatSeviyeSayi && fiyatSeviyesi(r.ortalama_fiyat) !== fiyatSeviyeSayi) return false;
+    if (fiyatSeviyeSayi && fiyatSeviyesi(r.ortalama_fiyat, r.fiyat_seviyesi) !== fiyatSeviyeSayi)
+      return false;
     return true;
   });
 
@@ -140,8 +141,12 @@ export default async function RestoranlarSayfasi({
 
   const siralamaFn: Record<string, (a: Restoran, b: Restoran) => number> = {
     puanYuksek: (a, b) => (puanlar.get(b.id)?.ortalama ?? 0) - (puanlar.get(a.id)?.ortalama ?? 0),
-    fiyatDusuk: (a, b) => (fiyatSeviyesi(a.ortalama_fiyat) ?? 99) - (fiyatSeviyesi(b.ortalama_fiyat) ?? 99),
-    fiyatYuksek: (a, b) => (fiyatSeviyesi(b.ortalama_fiyat) ?? 0) - (fiyatSeviyesi(a.ortalama_fiyat) ?? 0),
+    fiyatDusuk: (a, b) =>
+      (fiyatSeviyesi(a.ortalama_fiyat, a.fiyat_seviyesi) ?? 99) -
+      (fiyatSeviyesi(b.ortalama_fiyat, b.fiyat_seviyesi) ?? 99),
+    fiyatYuksek: (a, b) =>
+      (fiyatSeviyesi(b.ortalama_fiyat, b.fiyat_seviyesi) ?? 0) -
+      (fiyatSeviyesi(a.ortalama_fiyat, a.fiyat_seviyesi) ?? 0),
     isimAZ: (a, b) => a.ad.localeCompare(b.ad, "tr"),
   };
   if (sirala && siralamaFn[sirala]) {

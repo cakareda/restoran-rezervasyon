@@ -11,10 +11,12 @@ export interface Restoran {
   telefon: string | null;
   kapasite: number | null;
   ortalama_fiyat: string | null;
+  fiyat_seviyesi: number | null;
   aciklama: string | null;
   fotograf_url: string | null;
   adres: string | null;
   calisma_saatleri: string | null;
+  ozel_gunler: string | null;
   acilis_saati: string;
   kapanis_saati: string;
   oturma_suresi_dk: number;
@@ -27,6 +29,7 @@ export interface Restoran {
   en_erken_rezervasyon_saat: number;
   en_gec_rezervasyon_gun: number;
   maksimum_kisi_sayisi: number;
+  grup_esigi: number | null;
   lat: number | null;
   lng: number | null;
   duyuru: string | null;
@@ -87,6 +90,13 @@ export const ATMOSFER_ETIKETLERI = [
   { deger: "arkadas_grubu", etiket: "Arkadaş grubu" },
 ] as const;
 
+export const FIYAT_ARALIKLARI = [
+  { seviye: 1, aralik: "0-300", etiket: "₺ · 0–300 TL" },
+  { seviye: 2, aralik: "300-600", etiket: "₺₺ · 300–600 TL" },
+  { seviye: 3, aralik: "600-1000", etiket: "₺₺₺ · 600–1000 TL" },
+  { seviye: 4, aralik: "1000+", etiket: "₺₺₺₺ · 1000 TL ve üzeri" },
+] as const;
+
 export const MUTFAK_TURLERI = [
   "Türk",
   "Osmanlı",
@@ -132,6 +142,7 @@ export interface Rezervasyon {
   geldi_mi: boolean | null;
   kaynak: RezervasyonKaynagi;
   masa_kapasitesi: number | null;
+  alan_tercihi: string | null;
   ozel_gun: string | null;
   misafir_ad_soyad: string | null;
   misafir_telefon: string | null;

@@ -2,19 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { RezervasyonDurum, RezervasyonKaynagi } from "@/lib/types";
+import { MASA_ALANLARI, type RezervasyonDurum, type RezervasyonKaynagi } from "@/lib/types";
 import { DIL_ADLARI } from "@/i18n/routing";
 import { TakvimIkonu, TelefonIkonu, WhatsappIkonu } from "@/components/icons";
-
-function whatsappNumarasi(telefon: string) {
-  // Yeni kayıtlarda ülke kodu zaten "+" ile geliyor (örn. "+905551234567").
-  if (telefon.startsWith("+")) return telefon.slice(1).replace(/\D/g, "");
-  // Eski kayıtlar (ülke kodu olmadan girilmiş, Türk numarası varsayımı).
-  const rakamlar = telefon.replace(/\D/g, "");
-  if (rakamlar.startsWith("90")) return rakamlar;
-  if (rakamlar.startsWith("0")) return `90${rakamlar.slice(1)}`;
-  return `90${rakamlar}`;
-}
+import { whatsappNumarasi } from "@/lib/format";
 
 const kaynakEtiketi: Record<RezervasyonKaynagi, string> = {
   online: "Online",
@@ -49,6 +40,8 @@ export default function RezervasyonSatiri({
   notlar,
   restoranNotu,
   hayaletUyarisi,
+  alanTercihi,
+  grupUyarisi,
 }: {
   id: string;
   misafirAd: string;
@@ -63,6 +56,8 @@ export default function RezervasyonSatiri({
   notlar?: string | null;
   restoranNotu?: string | null;
   hayaletUyarisi?: boolean;
+  alanTercihi?: string | null;
+  grupUyarisi?: boolean;
 }) {
   const router = useRouter();
   const [yukleniyor, setYukleniyor] = useState(false);
@@ -117,6 +112,14 @@ export default function RezervasyonSatiri({
                 {DIL_ADLARI[misafirDili as keyof typeof DIL_ADLARI] ?? misafirDili}
               </span>
             )}
+            {grupUyarisi && (
+              <span
+                title="Bu rezervasyon grup eşiğinin üzerinde"
+                className="rounded-full bg-purple-50 px-2 py-0.5 text-[11px] font-semibold text-purple-700"
+              >
+                👥 Grup
+              </span>
+            )}
           </p>
           <p className="text-sm text-muted">{misafirEposta || misafirTelefon}</p>
           <p className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-foreground">
@@ -127,6 +130,11 @@ export default function RezervasyonSatiri({
               timeZone: "Europe/Istanbul",
             })}{" "}
             · {kisiSayisi} kişi
+            {alanTercihi && (
+              <span className="rounded-full bg-brand-light px-2 py-0.5 text-[11px] font-semibold text-brand-dark">
+                {MASA_ALANLARI.find((a) => a.deger === alanTercihi)?.etiket ?? alanTercihi} tercih ediyor
+              </span>
+            )}
           </p>
           {notlar && (
             <p className="mt-2 inline-flex max-w-md items-start gap-1.5 rounded-lg bg-amber-50 px-2.5 py-1.5 text-xs font-medium text-amber-800">

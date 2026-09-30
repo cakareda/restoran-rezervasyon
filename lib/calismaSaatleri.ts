@@ -17,8 +17,23 @@ export const GUNLER: { key: GunKey; etiket: string }[] = [
   { key: "pazar", etiket: "Pazar" },
 ];
 
-export type GunSaati = { acilis: string; kapanis: string; kapali: boolean };
+export type GunSaati = {
+  acilis: string;
+  kapanis: string;
+  kapali: boolean;
+  /** İkinci servis (örn. akşam), varsa öğle/akşam arası kapalı saat dilimi bırakır. */
+  aralik2Acilis?: string;
+  aralik2Kapanis?: string;
+};
 export type CalismaSaatleri = Partial<Record<GunKey, GunSaati>>;
+
+export type OzelGun = {
+  tarih: string; // YYYY-MM-DD
+  kapali: boolean;
+  acilis?: string;
+  kapanis?: string;
+  aciklama?: string;
+};
 
 const JS_GUN_INDEX_TO_KEY: GunKey[] = [
   "pazar",
@@ -45,15 +60,38 @@ export function calismaSaatleriYikle(deger: string | null | undefined): CalismaS
   }
 }
 
-/** Verilen tarih için o günün açılış/kapanış saatini döner; gün bazlı ayar yoksa restoranın
- *  genel açılış/kapanış saatine düşer (geriye dönük uyumluluk). */
+export function ozelGunlerYikle(deger: string | null | undefined): OzelGun[] {
+  if (!deger) return [];
+  try {
+    const veri = JSON.parse(deger);
+    return Array.isArray(veri) ? veri : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Verilen tarih için o günün açılış/kapanış saatini döner. Sırasıyla: önce özel gün/tatil
+ *  istisnası, sonra gün bazlı ayar, son olarak restoranın genel açılış/kapanış saatine
+ *  düşer (geriye dönük uyumluluk). */
 export function gununSaatleri(params: {
   tarih: string;
   calismaSaatleriJson: string | null | undefined;
   varsayilanAcilis: string;
   varsayilanKapanis: string;
+  ozelGunlerJson?: string | null;
 }): GunSaati {
-  const { tarih, calismaSaatleriJson, varsayilanAcilis, varsayilanKapanis } = params;
+  const { tarih, calismaSaatleriJson, varsayilanAcilis, varsayilanKapanis, ozelGunlerJson } = params;
+
+  const ozelGun = ozelGunlerYikle(ozelGunlerJson).find((o) => o.tarih === tarih);
+  if (ozelGun) {
+    if (ozelGun.kapali) return { acilis: "00:00", kapanis: "00:00", kapali: true };
+    return {
+      acilis: ozelGun.acilis || varsayilanAcilis,
+      kapanis: ozelGun.kapanis || varsayilanKapanis,
+      kapali: false,
+    };
+  }
+
   const yapi = calismaSaatleriYikle(calismaSaatleriJson);
   const gunVerisi = yapi?.[gunAnahtari(tarih)];
   if (!gunVerisi) return { acilis: varsayilanAcilis, kapanis: varsayilanKapanis, kapali: false };

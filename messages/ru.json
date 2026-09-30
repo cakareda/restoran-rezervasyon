@@ -112,7 +112,9 @@
 "yemekEtiket": "Блюда",
 "servisEtiket": "Сервис",
 "ortamEtiket": "Атмосфера",
-"yorumAdet": "{sayi} отзывов"
+"yorumAdet": "{sayi} отзывов",
+"araBtn": "Позвонить",
+"whatsappBtn": "Написать в WhatsApp"
 },
 "RezervasyonFormu": {
 "baslik": "Создать запрос на бронирование",
@@ -132,6 +134,13 @@
 "notPlaceholder": "Аллергии, особые пожелания и т. д.",
 "ozelGunEtiket": "Особый повод (необязательно)",
 "ozelGunYok": "Нет",
+"alanTercihiEtiket": "Предпочтение по зоне (необязательно)",
+"alanTercihiYok": "Не важно",
+"alanAdlari": {
+"salon": "Зал",
+"bahce": "Сад",
+"teras": "Терраса"
+},
 "ozelGun": {
 "dogum_gunu": "День рождения",
 "yil_donumu": "Годовщина",
