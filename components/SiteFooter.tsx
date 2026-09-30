@@ -40,14 +40,16 @@ export default function SiteFooter({
   return (
     <footer className="bg-brand-darkest text-white/70">
       <div className="mx-auto grid max-w-5xl gap-8 px-6 py-12 sm:grid-cols-4">
-        <div className="sm:col-span-2">
+        <div className="flex flex-col items-start sm:col-span-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/logo-full-krem.svg"
             alt={SITE_ADI}
             className="h-12 w-auto sm:h-14"
           />
-          <p className="mt-3 max-w-xs text-sm font-normal tracking-wide">{slogan}</p>
+          <p className="ms-[47px] -mt-[19px] max-w-xs text-xs font-normal tracking-wide sm:-mt-[22px]">
+            {slogan}
+          </p>
         </div>
         <div>
           <p className="text-xs font-bold uppercase tracking-wide text-white/50">{baslikMasadaki}</p>
