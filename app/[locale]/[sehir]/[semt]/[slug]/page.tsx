@@ -35,8 +35,11 @@ export async function generateMetadata({
   if (!restoran) return { title: t("restoranBulunamadi") };
 
   const baslik = `${restoran.ad} — ${restoran.semt}, ${restoran.sehir}`;
-  const aciklama = restoran.aciklama?.slice(0, 155) || baslik;
-  const foto = restoran.fotograflar?.[0];
+  const aciklama =
+    restoran.aciklama?.trim().slice(0, 155) ||
+    `${restoran.ad}, ${restoran.semt}, ${restoran.sehir} adresinde ${restoran.mutfak_turu} mutfağı sunuyor. Masadaki üzerinden ücretsiz rezervasyon talebi gönder.`;
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://masadaki.com";
+  const foto = restoran.fotograflar?.[0] || `${SITE_URL}/opengraph-image`;
 
   return {
     title: baslik,

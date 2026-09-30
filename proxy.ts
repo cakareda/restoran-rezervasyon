@@ -12,12 +12,15 @@ export async function proxy(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/widget")) {
     return;
   }
+  if (request.nextUrl.pathname.startsWith("/opengraph-image")) {
+    return;
+  }
   return dilYonlendirmesi(request);
 }
 
 export const config = {
   matcher: [
     "/restoran-panel/:path*",
-    "/((?!api|auth|_next|restoran-panel|restoran-girisi|restoran-kayit|restoranlar-icin|widget|.*\\..*).*)",
+    "/((?!api|auth|_next|restoran-panel|restoran-girisi|restoran-kayit|restoranlar-icin|widget|opengraph-image|.*\\..*).*)",
   ],
 };

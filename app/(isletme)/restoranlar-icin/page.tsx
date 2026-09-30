@@ -12,10 +12,20 @@ import {
 const SAHIP_FOTO =
   "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1800&q=80";
 
+const BASLIK = "Restoranlar için";
+const ACIKLAMA =
+  "Rezervasyon taleplerini tek panelden yönet, telefon trafiğini azalt. Kayıt ve kurulum ücretsiz.";
+
 export const metadata: Metadata = {
-  title: "Restoranlar için",
-  description:
-    "Rezervasyon taleplerini tek panelden yönet, telefon trafiğini azalt. Kayıt ve kurulum ücretsiz.",
+  title: BASLIK,
+  description: ACIKLAMA,
+  alternates: { canonical: "https://masadaki.com/restoranlar-icin" },
+  openGraph: {
+    title: `${BASLIK} — Masadaki`,
+    description: ACIKLAMA,
+    url: "https://masadaki.com/restoranlar-icin",
+    locale: "tr_TR",
+  },
 };
 
 export default function RestoranlarIcin() {
