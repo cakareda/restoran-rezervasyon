@@ -74,8 +74,34 @@ export default async function AnaSayfa() {
     { no: "03", Ikon: OnayIkonu, baslik: t("adim3Baslik"), aciklama: t("adim3Aciklama") },
   ];
 
+  const yapilandirilmisVeri = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        name: "Masadaki",
+        url: "https://masadaki.com",
+        logo: "https://masadaki.com/masadaki-logo.png",
+      },
+      {
+        "@type": "WebSite",
+        name: "Masadaki",
+        url: "https://masadaki.com",
+        potentialAction: {
+          "@type": "SearchAction",
+          target: "https://masadaki.com/restoranlar?ara={search_term_string}",
+          "query-input": "required name=search_term_string",
+        },
+      },
+    ],
+  };
+
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(yapilandirilmisVeri) }}
+      />
       {/* Hero */}
       <section
         className="relative bg-cover bg-center"

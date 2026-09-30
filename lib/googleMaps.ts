@@ -41,7 +41,7 @@ export function googleMapsYukle(apiKey: string, kutuphaneler = "") {
 
   window.__googleMapsYukleniyor = new Promise((resolve, reject) => {
     const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}${kutuphaneler ? `&libraries=${kutuphaneler}` : ""}&language=tr&region=TR`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}${kutuphaneler ? `&libraries=${kutuphaneler}` : ""}&language=tr&region=TR&loading=async`;
     script.async = true;
     script.onload = () => resolve();
     script.onerror = () => reject(new Error("Google Maps yüklenemedi"));
