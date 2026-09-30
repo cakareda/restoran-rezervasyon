@@ -14,6 +14,7 @@ export default function RestoranKayitClient() {
   const [hata, setHata] = useState<string | null>(null);
   const [epostaOnayBekleniyor, setEpostaOnayBekleniyor] = useState(false);
   const [sifreGorunur, setSifreGorunur] = useState(false);
+  const [kvkkOnay, setKvkkOnay] = useState(false);
 
   async function kayitOl(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -104,11 +105,27 @@ export default function RestoranKayitClient() {
           </button>
         </div>
 
+        <label className="flex items-start gap-2 text-xs text-muted">
+          <input
+            type="checkbox"
+            checked={kvkkOnay}
+            onChange={(e) => setKvkkOnay(e.target.checked)}
+            required
+            className="mt-0.5 accent-brand"
+          />
+          <span>
+            <Link href="/kvkk" target="_blank" className="font-semibold text-brand hover:underline">
+              KVKK Aydınlatma Metni&apos;ni
+            </Link>{" "}
+            okudum ve anladım.
+          </span>
+        </label>
+
         {hata && <p className="text-sm font-medium text-red-600">{hata}</p>}
 
         <button
           type="submit"
-          disabled={gonderiliyor}
+          disabled={gonderiliyor || !kvkkOnay}
           className="w-full rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-dark disabled:opacity-50"
         >
           {gonderiliyor ? "Oluşturuluyor..." : "Hesap Oluştur"}

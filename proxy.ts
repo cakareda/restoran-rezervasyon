@@ -15,12 +15,19 @@ export async function proxy(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/opengraph-image")) {
     return;
   }
+  if (
+    request.nextUrl.pathname.startsWith("/kvkk") ||
+    request.nextUrl.pathname.startsWith("/cerez-politikasi") ||
+    request.nextUrl.pathname.startsWith("/hakkimizda")
+  ) {
+    return;
+  }
   return dilYonlendirmesi(request);
 }
 
 export const config = {
   matcher: [
     "/restoran-panel/:path*",
-    "/((?!api|auth|_next|restoran-panel|restoran-girisi|restoran-kayit|restoranlar-icin|widget|opengraph-image|.*\\..*).*)",
+    "/((?!api|auth|_next|restoran-panel|restoran-girisi|restoran-kayit|restoranlar-icin|kvkk|cerez-politikasi|hakkimizda|widget|opengraph-image|.*\\..*).*)",
   ],
 };

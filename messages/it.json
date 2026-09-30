@@ -151,6 +151,12 @@
     "gonderiliyor": "Invio in corso...",
     "hataSaatSec": "Seleziona un orario.",
     "hataGenel": "Impossibile creare la prenotazione. Riprova.",
+    "hataKvkkOnay": "Conferma di aver letto l'Informativa sulla privacy per continuare.",
+    "kvkkLink": "l'Informativa sulla privacy",
+    "kvkkSonrasi": "e la comprendo.",
+    "notOnayMetni": "Acconsento alla condivisione di quanto scritto qui (comprese eventuali informazioni su allergie o salute) con il ristorante.",
+    "notUyariMesaji": "Poiché non hai selezionato la casella di consenso, questa nota non verrà salvata — il ristorante non la vedrà.",
+    "notSilGonderBtn": "Rimuovi la nota e invia la prenotazione",
     "ucretsizNot": "Inviare una richiesta di prenotazione è gratuito. Non verrà addebitato alcun importo sulla tua carta.",
     "beklemeListesineEkle": "Aggiungi alla lista d'attesa",
     "beklemeEklendiMesaj": "Sei stato aggiunto alla lista d'attesa. Il ristorante ti chiamerà se si libera un tavolo."
@@ -188,6 +194,8 @@
     "hataGenel": "Impossibile creare l'account.",
     "zatenHesabinVarMi": "Hai già un account?",
     "girisYap": "Accedi",
+    "kvkkLink": "l'Informativa sulla privacy",
+    "kvkkSonrasi": "e la comprendo.",
     "epostaKontrolBaslik": "Controlla la tua e-mail",
     "epostaKontrolAciklama": "Clicca sul link che ti abbiamo inviato per confermare il tuo account. Dopodiché potrai accedere."
   },

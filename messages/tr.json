@@ -157,9 +157,15 @@
     "gonderiliyor": "Gönderiliyor...",
     "hataSaatSec": "Lütfen bir saat seçin.",
     "hataGenel": "Rezervasyon oluşturulamadı, tekrar deneyin.",
+    "hataKvkkOnay": "Devam etmek için KVKK Aydınlatma Metni'ni okuduğunu onaylaman gerekiyor.",
     "ucretsizNot": "Rezervasyon talebi göndermek ücretsizdir, kartınızdan hiçbir ücret alınmaz.",
     "beklemeListesineEkle": "Bekleme listesine ekle",
-    "beklemeEklendiMesaj": "Bekleme listesine eklendin, bir yer açılırsa restoran seni arayacak."
+    "beklemeEklendiMesaj": "Bekleme listesine eklendin, bir yer açılırsa restoran seni arayacak.",
+    "kvkkLink": "KVKK Aydınlatma Metni'ni",
+    "kvkkSonrasi": "okudum ve anladım.",
+    "notOnayMetni": "Bu alana yazdığım bilgilerin (varsa alerji veya sağlık bilgisi dahil) ilgili restoranla paylaşılmasına açık rıza veriyorum.",
+    "notUyariMesaji": "Onay kutusunu işaretlemediğin için bu not kaydedilmeyecek — restoran bu bilgiden haberdar olmayacak.",
+    "notSilGonderBtn": "Notu silip rezervasyonu gönder"
   },
   "HesapGiris": {
     "baslik": "Giriş Yap",
@@ -194,6 +200,8 @@
     "hataGenel": "Kayıt oluşturulamadı.",
     "zatenHesabinVarMi": "Zaten hesabın var mı?",
     "girisYap": "Giriş yap",
+    "kvkkLink": "KVKK Aydınlatma Metni'ni",
+    "kvkkSonrasi": "okudum ve anladım.",
     "epostaKontrolBaslik": "E-postanı kontrol et",
     "epostaKontrolAciklama": "Hesabını onaylamak için sana gönderdiğimiz bağlantıya tıkla, ardından giriş yapabilirsin."
   },

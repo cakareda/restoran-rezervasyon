@@ -151,6 +151,12 @@
     "gonderiliyor": "Sending...",
     "hataSaatSec": "Please choose a time.",
     "hataGenel": "Could not create the reservation. Please try again.",
+    "hataKvkkOnay": "Please confirm you've read the Privacy Notice to continue.",
+    "kvkkLink": "the Privacy Notice",
+    "kvkkSonrasi": "and I understand it.",
+    "notOnayMetni": "I consent to sharing what I wrote here (including any allergy or health information) with the restaurant.",
+    "notUyariMesaji": "Since you didn't check the consent box, this note won't be saved — the restaurant won't see it.",
+    "notSilGonderBtn": "Remove the note and send the reservation",
     "ucretsizNot": "Sending a reservation request is free. Your card will not be charged.",
     "beklemeListesineEkle": "Join the waitlist",
     "beklemeEklendiMesaj": "You've been added to the waitlist. The restaurant will call you if a table becomes available."
@@ -188,6 +194,8 @@
     "hataGenel": "Could not create the account.",
     "zatenHesabinVarMi": "Already have an account?",
     "girisYap": "Log in",
+    "kvkkLink": "the Privacy Notice",
+    "kvkkSonrasi": "and I understand it.",
     "epostaKontrolBaslik": "Check your email",
     "epostaKontrolAciklama": "Click the link we sent you to confirm your account, then you can log in."
   },

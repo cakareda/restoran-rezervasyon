@@ -3,6 +3,7 @@ import { getLocale } from "next-intl/server";
 import "./globals.css";
 import { SITE_ADI, SITE_SLOGAN } from "@/lib/config";
 import { RTL_DILLER } from "@/i18n/routing";
+import CerezBanner from "@/components/CerezBanner";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://masadaki.com"),
@@ -27,7 +28,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
 
   return (
     <html lang={locale} dir={yon} className="h-full antialiased">
-      <body className="min-h-full flex flex-col bg-background text-foreground">{children}</body>
+      <body className="min-h-full flex flex-col bg-background text-foreground">
+        {children}
+        <CerezBanner />
+      </body>
     </html>
   );
 }

@@ -94,6 +94,19 @@ export default function SiteFooter({
             info@masadaki.com
           </a>
         </p>
+        <p className="mt-2 flex items-center justify-center gap-3">
+          <PlainLink href="/hakkimizda" className="hover:text-white">
+            Hakkımızda
+          </PlainLink>
+          <span aria-hidden>·</span>
+          <PlainLink href="/kvkk" className="hover:text-white">
+            KVKK Aydınlatma Metni
+          </PlainLink>
+          <span aria-hidden>·</span>
+          <PlainLink href="/cerez-politikasi" className="hover:text-white">
+            Çerez Politikası
+          </PlainLink>
+        </p>
         <p className="mt-1">
           © {new Date().getFullYear()} {SITE_ADI}
         </p>

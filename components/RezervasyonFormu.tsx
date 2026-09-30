@@ -106,6 +106,9 @@ export default function RezervasyonFormu({
   const [notlar, setNotlar] = useState("");
   const [ozelGun, setOzelGun] = useState("");
   const [alanTercihi, setAlanTercihi] = useState("");
+  const [kvkkOnay, setKvkkOnay] = useState(false);
+  const [notOnayi, setNotOnayi] = useState(false);
+  const [notUyarisiGoster, setNotUyarisiGoster] = useState(false);
   const [beklemeEklendi, setBeklemeEklendi] = useState(false);
   const [beklemeGonderiliyor, setBeklemeGonderiliyor] = useState(false);
 
@@ -189,13 +192,9 @@ export default function RezervasyonFormu({
     profiliYukle();
   }, [supabase]);
 
-  async function gonder(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!saat) {
-      setHata(t("hataSaatSec"));
-      return;
-    }
+  async function gonderimYap(notlarDegeri: string) {
     setHata(null);
+    setNotUyarisiGoster(false);
     setGonderiliyor(true);
 
     const yanit = await fetch("/api/rezervasyon", {
@@ -206,9 +205,10 @@ export default function RezervasyonFormu({
         adSoyad,
         eposta,
         telefon,
-        tarihSaat: istanbulTarihSaat(tarih, saat).toISOString(),
+        tarihSaat: istanbulTarihSaat(tarih, saat!).toISOString(),
         kisiSayisi,
-        notlar: notlar.trim() || null,
+        notlar: notlarDegeri.trim() || null,
+        notOnayi: Boolean(notlarDegeri.trim()) && notOnayi,
         ozelGun: ozelGun || null,
         alanTercihi: alanTercihi || null,
         misafirDili: locale,
@@ -226,10 +226,32 @@ export default function RezervasyonFormu({
     const ozet = new URLSearchParams({
       restoran: restoranAd,
       tarih,
-      saat,
+      saat: saat!,
       kisi: String(kisiSayisi),
     });
     router.push(`/rezervasyon-basarili?${ozet.toString()}`);
+  }
+
+  function notuSilipGonder() {
+    setNotlar("");
+    gonderimYap("");
+  }
+
+  async function gonder(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!saat) {
+      setHata(t("hataSaatSec"));
+      return;
+    }
+    if (!kvkkOnay) {
+      setHata(t("hataKvkkOnay"));
+      return;
+    }
+    if (notlar.trim() && !notOnayi) {
+      setNotUyarisiGoster(true);
+      return;
+    }
+    await gonderimYap(notlar);
   }
 
   return (
@@ -479,13 +501,57 @@ export default function RezervasyonFormu({
             <label className="block text-sm font-medium text-foreground">{t("notEtiket")}</label>
             <textarea
               value={notlar}
-              onChange={(e) => setNotlar(e.target.value)}
+              onChange={(e) => {
+                setNotlar(e.target.value);
+                if (!e.target.value.trim()) setNotUyarisiGoster(false);
+              }}
               rows={2}
               maxLength={300}
               placeholder={t("notPlaceholder")}
               className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
             />
+            {notlar.trim() && (
+              <label className="flex items-start gap-2 pt-1 text-xs text-muted">
+                <input
+                  type="checkbox"
+                  checked={notOnayi}
+                  onChange={(e) => {
+                    setNotOnayi(e.target.checked);
+                    if (e.target.checked) setNotUyarisiGoster(false);
+                  }}
+                  className="mt-0.5 accent-brand"
+                />
+                <span>{t("notOnayMetni")}</span>
+              </label>
+            )}
+            {notUyarisiGoster && (
+              <div className="rounded-xl bg-amber-50 p-3 text-xs text-amber-800">
+                <p>{t("notUyariMesaji")}</p>
+                <button
+                  type="button"
+                  onClick={notuSilipGonder}
+                  className="mt-1.5 font-semibold underline hover:no-underline"
+                >
+                  {t("notSilGonderBtn")}
+                </button>
+              </div>
+            )}
           </div>
+
+          <label className="flex items-start gap-2 text-xs text-muted">
+            <input
+              type="checkbox"
+              checked={kvkkOnay}
+              onChange={(e) => setKvkkOnay(e.target.checked)}
+              className="mt-0.5 accent-brand"
+            />
+            <span>
+              <Link href="/kvkk" target="_blank" className="font-semibold text-brand hover:underline">
+                {t("kvkkLink")}
+              </Link>{" "}
+              {t("kvkkSonrasi")}
+            </span>
+          </label>
 
           {hata && <p className="text-sm font-medium text-red-600">{hata}</p>}
 

@@ -2,10 +2,17 @@
 
 import { createClient } from "@/lib/supabase/client";
 
-export default function GoogleGirisButonu({ metin }: { metin: string }) {
+export default function GoogleGirisButonu({
+  metin,
+  disabled = false,
+}: {
+  metin: string;
+  disabled?: boolean;
+}) {
   const supabase = createClient();
 
   async function girisYap() {
+    if (disabled) return;
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${window.location.origin}/auth/callback` },
@@ -16,7 +23,8 @@ export default function GoogleGirisButonu({ metin }: { metin: string }) {
     <button
       type="button"
       onClick={girisYap}
-      className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-semibold text-foreground transition hover:bg-zinc-50"
+      disabled={disabled}
+      className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-semibold text-foreground transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
     >
       <svg className="h-4.5 w-4.5" viewBox="0 0 24 24">
         <path

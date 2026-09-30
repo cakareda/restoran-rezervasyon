@@ -15,6 +15,7 @@ export default function MusteriKayit() {
   const [hata, setHata] = useState<string | null>(null);
   const [epostaOnayBekleniyor, setEpostaOnayBekleniyor] = useState(false);
   const [sifreGorunur, setSifreGorunur] = useState(false);
+  const [kvkkOnay, setKvkkOnay] = useState(false);
 
   async function kayitOl(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -75,8 +76,23 @@ export default function MusteriKayit() {
         <h1 className="mt-4 text-center text-2xl font-extrabold text-foreground">{t("baslik")}</h1>
         <p className="mt-1 text-center text-sm text-muted">{t("altYazi")}</p>
 
-        <div className="mt-6">
-          <GoogleGirisButonu metin={t("googleDevam")} />
+        <label className="mt-5 flex items-start gap-2 text-xs text-muted">
+          <input
+            type="checkbox"
+            checked={kvkkOnay}
+            onChange={(e) => setKvkkOnay(e.target.checked)}
+            className="mt-0.5 accent-brand"
+          />
+          <span>
+            <Link href="/kvkk" target="_blank" className="font-semibold text-brand hover:underline">
+              {t("kvkkLink")}
+            </Link>{" "}
+            {t("kvkkSonrasi")}
+          </span>
+        </label>
+
+        <div className="mt-4">
+          <GoogleGirisButonu metin={t("googleDevam")} disabled={!kvkkOnay} />
         </div>
 
         <div className="my-5 flex items-center gap-3 text-xs font-medium text-muted">
@@ -133,7 +149,7 @@ export default function MusteriKayit() {
 
           <button
             type="submit"
-            disabled={gonderiliyor}
+            disabled={gonderiliyor || !kvkkOnay}
             className="w-full rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-dark disabled:opacity-50"
           >
             {gonderiliyor ? t("olusturuluyor") : t("hesapOlusturBtn")}

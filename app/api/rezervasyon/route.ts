@@ -15,10 +15,16 @@ export async function POST(request: Request) {
     tarihSaat,
     kisiSayisi,
     notlar,
+    notOnayi,
     ozelGun,
     alanTercihi,
     misafirDili,
   } = body;
+
+  // Not alanı özel nitelikli veri (alerji/sağlık bilgisi) içerebilir — açık rıza
+  // verilmediyse (notOnayi false/eksik), güvenlik için notu sunucu tarafında da
+  // düşürüyoruz; rezervasyonun kendisini reddetmiyoruz.
+  const guvenliNotlar = notOnayi ? notlar : null;
 
   if (!restoranId || !adSoyad || !eposta || !tarihSaat || !kisiSayisi) {
     return NextResponse.json({ hata: "Eksik bilgi." }, { status: 400 });
@@ -126,7 +132,7 @@ export async function POST(request: Request) {
       tarih_saat: tarihSaat,
       kisi_sayisi: kisiSayisi,
       durum: "beklemede",
-      notlar: notlar ? String(notlar).slice(0, 300) : null,
+      notlar: guvenliNotlar ? String(guvenliNotlar).slice(0, 300) : null,
       ozel_gun: ozelGun ?? null,
       alan_tercihi: alanTercihi ?? null,
       masa_kapasitesi: atanacakKapasite,
