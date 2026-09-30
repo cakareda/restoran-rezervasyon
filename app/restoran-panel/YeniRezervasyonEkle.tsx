@@ -14,7 +14,7 @@ function zamanDilimleriUret(acilisSaati: string, kapanisSaati: string) {
   const bitisDk = kapanisSaat * 60 + kapanisDakika;
 
   const dilimler: string[] = [];
-  for (let dk = baslangicDk; dk <= bitisDk; dk += 30) {
+  for (let dk = baslangicDk; dk < bitisDk; dk += 30) {
     const saat = String(Math.floor(dk / 60)).padStart(2, "0");
     const dakika = String(dk % 60).padStart(2, "0");
     dilimler.push(`${saat}:${dakika}`);
@@ -55,11 +55,19 @@ export default function YeniRezervasyonEkle({
     [tarih, calismaSaatleriJson, acilisSaati, kapanisSaati]
   );
 
-  const zamanDilimleri = useMemo(
-    () =>
-      gununSaati.kapali ? [] : zamanDilimleriUret(gununSaati.acilis, gununSaati.kapanis),
-    [gununSaati]
-  );
+  const zamanDilimleri = useMemo(() => {
+    if (gununSaati.kapali) return [];
+    const tumDilimler = zamanDilimleriUret(gununSaati.acilis, gununSaati.kapanis);
+    if (tarih !== bugununTarihi()) return tumDilimler;
+
+    // İstanbul UTC+3 sabit; bugün için geçmiş saatleri listeden çıkar.
+    const simdiIstanbul = new Date(new Date().getTime() + 3 * 60 * 60 * 1000);
+    const simdiDk = simdiIstanbul.getUTCHours() * 60 + simdiIstanbul.getUTCMinutes();
+    return tumDilimler.filter((dilim) => {
+      const [saatStr, dakikaStr] = dilim.split(":");
+      return Number(saatStr) * 60 + Number(dakikaStr) > simdiDk;
+    });
+  }, [gununSaati, tarih]);
 
   useEffect(() => {
     if (!acik) return;

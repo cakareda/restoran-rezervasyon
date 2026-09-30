@@ -115,7 +115,7 @@ export default function HeroArama({ semtler }: { semtler: [string, { sehir: stri
         </label>
 
         <div className="flex-1">
-          <SaatSecici name="saat" defaultValue="20:00" etiket={t("saatEtiket")} varyant="duz" />
+          <SaatSecici name="saat" etiket={t("saatEtiket")} varyant="duz" />
         </div>
 
         <label className="px-4 py-2.5 sm:w-24">

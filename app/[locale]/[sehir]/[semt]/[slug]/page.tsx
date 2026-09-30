@@ -270,6 +270,7 @@ export default async function RestoranDetay({
               <div>
                 <h2 className="text-lg font-bold text-foreground">{t("konumBaslik")}</h2>
                 <iframe
+                  title={`${restoran.ad} konum haritası`}
                   className="mt-3 h-56 w-full rounded-2xl border border-border"
                   loading="lazy"
                   src={`https://www.google.com/maps?q=${encodeURIComponent(haritaAdresi)}&output=embed`}

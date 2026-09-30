@@ -17,7 +17,7 @@ function zamanDilimleriUret(acilisSaati: string, kapanisSaati: string) {
   const bitisDk = kapanisSaat * 60 + kapanisDakika;
 
   const dilimler: string[] = [];
-  for (let dk = baslangicDk; dk <= bitisDk; dk += 30) {
+  for (let dk = baslangicDk; dk < bitisDk; dk += 30) {
     const saat = String(Math.floor(dk / 60)).padStart(2, "0");
     const dakika = String(dk % 60).padStart(2, "0");
     dilimler.push(`${saat}:${dakika}`);
@@ -297,6 +297,8 @@ export default function RezervasyonFormu({
                   value={adSoyad}
                   onChange={(e) => setAdSoyad(e.target.value)}
                   type="text"
+                  name="adSoyad"
+                  autoComplete="name"
                   aria-label={t("adSoyadEtiket")}
                   placeholder={t("adSoyadEtiket")}
                   className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
@@ -305,6 +307,8 @@ export default function RezervasyonFormu({
                   value={eposta}
                   onChange={(e) => setEposta(e.target.value)}
                   type="email"
+                  name="eposta"
+                  autoComplete="email"
                   aria-label={t("epostaEtiket")}
                   placeholder={t("epostaEtiket")}
                   className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
@@ -350,6 +354,8 @@ export default function RezervasyonFormu({
                   value={adSoyad}
                   onChange={(e) => setAdSoyad(e.target.value)}
                   type="text"
+                  name="adSoyad"
+                  autoComplete="name"
                   required
                   className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
                 />
@@ -362,6 +368,8 @@ export default function RezervasyonFormu({
                   value={eposta}
                   onChange={(e) => setEposta(e.target.value)}
                   type="email"
+                  name="eposta"
+                  autoComplete="email"
                   required
                   className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
                 />

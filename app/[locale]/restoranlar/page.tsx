@@ -143,12 +143,21 @@ export default async function RestoranlarSayfasi({
     restoranlar = [...restoranlar].sort(siralamaFn[sirala]);
   }
 
-  const mutfakSecenekleri = Array.from(
-    new Set((tumRestoranlar ?? []).map((r) => r.mutfak_turu).filter(Boolean))
-  ).sort();
-  const semtSecenekleri = Array.from(
-    new Set((tumRestoranlar ?? []).map((r) => r.semt).filter(Boolean))
-  ).sort();
+  function harfDuyarsizBenzersiz(degerler: string[]) {
+    const gorulen = new Map<string, string>();
+    for (const d of degerler) {
+      const anahtar = d.toLocaleLowerCase("tr");
+      if (!gorulen.has(anahtar)) gorulen.set(anahtar, d);
+    }
+    return Array.from(gorulen.values()).sort((a, b) => a.localeCompare(b, "tr"));
+  }
+
+  const mutfakSecenekleri = harfDuyarsizBenzersiz(
+    (tumRestoranlar ?? []).map((r) => r.mutfak_turu).filter(Boolean)
+  );
+  const semtSecenekleri = harfDuyarsizBenzersiz(
+    (tumRestoranlar ?? []).map((r) => r.semt).filter(Boolean)
+  );
 
   const filtreliMi = Boolean(
     sehir || semt || mutfakTuru || ara || minPuan || fiyatSeviye || musaitlikAktif || secilenAtmosferler.length

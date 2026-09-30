@@ -7,6 +7,7 @@ import YeniRezervasyonEkle from "./YeniRezervasyonEkle";
 import DisaAktarButonu from "./DisaAktarButonu";
 import IceAktarButonu from "./IceAktarButonu";
 import { AsagiOkIkonu } from "@/components/icons";
+import { restoranYolu } from "@/lib/slug";
 
 type RezervasyonSatirVerisi = {
   id: string;
@@ -84,7 +85,7 @@ export default async function RestoranPaneli({
 
   const { data: restoran } = await supabase
     .from("restoranlar")
-    .select("id, ad, acilis_saati, kapanis_saati, calisma_saatleri")
+    .select("id, ad, sehir, semt, acilis_saati, kapanis_saati, calisma_saatleri")
     .eq("auth_user_id", user!.id)
     .maybeSingle();
 
@@ -300,6 +301,10 @@ export default async function RestoranPaneli({
           <p className="rounded-2xl border border-dashed border-border bg-white p-8 text-center text-muted">
             &quot;{sekmeEtiketi[sekme]}&quot; sekmesinde rezervasyon yok.
           </p>
+        ) : aramaKucuk ? (
+          <p className="rounded-2xl border border-dashed border-border bg-white p-8 text-center text-muted">
+            Arama sonucu bulunamadı.
+          </p>
         ) : tumu ? (
           <div className="space-y-3 rounded-2xl border border-dashed border-border bg-white p-8 text-center">
             <p className="text-muted">Henüz rezervasyon talebi yok.</p>
@@ -307,17 +312,17 @@ export default async function RestoranPaneli({
               Restoranının sayfa linkini paylaşarak veya QR kodu masalara koyarak ilk
               rezervasyonu alabilirsin: <br />
               <a
-                href={`https://masadaki.com/restoranlar`}
+                href={`https://masadaki.com${restoranYolu(restoran)}`}
                 target="_blank"
                 rel="noreferrer"
                 className="font-semibold text-brand hover:underline"
               >
-                masadaki.com/restoranlar
+                masadaki.com{restoranYolu(restoran)}
               </a>
             </p>
             <img
               src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(
-                "https://masadaki.com/restoranlar"
+                `https://masadaki.com${restoranYolu(restoran)}`
               )}`}
               alt="Masadaki QR kod"
               width={140}
