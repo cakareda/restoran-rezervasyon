@@ -3,7 +3,7 @@ import RestoranKayitClient from "./RestoranKayitClient";
 
 const BASLIK = "Restoranını Ekle";
 const ACIKLAMA =
-  "Restoranın için ücretsiz Masadaki hesabı oluştur, Google'da arayarak profilini saniyeler içinde doldur.";
+  "Restoranını Masadaki'ye eklemek için başvuru formunu doldur, kurulumu birlikte 10 dakikada yapalım.";
 
 export const metadata: Metadata = {
   title: BASLIK,

@@ -2,63 +2,66 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { GozIkonu, GozKapaliIkonu } from "@/components/icons";
 import RestoranAuthLayout from "@/components/RestoranAuthLayout";
+import TelefonGirdisi from "@/components/TelefonGirdisi";
+
+const girdiStil =
+  "w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand";
+const etiketStil = "block text-sm font-medium text-foreground mb-1";
 
 export default function RestoranKayitClient() {
-  const router = useRouter();
-  const supabase = createClient();
+  const [restoranAdi, setRestoranAdi] = useState("");
+  const [eposta, setEposta] = useState("");
+  const [telefon, setTelefon] = useState("");
+  const [masaDuzeni, setMasaDuzeni] = useState("");
+  const [menu, setMenu] = useState("");
   const [gonderiliyor, setGonderiliyor] = useState(false);
   const [hata, setHata] = useState<string | null>(null);
-  const [epostaOnayBekleniyor, setEpostaOnayBekleniyor] = useState(false);
-  const [sifreGorunur, setSifreGorunur] = useState(false);
-  const [kvkkOnay, setKvkkOnay] = useState(false);
+  const [gonderildi, setGonderildi] = useState(false);
 
-  async function kayitOl(e: React.FormEvent<HTMLFormElement>) {
+  async function basvur(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!telefon) {
+      setHata("Telefon zorunlu.");
+      return;
+    }
     setHata(null);
     setGonderiliyor(true);
 
-    const form = new FormData(e.currentTarget);
-
-    const { data, error } = await supabase.auth.signUp({
-      email: String(form.get("eposta")),
-      password: String(form.get("sifre")),
+    const yanit = await fetch("/api/basvuru", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        restoranAdi,
+        eposta,
+        telefon,
+        masaDuzeni: masaDuzeni || null,
+        menu: menu || null,
+      }),
     });
 
     setGonderiliyor(false);
 
-    if (error || !data.user) {
-      setHata(
-        error?.message === "User already registered"
-          ? "Bu e-posta zaten kayıtlı."
-          : "Kayıt oluşturulamadı."
-      );
+    if (!yanit.ok) {
+      const govde = await yanit.json().catch(() => ({}));
+      setHata(govde.hata ?? "Başvuru gönderilemedi, tekrar deneyin.");
       return;
     }
 
-    if (!data.session) {
-      setEpostaOnayBekleniyor(true);
-      return;
-    }
-
-    router.push("/restoran-panel/restoranim");
-    router.refresh();
+    setGonderildi(true);
   }
 
-  if (epostaOnayBekleniyor) {
+  if (gonderildi) {
     return (
       <RestoranAuthLayout>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/icon.svg" alt="" className="mx-auto h-12 w-12" />
         <h1 className="mt-4 text-center text-xl font-extrabold text-foreground">
-          E-postanı kontrol et
+          Başvurun bize ulaştı
         </h1>
         <p className="mt-2 text-center text-sm text-muted">
-          Hesabını onaylamak için sana gönderdiğimiz bağlantıya tıkla, ardından giriş yapıp
-          restoran profilini oluşturabilirsin.
+          En kısa sürede sana ulaşıp 10 dakikalık kurulumu birlikte yapacağız ve giriş
+          bilgilerini e-postanla paylaşacağız.
         </p>
       </RestoranAuthLayout>
     );
@@ -69,66 +72,70 @@ export default function RestoranKayitClient() {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/icon.svg" alt="" className="mx-auto h-12 w-12" />
       <h1 className="mt-4 text-center text-2xl font-extrabold text-foreground">
-        Restoranını Ekle
+        Restoranını Ekleyelim
       </h1>
+      <p className="mt-2 text-center text-sm text-muted">Güvenlik için restoran hesapları kendiliğinden açılmıyor.</p>
       <p className="mt-1 text-center text-sm text-muted">
-        Hesabını oluştur, ardından restoranını Google&apos;da arayarak saniyeler içinde
-        profilini doldur.
+        Aşağıdaki formu doldur, seninle iletişime geçip giriş bilgilerini sana ulaştıralım.
       </p>
 
-      <form method="post" onSubmit={kayitOl} className="mt-6 space-y-3">
-        <input
-          name="eposta"
-          type="email"
-          required
-          autoComplete="email"
-          placeholder="E-posta"
-          className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
-        />
-        <div className="relative">
+      <form method="post" onSubmit={basvur} className="mt-6 space-y-3">
+        <div>
+          <label className={etiketStil}>Restoran adı</label>
           <input
-            name="sifre"
-            type={sifreGorunur ? "text" : "password"}
+            value={restoranAdi}
+            onChange={(e) => setRestoranAdi(e.target.value)}
             required
-            minLength={8}
-            autoComplete="new-password"
-            placeholder="Şifre (en az 8 karakter)"
-            className="w-full rounded-xl border-0 px-3.5 py-2.5 pr-10 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+            maxLength={100}
+            className={girdiStil}
           />
-          <button
-            type="button"
-            onClick={() => setSifreGorunur((v) => !v)}
-            aria-label={sifreGorunur ? "Şifreyi gizle" : "Şifreyi göster"}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground"
-          >
-            {sifreGorunur ? <GozKapaliIkonu className="h-4.5 w-4.5" /> : <GozIkonu className="h-4.5 w-4.5" />}
-          </button>
         </div>
-
-        <label className="flex items-start gap-2 text-xs text-muted">
+        <div>
+          <label className={etiketStil}>E-posta</label>
           <input
-            type="checkbox"
-            checked={kvkkOnay}
-            onChange={(e) => setKvkkOnay(e.target.checked)}
+            value={eposta}
+            onChange={(e) => setEposta(e.target.value)}
+            type="email"
             required
-            className="mt-0.5 accent-brand"
+            autoComplete="email"
+            className={girdiStil}
           />
-          <span>
-            <Link href="/kvkk" target="_blank" className="font-semibold text-brand hover:underline">
-              KVKK Aydınlatma Metni&apos;ni
-            </Link>{" "}
-            okudum ve anladım.
-          </span>
-        </label>
+        </div>
+        <div>
+          <label className={etiketStil}>Telefon</label>
+          <TelefonGirdisi value={telefon} onChange={setTelefon} girdiSinifi={girdiStil} />
+        </div>
+        <div>
+          <label className={etiketStil}>Masa düzeni (opsiyonel)</label>
+          <textarea
+            value={masaDuzeni}
+            onChange={(e) => setMasaDuzeni(e.target.value)}
+            rows={3}
+            maxLength={1000}
+            placeholder="Örn. 5 masa 4 kişilik, 3 masa 2 kişilik, bahçede 4 masa daha"
+            className={girdiStil}
+          />
+        </div>
+        <div>
+          <label className={etiketStil}>Menü (opsiyonel)</label>
+          <textarea
+            value={menu}
+            onChange={(e) => setMenu(e.target.value)}
+            rows={3}
+            maxLength={1000}
+            placeholder="Menü linki paylaşabilir ya da kısaca yazabilirsiniz"
+            className={girdiStil}
+          />
+        </div>
 
         {hata && <p className="text-sm font-medium text-red-600">{hata}</p>}
 
         <button
           type="submit"
-          disabled={gonderiliyor || !kvkkOnay}
+          disabled={gonderiliyor}
           className="w-full rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-dark disabled:opacity-50"
         >
-          {gonderiliyor ? "Oluşturuluyor..." : "Hesap Oluştur"}
+          {gonderiliyor ? "Gönderiliyor..." : "Başvuruyu Gönder"}
         </button>
       </form>
 

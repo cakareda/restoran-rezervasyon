@@ -65,7 +65,7 @@ export default function MobilMenu() {
                 onClick={() => setAcik(false)}
                 className="rounded-lg px-3 py-3 font-semibold text-brand hover:bg-brand-light"
               >
-                Restoranımı ücretsiz ekle
+                Restoranımı eklemek için bize ulaş
               </Link>
             </nav>
           </div>

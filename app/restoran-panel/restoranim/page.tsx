@@ -16,6 +16,20 @@ async function kaydet(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) return;
 
+  // Güvenlik: restoran hesapları artık kendiliğinden açılmıyor, biz oluşturuyoruz.
+  // Bu yüzden burada "oluşturma" değil sadece "düzenleme" izinliyiz — aksi halde
+  // herhangi bir (örn. misafir) hesap, panele gelip rastgele bir restoran adı girip
+  // kendine yeni bir restoran profili açabilirdi.
+  const { data: mevcutRestoran } = await supabase
+    .from("restoranlar")
+    .select("id")
+    .eq("auth_user_id", user.id)
+    .maybeSingle();
+
+  if (!mevcutRestoran) {
+    redirect("/restoran-panel/restoranim?hata=yetkisiz");
+  }
+
   const olanaklar = formData
     .getAll("olanaklar")
     .map((deger) => String(deger).trim())
@@ -98,6 +112,22 @@ export default async function Restoranim({
   const semtSecenekleri = Array.from(
     new Set((tumRestoranlar ?? []).map((r) => r.semt).filter(Boolean))
   ).sort();
+
+  if (!restoran) {
+    return (
+      <div>
+        <h1 className="text-2xl font-extrabold text-foreground">Restoranım</h1>
+        <p className="mt-4 rounded-2xl border border-dashed border-border bg-white p-8 text-center text-muted">
+          Bu hesap için henüz bir restoran profili oluşturulmamış. Güvenlik nedeniyle restoran
+          profilleri kendiliğinden açılmıyor —{" "}
+          <a href="mailto:info@masadaki.com" className="font-semibold text-brand hover:underline">
+            info@masadaki.com
+          </a>{" "}
+          adresinden bize ulaşın, kurulumu birlikte yapalım.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>

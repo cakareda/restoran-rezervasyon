@@ -48,7 +48,7 @@ export default function RestoranlarIcin() {
               href="/restoran-kayit"
               className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-dark"
             >
-              Restoranımı Ücretsiz Kayıt Et
+              Bize Ulaş, Ücretsiz Başla
             </Link>
           </div>
         </div>
@@ -78,7 +78,7 @@ export default function RestoranlarIcin() {
               href="/restoran-kayit"
               className="rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-dark"
             >
-              Restoranımı Ücretsiz Kayıt Et
+              Bize Ulaş, Ücretsiz Başla
             </Link>
             <Link
               href="/restoran-girisi"
@@ -127,14 +127,14 @@ export default function RestoranlarIcin() {
             {
               no: "01",
               Ikon: AramaIkonu,
-              baslik: "Ücretsiz kayıt ol",
-              aciklama: "Birkaç dakikada hesabını oluştur, restoranını ekle.",
+              baslik: "Bize ulaş",
+              aciklama: "E-posta ya da telefonla bize ulaş, restoranını birlikte kuralım.",
             },
             {
               no: "02",
               Ikon: KisiIkonu,
-              baslik: "Bilgilerini doldur",
-              aciklama: "Adres ve iletişim bilgilerini Google'dan otomatik çek, çalışma saatlerini ve fotoğraflarını ekle.",
+              baslik: "Birlikte 10 dakikada kur",
+              aciklama: "Adres ve iletişim bilgilerini Google'dan otomatik çekiyoruz, çalışma saatlerini ve fotoğraflarını birlikte ekliyoruz.",
             },
             {
               no: "03",
@@ -162,7 +162,7 @@ export default function RestoranlarIcin() {
           href="/restoran-kayit"
           className="mt-6 inline-block rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-dark"
         >
-          Restoranımı Ücretsiz Kayıt Et
+          Bize Ulaş, Ücretsiz Başla
         </Link>
       </section>
     </div>

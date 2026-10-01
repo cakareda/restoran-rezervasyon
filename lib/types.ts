@@ -183,3 +183,14 @@ export interface Yorum {
   yorum_metni: string | null;
   olusturulma: string;
 }
+
+export interface Basvuru {
+  id: string;
+  restoran_adi: string;
+  eposta: string;
+  telefon: string | null;
+  masa_duzeni: string | null;
+  menu: string | null;
+  durum: "bekliyor" | "iletisime_gecildi" | "tamamlandi";
+  olusturulma: string;
+}

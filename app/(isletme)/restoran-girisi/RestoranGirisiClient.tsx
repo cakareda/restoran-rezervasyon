@@ -114,7 +114,7 @@ export default function RestoranGirisiClient() {
       <p className="mt-4 text-center text-sm text-muted">
         Restoranın henüz kayıtlı değil mi?{" "}
         <Link href="/restoran-kayit" className="font-semibold text-brand hover:underline">
-          Ücretsiz kayıt ol
+          Bize ulaş
         </Link>
       </p>
     </RestoranAuthLayout>

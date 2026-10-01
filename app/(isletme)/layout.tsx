@@ -32,7 +32,7 @@ export default function IsletmeLayout({ children }: { children: React.ReactNode 
         baslikRestoranlarIcin="Restoranlar için"
         nedenMasadakiMetni="Neden Masadaki?"
         restoranGirisiMetni="Restoran girişi"
-        restoranKayitMetni="Restoranımı ücretsiz kayıt et"
+        restoranKayitMetni="Restoranımı eklemek için bize ulaş"
         bizeUlasinMetni="Bize ulaşın:"
       />
     </>
