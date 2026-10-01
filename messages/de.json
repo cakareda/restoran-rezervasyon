@@ -199,6 +199,20 @@
 "epostaKontrolBaslik": "Überprüfe deine E-Mails",
 "epostaKontrolAciklama": "Klicke auf den Link, den wir dir geschickt haben, um dein Konto zu bestätigen. Danach kannst du dich anmelden."
 },
+"TelefonGiris": {
+"telefonSekmesi": "Telefon",
+"telefonPlaceholder": "Telefonnummer",
+"kodGonder": "Code senden",
+"kodGonderiliyor": "Wird gesendet...",
+"kodGonderildi": "An {telefon} wurde ein Bestätigungscode gesendet.",
+"kodPlaceholder": "6-stelliger Code",
+"kodDogrula": "Bestätigen und anmelden",
+"dogrulaniyor": "Wird überprüft...",
+"numarayiDegistir": "Nummer ändern",
+"hataKod": "Code konnte nicht gesendet werden, Nummer prüfen.",
+"hataDogrulama": "Falscher oder abgelaufener Code.",
+"kvkkOnceOnayla": "Bitte zuerst oben die Datenschutzzustimmung bestätigen, um mit Telefon fortzufahren."
+},
 "SifremiUnuttum": {
 "baslik": "Passwort vergessen",
 "aciklama": "Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen deines Passworts.",

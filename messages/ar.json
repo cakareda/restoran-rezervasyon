@@ -199,6 +199,20 @@
 "epostaKontrolBaslik": "تحقق من بريدك الإلكتروني",
 "epostaKontrolAciklama": "انقر على الرابط الذي أرسلناه إليك لتأكيد حسابك، ثم يمكنك تسجيل الدخول."
 },
+"TelefonGiris": {
+"telefonSekmesi": "الهاتف",
+"telefonPlaceholder": "رقم الهاتف",
+"kodGonder": "إرسال الرمز",
+"kodGonderiliyor": "جارٍ الإرسال...",
+"kodGonderildi": "تم إرسال رمز التحقق إلى {telefon}.",
+"kodPlaceholder": "رمز مكوّن من 6 أرقام",
+"kodDogrula": "تحقق وتسجيل الدخول",
+"dogrulaniyor": "جارٍ التحقق...",
+"numarayiDegistir": "تغيير الرقم",
+"hataKod": "تعذّر إرسال الرمز، تحقق من الرقم.",
+"hataDogrulama": "رمز غير صحيح أو منتهي الصلاحية.",
+"kvkkOnceOnayla": "فضلاً وافق على سياسة الخصوصية أعلاه للمتابعة عبر الهاتف."
+},
 "SifremiUnuttum": {
 "baslik": "نسيت كلمة المرور",
 "aciklama": "أدخل عنوان بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور.",

@@ -6,14 +6,17 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { GozIkonu, GozKapaliIkonu } from "@/components/icons";
 import GoogleGirisButonu from "@/components/GoogleGirisButonu";
+import TelefonGirisFormu from "@/components/TelefonGirisFormu";
 
 export default function MusteriGiris() {
   const t = useTranslations("HesapGiris");
+  const tTelefon = useTranslations("TelefonGiris");
   const router = useRouter();
   const supabase = createClient();
   const [gonderiliyor, setGonderiliyor] = useState(false);
   const [hata, setHata] = useState<string | null>(null);
   const [sifreGorunur, setSifreGorunur] = useState(false);
+  const [yontem, setYontem] = useState<"eposta" | "telefon">("eposta");
 
   async function girisYap(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -55,6 +58,26 @@ export default function MusteriGiris() {
           <div className="h-px flex-1 bg-border" />
         </div>
 
+        <div className="mb-4 flex rounded-xl bg-zinc-100 p-1 text-sm font-semibold">
+          <button
+            type="button"
+            onClick={() => setYontem("eposta")}
+            className={`flex-1 rounded-lg py-1.5 ${yontem === "eposta" ? "bg-white text-foreground shadow-sm" : "text-muted"}`}
+          >
+            {t("epostaPlaceholder")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setYontem("telefon")}
+            className={`flex-1 rounded-lg py-1.5 ${yontem === "telefon" ? "bg-white text-foreground shadow-sm" : "text-muted"}`}
+          >
+            {tTelefon("telefonSekmesi")}
+          </button>
+        </div>
+
+        {yontem === "telefon" ? (
+          <TelefonGirisFormu />
+        ) : (
         <form method="post" onSubmit={girisYap} className="space-y-3">
           <input
             name="eposta"
@@ -99,6 +122,7 @@ export default function MusteriGiris() {
             {gonderiliyor ? t("girisYapiliyor") : t("girisYapBtn")}
           </button>
         </form>
+        )}
 
         <p className="mt-4 text-center text-sm text-muted">
           {t("hesabinYokMu")}{" "}

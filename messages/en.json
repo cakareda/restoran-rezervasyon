@@ -199,6 +199,20 @@
     "epostaKontrolBaslik": "Check your email",
     "epostaKontrolAciklama": "Click the link we sent you to confirm your account, then you can log in."
   },
+  "TelefonGiris": {
+    "telefonSekmesi": "Phone",
+    "telefonPlaceholder": "Phone number",
+    "kodGonder": "Send code",
+    "kodGonderiliyor": "Sending...",
+    "kodGonderildi": "A verification code was sent to {telefon}.",
+    "kodPlaceholder": "6-digit code",
+    "kodDogrula": "Verify and log in",
+    "dogrulaniyor": "Verifying...",
+    "numarayiDegistir": "Change number",
+    "hataKod": "Couldn't send the code, check the number.",
+    "hataDogrulama": "Wrong or expired code.",
+    "kvkkOnceOnayla": "Check the privacy consent above to continue with phone."
+  },
   "SifremiUnuttum": {
     "baslik": "Forgot Password",
     "aciklama": "Enter your email address and we'll send you a reset link.",

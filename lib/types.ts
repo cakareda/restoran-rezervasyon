@@ -44,6 +44,16 @@ export interface Masa {
   alan: string;
 }
 
+export interface RestoranMasasi {
+  id: string;
+  restoran_id: string;
+  isim: string;
+  kapasite: number;
+  alan: string;
+  pozisyon_x: number;
+  pozisyon_y: number;
+}
+
 export const MASA_ALANLARI = [
   { deger: "", etiket: "Genel" },
   { deger: "salon", etiket: "Salon" },

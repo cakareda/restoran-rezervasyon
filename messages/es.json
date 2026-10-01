@@ -199,6 +199,20 @@
 "epostaKontrolBaslik": "Revisa tu correo electrónico",
 "epostaKontrolAciklama": "Haz clic en el enlace que te hemos enviado para confirmar tu cuenta. Después podrás iniciar sesión."
 },
+"TelefonGiris": {
+"telefonSekmesi": "Teléfono",
+"telefonPlaceholder": "Número de teléfono",
+"kodGonder": "Enviar código",
+"kodGonderiliyor": "Enviando...",
+"kodGonderildi": "Se envió un código de verificación a {telefon}.",
+"kodPlaceholder": "Código de 6 dígitos",
+"kodDogrula": "Verificar e iniciar sesión",
+"dogrulaniyor": "Verificando...",
+"numarayiDegistir": "Cambiar número",
+"hataKod": "No se pudo enviar el código, revisa el número.",
+"hataDogrulama": "Código incorrecto o expirado.",
+"kvkkOnceOnayla": "Marca el consentimiento de privacidad arriba para continuar con el teléfono."
+},
 "SifremiUnuttum": {
 "baslik": "He olvidado mi contraseña",
 "aciklama": "Introduce tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",

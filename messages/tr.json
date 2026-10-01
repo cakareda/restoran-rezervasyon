@@ -205,6 +205,20 @@
     "epostaKontrolBaslik": "E-postanı kontrol et",
     "epostaKontrolAciklama": "Hesabını onaylamak için sana gönderdiğimiz bağlantıya tıkla, ardından giriş yapabilirsin."
   },
+  "TelefonGiris": {
+    "telefonSekmesi": "Telefon ile",
+    "telefonPlaceholder": "Telefon numarası (05XX XXX XX XX)",
+    "kodGonder": "Kod gönder",
+    "kodGonderiliyor": "Gönderiliyor...",
+    "kodGonderildi": "{telefon} numarasına doğrulama kodu gönderildi.",
+    "kodPlaceholder": "6 haneli kod",
+    "kodDogrula": "Doğrula ve giriş yap",
+    "dogrulaniyor": "Doğrulanıyor...",
+    "numarayiDegistir": "Numarayı değiştir",
+    "hataKod": "Kod gönderilemedi, numarayı kontrol et.",
+    "hataDogrulama": "Kod hatalı veya süresi doldu.",
+    "kvkkOnceOnayla": "Telefonla devam etmek için önce yukarıdaki KVKK onayını işaretle."
+  },
   "SifremiUnuttum": {
     "baslik": "Şifremi unuttum",
     "aciklama": "E-posta adresini gir, sana sıfırlama bağlantısı gönderelim.",

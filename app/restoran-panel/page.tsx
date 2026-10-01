@@ -29,6 +29,7 @@ type RezervasyonSatirVerisi = {
   misafir_eposta: string | null;
   misafir_dili: string | null;
   restoran_notu: string | null;
+  atanan_masa_idler: string[] | null;
   kullanicilar: { ad_soyad: string; eposta: string; telefon: string | null } | null;
 };
 
@@ -108,10 +109,16 @@ export default async function RestoranPaneli({
     );
   }
 
+  const { data: masalar } = await supabase
+    .from("restoran_masalari")
+    .select("id, isim, kapasite, alan")
+    .eq("restoran_id", restoran.id)
+    .order("isim", { ascending: true });
+
   let sorgu = supabase
     .from("rezervasyonlar")
     .select(
-      "id, kullanici_id, tarih_saat, kisi_sayisi, durum, geldi_mi, misafir_teyit, kaynak, notlar, alan_tercihi, ozel_gun, restoran_notu, misafir_ad_soyad, misafir_telefon, misafir_eposta, misafir_dili, kullanicilar(ad_soyad, eposta, telefon)"
+      "id, kullanici_id, tarih_saat, kisi_sayisi, durum, geldi_mi, misafir_teyit, kaynak, notlar, alan_tercihi, ozel_gun, restoran_notu, misafir_ad_soyad, misafir_telefon, misafir_eposta, misafir_dili, atanan_masa_idler, kullanicilar(ad_soyad, eposta, telefon)"
     )
     .eq("restoran_id", restoran.id)
     .order("tarih_saat", { ascending: true });
@@ -300,6 +307,8 @@ export default async function RestoranPaneli({
               durum={r.durum}
               geldiMi={r.geldi_mi}
               misafirTeyit={r.misafir_teyit}
+              atananMasaIdler={r.atanan_masa_idler}
+              masalar={masalar ?? []}
               notlar={r.notlar}
               alanTercihi={r.alan_tercihi}
               ozelGun={r.ozel_gun}

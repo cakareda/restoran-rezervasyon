@@ -6,9 +6,11 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { GozIkonu, GozKapaliIkonu } from "@/components/icons";
 import GoogleGirisButonu from "@/components/GoogleGirisButonu";
+import TelefonGirisFormu from "@/components/TelefonGirisFormu";
 
 export default function MusteriKayit() {
   const t = useTranslations("HesapKayit");
+  const tTelefon = useTranslations("TelefonGiris");
   const router = useRouter();
   const supabase = createClient();
   const [gonderiliyor, setGonderiliyor] = useState(false);
@@ -16,6 +18,7 @@ export default function MusteriKayit() {
   const [epostaOnayBekleniyor, setEpostaOnayBekleniyor] = useState(false);
   const [sifreGorunur, setSifreGorunur] = useState(false);
   const [kvkkOnay, setKvkkOnay] = useState(false);
+  const [yontem, setYontem] = useState<"eposta" | "telefon">("eposta");
 
   async function kayitOl(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -101,6 +104,30 @@ export default function MusteriKayit() {
           <div className="h-px flex-1 bg-border" />
         </div>
 
+        <div className="mb-4 flex rounded-xl bg-zinc-100 p-1 text-sm font-semibold">
+          <button
+            type="button"
+            onClick={() => setYontem("eposta")}
+            className={`flex-1 rounded-lg py-1.5 ${yontem === "eposta" ? "bg-white text-foreground shadow-sm" : "text-muted"}`}
+          >
+            {t("epostaPlaceholder")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setYontem("telefon")}
+            className={`flex-1 rounded-lg py-1.5 ${yontem === "telefon" ? "bg-white text-foreground shadow-sm" : "text-muted"}`}
+          >
+            {tTelefon("telefonSekmesi")}
+          </button>
+        </div>
+
+        {yontem === "telefon" ? (
+          kvkkOnay ? (
+            <TelefonGirisFormu />
+          ) : (
+            <p className="text-center text-xs text-muted">{tTelefon("kvkkOnceOnayla")}</p>
+          )
+        ) : (
         <form method="post" onSubmit={kayitOl} className="space-y-3">
           <input
             name="adSoyad"
@@ -155,6 +182,7 @@ export default function MusteriKayit() {
             {gonderiliyor ? t("olusturuluyor") : t("hesapOlusturBtn")}
           </button>
         </form>
+        )}
 
         <p className="mt-4 text-center text-sm text-muted">
           {t("zatenHesabinVarMi")}{" "}

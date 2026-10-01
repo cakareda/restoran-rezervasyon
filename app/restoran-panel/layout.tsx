@@ -80,6 +80,12 @@ export default async function RestoranPanelLayout({
             Restoranım
           </PanelLink>
           <PanelLink
+            href="/restoran-panel/kat-plani"
+            ikon={<MasaIkonu className="h-4 w-4" />}
+          >
+            Kat Planı
+          </PanelLink>
+          <PanelLink
             href="/restoran-panel/bekleme-listesi"
             ikon={<MasaIkonu className="h-4 w-4" />}
           >

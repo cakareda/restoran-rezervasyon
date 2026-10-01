@@ -49,6 +49,8 @@ export default function RezervasyonSatiri({
   ozelGun,
   grupUyarisi,
   misafirTeyit,
+  atananMasaIdler,
+  masalar,
 }: {
   id: string;
   misafirAd: string;
@@ -67,6 +69,8 @@ export default function RezervasyonSatiri({
   ozelGun?: string | null;
   grupUyarisi?: boolean;
   misafirTeyit?: boolean | null;
+  atananMasaIdler?: string[] | null;
+  masalar?: { id: string; isim: string; kapasite: number; alan: string }[];
 }) {
   const router = useRouter();
   const [yukleniyor, setYukleniyor] = useState(false);
@@ -77,6 +81,8 @@ export default function RezervasyonSatiri({
     baslik: string;
     url: string;
   } | null>(null);
+  const [masaModaliAcik, setMasaModaliAcik] = useState(false);
+  const [seciliMasaIdler, setSeciliMasaIdler] = useState<string[]>(atananMasaIdler ?? []);
 
   async function notuKaydet() {
     setNotKaydediliyor(true);
@@ -87,6 +93,28 @@ export default function RezervasyonSatiri({
     });
     setNotKaydediliyor(false);
     setNotDuzenleniyor(false);
+    router.refresh();
+  }
+
+  const seciliKapasite = (masalar ?? [])
+    .filter((m) => seciliMasaIdler.includes(m.id))
+    .reduce((t, m) => t + m.kapasite, 0);
+
+  function masaSecimiDegistir(masaId: string) {
+    setSeciliMasaIdler((onceki) =>
+      onceki.includes(masaId) ? onceki.filter((x) => x !== masaId) : [...onceki, masaId]
+    );
+  }
+
+  async function masaAtaKaydet() {
+    setYukleniyor(true);
+    await fetch(`/api/rezervasyon/${id}/masa-ata`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ masaIdler: seciliMasaIdler }),
+    });
+    setYukleniyor(false);
+    setMasaModaliAcik(false);
     router.refresh();
   }
 
@@ -308,7 +336,74 @@ export default function RezervasyonSatiri({
             İptal Et
           </button>
         )}
+
+        {durum === "onaylandi" && masalar && masalar.length > 0 && (
+          <button
+            onClick={() => setMasaModaliAcik(true)}
+            className="rounded-lg border border-border px-3.5 py-1.5 text-sm font-semibold text-foreground hover:bg-zinc-50"
+          >
+            {atananMasaIdler && atananMasaIdler.length > 0
+              ? `Masa: ${atananMasaIdler
+                  .map((mid) => masalar.find((m) => m.id === mid)?.isim ?? "?")
+                  .join(" + ")}`
+              : "Masa ata"}
+          </button>
+        )}
       </div>
+
+      {masaModaliAcik && (
+        <div
+          className="fixed inset-0 z-40 flex items-center justify-center bg-black/30 p-4"
+          onClick={() => setMasaModaliAcik(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="text-sm font-bold text-foreground">Masa ata</p>
+            <p className="mt-1 text-xs text-muted">
+              Birden fazla masa seçersen birleştirilmiş sayılır ({kisiSayisi} kişi gerekiyor).
+            </p>
+            <div className="mt-3 max-h-64 space-y-1 overflow-y-auto">
+              {(masalar ?? []).map((m) => (
+                <label
+                  key={m.id}
+                  className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-zinc-50"
+                >
+                  <input
+                    type="checkbox"
+                    checked={seciliMasaIdler.includes(m.id)}
+                    onChange={() => masaSecimiDegistir(m.id)}
+                  />
+                  {m.isim} — {m.kapasite} kişi{m.alan && ` · ${m.alan}`}
+                </label>
+              ))}
+            </div>
+            <p
+              className={`mt-2 text-xs font-semibold ${
+                seciliKapasite < kisiSayisi ? "text-red-600" : "text-green-600"
+              }`}
+            >
+              Toplam kapasite: {seciliKapasite} kişi
+            </p>
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                onClick={() => setMasaModaliAcik(false)}
+                className="rounded-lg border border-border px-3.5 py-1.5 text-sm font-semibold text-foreground hover:bg-zinc-50"
+              >
+                Vazgeç
+              </button>
+              <button
+                disabled={yukleniyor || (seciliMasaIdler.length > 0 && seciliKapasite < kisiSayisi)}
+                onClick={masaAtaKaydet}
+                className="rounded-lg bg-brand px-3.5 py-1.5 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-50"
+              >
+                Kaydet
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {onayModali && (
         <div
