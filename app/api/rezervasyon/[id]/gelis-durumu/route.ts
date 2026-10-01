@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
-import { yorumDavetiEpostasi } from "@/lib/email/templates";
+import { yorumDavetiEpostasi, gelisTeyitEpostasi } from "@/lib/email/templates";
+import { teyitLinkUret } from "@/lib/misafirTeyit";
 
 export async function POST(
   request: Request,
@@ -27,13 +28,37 @@ export async function POST(
     return NextResponse.json({ hata: "Yetkiniz yok." }, { status: 403 });
   }
 
+  const { data: mevcutRezervasyon } = await supabase
+    .from("rezervasyonlar")
+    .select("id, tarih_saat")
+    .eq("id", id)
+    .eq("restoran_id", restoranSahiplik.id)
+    .eq("durum", "onaylandi")
+    .maybeSingle();
+
+  if (!mevcutRezervasyon) {
+    return NextResponse.json({ hata: "Rezervasyon bulunamadı." }, { status: 404 });
+  }
+
+  if (geldiMi) {
+    const ERKEN_ISARETLEME_TOLERANSI_DK = 30;
+    const rezervasyonZamani = new Date(mevcutRezervasyon.tarih_saat).getTime();
+    const enErkenIsaretlemeZamani = rezervasyonZamani - ERKEN_ISARETLEME_TOLERANSI_DK * 60 * 1000;
+    if (Date.now() < enErkenIsaretlemeZamani) {
+      return NextResponse.json(
+        { hata: "Bu rezervasyon için henüz 'Geldi' işaretlenemez — rezervasyon saati gelmedi." },
+        { status: 400 }
+      );
+    }
+  }
+
   const { data: rezervasyon, error: guncelHata } = await supabase
     .from("rezervasyonlar")
     .update({ geldi_mi: geldiMi })
     .eq("id", id)
     .eq("restoran_id", restoranSahiplik.id)
     .eq("durum", "onaylandi")
-    .select("id, kullanici_id, restoran_id, misafir_dili")
+    .select("id, kullanici_id, restoran_id, misafir_dili, teyit_gonderildi")
     .single();
 
   if (guncelHata || !rezervasyon) {
@@ -67,6 +92,26 @@ export async function POST(
         konu,
         html,
       });
+
+      // Restoranın "Geldi" beyanını bağımsız olarak doğrulatmak için misafire
+      // tek tıkla teyit linki gönderiyoruz. Aynı rezervasyona birden fazla kez
+      // (Geldi -> Geri al -> Geldi) gönderilmesin diye bir kere işaretliyoruz.
+      if (!rezervasyon.teyit_gonderildi) {
+        const { konu: teyitKonu, html: teyitHtml } = gelisTeyitEpostasi({
+          restoranAd: restoran.ad,
+          evetUrl: teyitLinkUret(rezervasyon.id, "evet"),
+          hayirUrl: teyitLinkUret(rezervasyon.id, "hayir"),
+          dil: rezervasyon.misafir_dili,
+        });
+        await bildirimGonderVeKaydet({
+          rezervasyonId: rezervasyon.id,
+          aliciEposta: kullanici.eposta,
+          tur: "gelis_teyidi",
+          konu: teyitKonu,
+          html: teyitHtml,
+        });
+        await supabase.from("rezervasyonlar").update({ teyit_gonderildi: true }).eq("id", rezervasyon.id);
+      }
     }
   }
 

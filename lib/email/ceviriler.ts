@@ -38,6 +38,12 @@ type SabitMetinler = {
   yorumBaslik: string;
   yorumP1: (restoranAd: string) => string;
   yorumButon: string;
+
+  teyitKonu: (restoranAd: string) => string;
+  teyitBaslik: string;
+  teyitP1: (restoranAd: string) => string;
+  teyitEvet: string;
+  teyitHayir: string;
 };
 
 export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
@@ -74,6 +80,11 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     yorumBaslik: "Nasıl geçti?",
     yorumP1: (ad) => `<strong>${ad}</strong>'daki deneyiminizi diğer misafirlerle paylaşmak ister misiniz?`,
     yorumButon: "Yorum bırak",
+    teyitKonu: (ad) => `${ad}'a gittin mi?`,
+    teyitBaslik: "Rezervasyonun gerçekleşti mi?",
+    teyitP1: (ad) => `${ad} rezervasyonunu "geldi" olarak işaretledi. Onaylar mısın?`,
+    teyitEvet: "Evet, gittim",
+    teyitHayir: "Hayır, gitmedim",
   },
   en: {
     tarihSaatEtiketi: "Date/Time",
@@ -107,6 +118,11 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     yorumBaslik: "How was it?",
     yorumP1: (ad) => `Would you like to share your experience at <strong>${ad}</strong> with other guests?`,
     yorumButon: "Leave a review",
+    teyitKonu: (ad) => `Did you visit ${ad}?`,
+    teyitBaslik: "Did your reservation happen?",
+    teyitP1: (ad) => `${ad} marked your reservation as "arrived." Can you confirm?`,
+    teyitEvet: "Yes, I went",
+    teyitHayir: "No, I didn't go",
   },
   de: {
     tarihSaatEtiketi: "Datum/Uhrzeit",
@@ -140,6 +156,11 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     yorumBaslik: "Wie war's?",
     yorumP1: (ad) => `Möchten Sie Ihre Erfahrung bei <strong>${ad}</strong> mit anderen Gästen teilen?`,
     yorumButon: "Bewertung abgeben",
+    teyitKonu: (ad) => `Waren Sie bei ${ad}?`,
+    teyitBaslik: "Hat Ihre Reservierung stattgefunden?",
+    teyitP1: (ad) => `${ad} hat Ihre Reservierung als "angekommen" markiert. Können Sie das bestätigen?`,
+    teyitEvet: "Ja, ich war da",
+    teyitHayir: "Nein, ich war nicht da",
   },
   es: {
     tarihSaatEtiketi: "Fecha/Hora",
@@ -173,6 +194,11 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     yorumBaslik: "¿Qué tal fue?",
     yorumP1: (ad) => `¿Quieres compartir tu experiencia en <strong>${ad}</strong> con otros huéspedes?`,
     yorumButon: "Dejar una reseña",
+    teyitKonu: (ad) => `¿Visitaste ${ad}?`,
+    teyitBaslik: "¿Se realizó tu reserva?",
+    teyitP1: (ad) => `${ad} marcó tu reserva como "llegado". ¿Puedes confirmarlo?`,
+    teyitEvet: "Sí, fui",
+    teyitHayir: "No, no fui",
   },
   fr: {
     tarihSaatEtiketi: "Date/Heure",
@@ -206,6 +232,11 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     yorumBaslik: "Comment ça s'est passé ?",
     yorumP1: (ad) => `Souhaitez-vous partager votre expérience chez <strong>${ad}</strong> avec d'autres clients ?`,
     yorumButon: "Laisser un avis",
+    teyitKonu: (ad) => `Avez-vous visité ${ad} ?`,
+    teyitBaslik: "Votre réservation a-t-elle eu lieu ?",
+    teyitP1: (ad) => `${ad} a marqué votre réservation comme "arrivé". Pouvez-vous confirmer ?`,
+    teyitEvet: "Oui, j'y suis allé",
+    teyitHayir: "Non, je n'y suis pas allé",
   },
   it: {
     tarihSaatEtiketi: "Data/Ora",
@@ -239,6 +270,11 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     yorumBaslik: "Com'è andata?",
     yorumP1: (ad) => `Vuoi condividere la tua esperienza da <strong>${ad}</strong> con altri ospiti?`,
     yorumButon: "Lascia una recensione",
+    teyitKonu: (ad) => `Hai visitato ${ad}?`,
+    teyitBaslik: "La tua prenotazione si è svolta?",
+    teyitP1: (ad) => `${ad} ha contrassegnato la tua prenotazione come "arrivato". Puoi confermarlo?`,
+    teyitEvet: "Sì, ci sono andato",
+    teyitHayir: "No, non ci sono andato",
   },
   ar: {
     tarihSaatEtiketi: "التاريخ/الوقت",
@@ -272,6 +308,11 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     yorumBaslik: "كيف كانت تجربتك؟",
     yorumP1: (ad) => `هل ترغب بمشاركة تجربتك في <strong>${ad}</strong> مع ضيوف آخرين؟`,
     yorumButon: "اكتب تقييماً",
+    teyitKonu: (ad) => `هل زرت ${ad}؟`,
+    teyitBaslik: "هل تم حجزك فعلاً؟",
+    teyitP1: (ad) => `قام ${ad} بتعليم حجزك كـ"وصل". هل يمكنك التأكيد؟`,
+    teyitEvet: "نعم، ذهبت",
+    teyitHayir: "لا، لم أذهب",
   },
   ru: {
     tarihSaatEtiketi: "Дата/Время",
@@ -305,6 +346,11 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     yorumBaslik: "Как всё прошло?",
     yorumP1: (ad) => `Хотите поделиться впечатлениями о <strong>${ad}</strong> с другими гостями?`,
     yorumButon: "Оставить отзыв",
+    teyitKonu: (ad) => `Вы посетили ${ad}?`,
+    teyitBaslik: "Ваша бронь состоялась?",
+    teyitP1: (ad) => `${ad} отметил вашу бронь как "пришёл". Можете подтвердить?`,
+    teyitEvet: "Да, я был(а)",
+    teyitHayir: "Нет, я не был(а)",
   },
 };
 

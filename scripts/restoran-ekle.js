@@ -1,7 +1,6 @@
 // kullanım: node scripts/restoran-ekle.js
 const fs = require("fs");
 const path = require("path");
-const crypto = require("crypto");
 const readline = require("readline/promises");
 
 for (const line of fs.readFileSync(path.join(__dirname, "..", ".env.local"), "utf8").split("\n")) {
@@ -16,9 +15,20 @@ const supabase = createClient(
   { auth: { persistSession: false } }
 );
 
-function guvenliSifreUret() {
-  const grup = () => crypto.randomBytes(3).toString("hex");
-  return `${grup()}-${grup()}-${grup()}`;
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://masadaki.com").replace(/\/$/, "");
+const SIFRE_BELIRLEME_YOLU = "/restoran-girisi/sifre-sifirla";
+
+// Şifreyi biz üretip WhatsApp/e-postayla düz metin iletmek yerine, Supabase'in
+// tek kullanımlık, süreli (invite/recovery) linkini üretiyoruz. Restoran bu
+// linke tıklayıp kendi şifresini kendisi belirliyor — biz şifreyi hiç görmüyoruz.
+async function girisLinkiUret({ email, yeniHesap }) {
+  const { data, error } = await supabase.auth.admin.generateLink({
+    type: yeniHesap ? "invite" : "recovery",
+    email,
+    options: { redirectTo: `${SITE_URL}${SIFRE_BELIRLEME_YOLU}` },
+  });
+  if (error) throw error;
+  return { link: data.properties.action_link, userId: data.user.id };
 }
 
 async function main() {
@@ -61,24 +71,17 @@ async function main() {
   const mevcut = varOlanKullanici?.users?.find((u) => u.email === secilen.eposta);
 
   let userId;
-  let sifre = null;
+  let girisLinki = null;
 
-  if (mevcut) {
-    console.log("\nBu e-postayla zaten bir hesap var, mevcut hesap kullanılacak.");
-    userId = mevcut.id;
-  } else {
-    sifre = guvenliSifreUret();
-    const { data: userData, error: userErr } = await supabase.auth.admin.createUser({
-      email: secilen.eposta,
-      password: sifre,
-      email_confirm: true,
-    });
-    if (userErr) {
-      console.error("Hesap oluşturulamadı:", userErr.message);
-      rl.close();
-      return;
-    }
-    userId = userData.user.id;
+  try {
+    const sonuc = await girisLinkiUret({ email: secilen.eposta, yeniHesap: !mevcut });
+    userId = sonuc.userId;
+    girisLinki = sonuc.link;
+    if (mevcut) console.log("\nBu e-postayla zaten bir hesap var, mevcut hesap kullanılacak.");
+  } catch (e) {
+    console.error("Hesap/giriş linki oluşturulamadı:", e.message);
+    rl.close();
+    return;
   }
 
   const { data: restoran, error: restoranErr } = await supabase
@@ -108,16 +111,13 @@ async function main() {
 
   console.log("\n✅ Restoran eklendi.");
   console.log(`Restoran ID: ${restoran.id}`);
-  console.log(`Giriş: masadaki.com/restoran-girisi`);
   console.log(`E-posta: ${secilen.eposta}`);
-  if (sifre) {
-    console.log(`Geçici şifre: ${sifre}`);
-    console.log(
-      "\nBu şifreyi restorana WhatsApp/e-posta ile kendin ilet. İstersen panelden 'Şifremi unuttum' ile kendi şifresini de belirleyebilir."
-    );
-  } else {
-    console.log("(Hesap zaten vardı, şifre değiştirilmedi — mevcut şifresiyle giriş yapabilir.)");
-  }
+  console.log(`\nŞifre belirleme linki (restorana WhatsApp/e-posta ile ilet, biz şifreyi hiç görmüyoruz):`);
+  console.log(girisLinki);
+  console.log(
+    "\nNot: Bu link Supabase ayarlarındaki süre sonunda (varsayılan 24 saat/1 saat) geçersiz olur. " +
+      "Süresi dolarsa restoran panelden 'Şifremi unuttum' akışını kullanabilir."
+  );
   console.log(
     `\nMasa düzenini ve menüyü panelden (Restoranım > Masa envanteri / Menü linki) birlikte ya da restoran kendi başına tamamlayabilir.`
   );

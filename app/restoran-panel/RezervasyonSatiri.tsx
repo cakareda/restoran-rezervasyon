@@ -48,6 +48,7 @@ export default function RezervasyonSatiri({
   alanTercihi,
   ozelGun,
   grupUyarisi,
+  misafirTeyit,
 }: {
   id: string;
   misafirAd: string;
@@ -65,6 +66,7 @@ export default function RezervasyonSatiri({
   alanTercihi?: string | null;
   ozelGun?: string | null;
   grupUyarisi?: boolean;
+  misafirTeyit?: boolean | null;
 }) {
   const router = useRouter();
   const [yukleniyor, setYukleniyor] = useState(false);
@@ -275,6 +277,20 @@ export default function RezervasyonSatiri({
             >
               Geri al
             </button>
+          </span>
+        )}
+
+        {geldiMi === true && misafirTeyit === false && (
+          <span
+            title="Misafir, geldiğini onaylamadı — komisyon itirazına açık, incele."
+            className="rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700"
+          >
+            ⚠️ Misafir onaylamadı
+          </span>
+        )}
+        {geldiMi === true && misafirTeyit === true && (
+          <span className="rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
+            ✓ Misafir onayladı
           </span>
         )}
 

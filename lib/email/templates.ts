@@ -282,3 +282,30 @@ export function yorumDavetiEpostasi(params: { restoranAd: string; yorumUrl: stri
     }),
   };
 }
+
+/** Restoran bir rezervasyonu "Geldi" işaretlediğinde misafire gider — restoranın
+ *  tek taraflı beyanını bağımsız bir teyitle doğrular (bkz. sözleşme Madde 5). */
+export function gelisTeyitEpostasi(params: {
+  restoranAd: string;
+  evetUrl: string;
+  hayirUrl: string;
+  dil?: string | null;
+}) {
+  const dil = epostaDiliCoz(params.dil);
+  const c = EPOSTA_CEVIRILERI[dil];
+  return {
+    konu: c.teyitKonu(params.restoranAd),
+    html: epostaSarmalayici({
+      dil,
+      icerikHtml: `
+        ${baslik(c.teyitBaslik)}
+        <p style="margin:0;">${c.teyitP1(params.restoranAd)}</p>
+        <p style="margin-top:20px;">
+          ${buton(params.evetUrl, c.teyitEvet)}
+          <span style="display:inline-block;width:10px;"></span>
+          ${buton(params.hayirUrl, c.teyitHayir, "#6b7280")}
+        </p>
+      `,
+    }),
+  };
+}
