@@ -17,10 +17,20 @@ export async function POST(
     return NextResponse.json({ hata: "Giriş yapmalısınız." }, { status: 401 });
   }
 
+  const { data: restoranSahiplik } = await supabase
+    .from("restoranlar")
+    .select("id")
+    .eq("auth_user_id", user.id)
+    .maybeSingle();
+  if (!restoranSahiplik) {
+    return NextResponse.json({ hata: "Yetkiniz yok." }, { status: 403 });
+  }
+
   const { data: rezervasyon, error: guncelHata } = await supabase
     .from("rezervasyonlar")
     .update({ durum: "iptal_edildi" })
     .eq("id", id)
+    .eq("restoran_id", restoranSahiplik.id)
     .select("id, tarih_saat, kisi_sayisi, kullanici_id, restoran_id, misafir_dili")
     .single();
 

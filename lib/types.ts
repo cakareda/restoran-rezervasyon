@@ -91,10 +91,10 @@ export const ATMOSFER_ETIKETLERI = [
 ] as const;
 
 export const FIYAT_ARALIKLARI = [
-  { seviye: 1, aralik: "0-300", etiket: "₺ · 0–300 TL" },
-  { seviye: 2, aralik: "300-600", etiket: "₺₺ · 300–600 TL" },
-  { seviye: 3, aralik: "600-1000", etiket: "₺₺₺ · 600–1000 TL" },
-  { seviye: 4, aralik: "1000+", etiket: "₺₺₺₺ · 1000 TL ve üzeri" },
+  { seviye: 1, aralik: "0-600", etiket: "₺ · 0–600 TL" },
+  { seviye: 2, aralik: "600-1200", etiket: "₺₺ · 600–1200 TL" },
+  { seviye: 3, aralik: "1200-2500", etiket: "₺₺₺ · 1200–2500 TL" },
+  { seviye: 4, aralik: "2500+", etiket: "₺₺₺₺ · 2500 TL ve üzeri" },
 ] as const;
 
 export const MUTFAK_TURLERI = [

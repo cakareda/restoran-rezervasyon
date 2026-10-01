@@ -12,8 +12,12 @@ export async function GET(
   const tarih = searchParams.get("tarih");
   const kisiSayisi = Number(searchParams.get("kisiSayisi") ?? 2);
 
-  if (!tarih) {
-    return NextResponse.json({ hata: "Tarih gerekli." }, { status: 400 });
+  if (!tarih || !/^\d{4}-\d{2}-\d{2}$/.test(tarih) || Number.isNaN(new Date(`${tarih}T00:00:00`).getTime())) {
+    return NextResponse.json({ hata: "Geçerli bir tarih gerekli (YYYY-MM-DD)." }, { status: 400 });
+  }
+
+  if (!Number.isInteger(kisiSayisi) || kisiSayisi < 1) {
+    return NextResponse.json({ hata: "Geçerli bir kişi sayısı gerekli." }, { status: 400 });
   }
 
   const supabase = createServiceRoleClient();
