@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import AyarlarForm from "./AyarlarForm";
+import SifreDegistirFormu from "./SifreDegistirFormu";
 import UrlTemizle from "@/components/UrlTemizle";
 
 export const metadata: Metadata = { title: "Ayarlar" };
@@ -83,9 +84,10 @@ export default async function Ayarlar({
         <div className="border-t border-border pt-4">
           <p className="text-sm font-semibold text-foreground">Şifre</p>
           <p className="mt-1 text-sm text-muted">
-            Şifreni sıfırlamak için çıkış yapıp giriş ekranındaki &quot;Şifremi unuttum&quot;
-            bağlantısını kullan.
+            Şifreni aşağıdan değiştirebilirsin. Mevcut şifreni unuttuysan çıkış yapıp giriş
+            ekranındaki &quot;Şifremi unuttum&quot; bağlantısını kullan.
           </p>
+          <SifreDegistirFormu eposta={user!.email!} />
         </div>
       </div>
 
