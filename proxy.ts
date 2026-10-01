@@ -6,7 +6,10 @@ import { routing } from "./i18n/routing";
 const dilYonlendirmesi = createMiddleware(routing);
 
 export async function proxy(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith("/restoran-panel")) {
+  if (
+    request.nextUrl.pathname.startsWith("/restoran-panel") ||
+    request.nextUrl.pathname.startsWith("/admin")
+  ) {
     return await updateSession(request);
   }
   if (request.nextUrl.pathname.startsWith("/widget")) {
@@ -28,6 +31,6 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/restoran-panel/:path*",
-    "/((?!api|auth|_next|restoran-panel|restoran-girisi|restoran-kayit|restoranlar-icin|kvkk|cerez-politikasi|hakkimizda|widget|opengraph-image|.*\\..*).*)",
+    "/((?!api|auth|_next|restoran-panel|restoran-girisi|restoran-kayit|restoranlar-icin|admin|kvkk|cerez-politikasi|hakkimizda|widget|opengraph-image|.*\\..*).*)",
   ],
 };

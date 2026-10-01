@@ -3,7 +3,7 @@ import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { adminMi } from "@/lib/admin";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://masadaki.com").replace(/\/$/, "");
-const SIFRE_BELIRLEME_YOLU = "/restoran-girisi/sifre-sifirla";
+const SIFRE_BELIRLEME_YOLU = "/auth/callback?next=/restoran-girisi/sifre-sifirla";
 
 // restoran-ekle.js scriptinin panel içi karşılığı — aynı mantık: şifreyi biz
 // üretip iletmek yerine Supabase'in tek kullanımlık giriş linkini üretiyoruz.

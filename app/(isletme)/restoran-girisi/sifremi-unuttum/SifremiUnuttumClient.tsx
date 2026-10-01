@@ -18,7 +18,7 @@ export default function RestoranSifremiUnuttum() {
 
     const form = new FormData(e.currentTarget);
     const { error } = await supabase.auth.resetPasswordForEmail(String(form.get("eposta")), {
-      redirectTo: `${window.location.origin}/restoran-girisi/sifre-sifirla`,
+      redirectTo: `${window.location.origin}/auth/callback?next=/restoran-girisi/sifre-sifirla`,
     });
 
     setGonderiliyor(false);

@@ -19,7 +19,7 @@ export default function SifremiUnuttum() {
 
     const form = new FormData(e.currentTarget);
     const { error } = await supabase.auth.resetPasswordForEmail(String(form.get("eposta")), {
-      redirectTo: `${window.location.origin}/hesap/sifre-sifirla`,
+      redirectTo: `${window.location.origin}/auth/callback?next=/hesap/sifre-sifirla`,
     });
 
     setGonderiliyor(false);

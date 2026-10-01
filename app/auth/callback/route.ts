@@ -11,21 +11,26 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error && data.user) {
-      const adSoyad =
-        (data.user.user_metadata?.full_name as string | undefined) ??
-        (data.user.user_metadata?.name as string | undefined) ??
-        data.user.email ??
-        "";
-      const eposta = data.user.email ?? "";
+      // "kullanicilar" tablosu müşteri profili içindir — restoran/admin şifre
+      // kurulumu/sıfırlaması bu akıştan geçtiğinde (next, /hesap ile başlamıyorsa)
+      // oraya yanlışlıkla "misafir" kaydı açmayalım.
+      if (sonrakiSayfa.startsWith("/hesap")) {
+        const adSoyad =
+          (data.user.user_metadata?.full_name as string | undefined) ??
+          (data.user.user_metadata?.name as string | undefined) ??
+          data.user.email ??
+          "";
+        const eposta = data.user.email ?? "";
 
-      if (eposta) {
-        const servisClient = createServiceRoleClient();
-        await servisClient
-          .from("kullanicilar")
-          .upsert(
-            { auth_user_id: data.user.id, ad_soyad: adSoyad, eposta },
-            { onConflict: "eposta" }
-          );
+        if (eposta) {
+          const servisClient = createServiceRoleClient();
+          await servisClient
+            .from("kullanicilar")
+            .upsert(
+              { auth_user_id: data.user.id, ad_soyad: adSoyad, eposta },
+              { onConflict: "eposta" }
+            );
+        }
       }
 
       return NextResponse.redirect(`${origin}${sonrakiSayfa}`);
