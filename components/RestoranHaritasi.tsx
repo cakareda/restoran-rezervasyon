@@ -35,7 +35,13 @@ export default function RestoranHaritasi({ restoranlar }: { restoranlar: HaritaR
       .catch(() => setHata(true));
   }, [apiKey, restoranlar]);
 
-  if (!apiKey || hata) return null;
+  if (!apiKey || hata) {
+    return (
+      <p className="rounded-2xl border border-dashed border-border bg-white p-8 text-center text-muted">
+        Harita şu anda yüklenemiyor, listeden devam edebilirsin.
+      </p>
+    );
+  }
 
   if (restoranlar.length === 0) {
     return (

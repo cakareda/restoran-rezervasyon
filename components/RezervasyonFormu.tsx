@@ -542,7 +542,10 @@ export default function RezervasyonFormu({
             <input
               type="checkbox"
               checked={kvkkOnay}
-              onChange={(e) => setKvkkOnay(e.target.checked)}
+              onChange={(e) => {
+                setKvkkOnay(e.target.checked);
+                if (e.target.checked) setHata(null);
+              }}
               className="mt-0.5 accent-brand"
             />
             <span>

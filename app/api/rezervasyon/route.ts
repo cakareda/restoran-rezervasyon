@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
 import { yeniTalepEpostasi } from "@/lib/email/templates";
@@ -153,13 +153,18 @@ export async function POST(request: Request) {
     panelUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/restoran-panel`,
   });
 
-  await bildirimGonderVeKaydet({
-    rezervasyonId: rezervasyon.id,
-    aliciEposta: restoran.eposta,
-    tur: "yeni_talep",
-    konu,
-    html,
-  });
+  // E-posta gönderimini yanıtı geciktirmeden arka planda yap (misafir "Gönderiliyor..."
+  // ekranında uzun süre beklemesin) — after() yanıt döndükten sonra da Vercel'in isteği
+  // tamamlanmış sayıp fonksiyonu durdurmasını engelliyor.
+  after(() =>
+    bildirimGonderVeKaydet({
+      rezervasyonId: rezervasyon.id,
+      aliciEposta: restoran.eposta,
+      tur: "yeni_talep",
+      konu,
+      html,
+    })
+  );
 
   return NextResponse.json({ rezervasyonId: rezervasyon.id });
 }

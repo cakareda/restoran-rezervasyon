@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { MASA_ALANLARI, type RezervasyonDurum, type RezervasyonKaynagi } from "@/lib/types";
+import {
+  MASA_ALANLARI,
+  OZEL_GUN_SECENEKLERI,
+  type RezervasyonDurum,
+  type RezervasyonKaynagi,
+} from "@/lib/types";
 import { DIL_ADLARI } from "@/i18n/routing";
 import { TakvimIkonu, TelefonIkonu, WhatsappIkonu } from "@/components/icons";
 import { whatsappNumarasi } from "@/lib/format";
@@ -41,6 +46,7 @@ export default function RezervasyonSatiri({
   restoranNotu,
   hayaletUyarisi,
   alanTercihi,
+  ozelGun,
   grupUyarisi,
 }: {
   id: string;
@@ -57,6 +63,7 @@ export default function RezervasyonSatiri({
   restoranNotu?: string | null;
   hayaletUyarisi?: boolean;
   alanTercihi?: string | null;
+  ozelGun?: string | null;
   grupUyarisi?: boolean;
 }) {
   const router = useRouter();
@@ -136,6 +143,11 @@ export default function RezervasyonSatiri({
               </span>
             )}
           </p>
+          {ozelGun && (
+            <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-pink-50 px-2.5 py-1 text-xs font-semibold text-pink-700">
+              🎉 {OZEL_GUN_SECENEKLERI.find((o) => o.deger === ozelGun)?.etiket ?? ozelGun}
+            </p>
+          )}
           {notlar && (
             <p className="mt-2 inline-flex max-w-md items-start gap-1.5 rounded-lg bg-amber-50 px-2.5 py-1.5 text-xs font-medium text-amber-800">
               📝 {notlar}
