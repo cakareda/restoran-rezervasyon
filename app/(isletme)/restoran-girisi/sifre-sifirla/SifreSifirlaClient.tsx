@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { GozIkonu, GozKapaliIkonu } from "@/components/icons";
@@ -13,6 +13,16 @@ export default function RestoranSifreSifirla() {
   const [hata, setHata] = useState<string | null>(null);
   const [basarili, setBasarili] = useState(false);
   const [sifreGorunur, setSifreGorunur] = useState(false);
+
+  // Link türüne göre (admin tarafından üretilen linkler hash tabanlı token,
+  // kullanıcının kendi "şifremi unuttum" akışı PKCE/"code" tabanlı) oturum ya
+  // otomatik kuruluyor (hash) ya da burada elle kurulması gerekiyor ("code").
+  useEffect(() => {
+    const code = new URLSearchParams(window.location.search).get("code");
+    if (code) {
+      supabase.auth.exchangeCodeForSession(code).catch(() => {});
+    }
+  }, [supabase]);
 
   async function kaydet(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

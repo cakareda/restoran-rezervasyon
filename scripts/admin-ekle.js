@@ -19,7 +19,7 @@ const supabase = createClient(
 );
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://masadaki.com").replace(/\/$/, "");
-const SIFRE_BELIRLEME_YOLU = "/auth/callback?next=/hesap/sifre-sifirla";
+const SIFRE_BELIRLEME_YOLU = "/hesap/sifre-sifirla";
 
 async function main() {
   const eposta = process.argv[2];

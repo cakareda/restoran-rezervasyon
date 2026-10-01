@@ -16,7 +16,7 @@ const supabase = createClient(
 );
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://masadaki.com").replace(/\/$/, "");
-const SIFRE_BELIRLEME_YOLU = "/auth/callback?next=/restoran-girisi/sifre-sifirla";
+const SIFRE_BELIRLEME_YOLU = "/restoran-girisi/sifre-sifirla";
 
 // Şifreyi biz üretip WhatsApp/e-postayla düz metin iletmek yerine, Supabase'in
 // tek kullanımlık, süreli (invite/recovery) linkini üretiyoruz. Restoran bu
