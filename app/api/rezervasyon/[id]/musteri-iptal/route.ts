@@ -30,7 +30,7 @@ export async function POST(
 
   const { error } = await supabase
     .from("rezervasyonlar")
-    .update({ durum: "iptal_edildi" })
+    .update({ durum: "iptal_edildi", iptal_eden: "misafir" })
     .eq("id", id);
 
   if (error) {

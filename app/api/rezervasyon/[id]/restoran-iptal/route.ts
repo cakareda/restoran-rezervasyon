@@ -28,7 +28,7 @@ export async function POST(
 
   const { data: rezervasyon, error: guncelHata } = await supabase
     .from("rezervasyonlar")
-    .update({ durum: "iptal_edildi" })
+    .update({ durum: "iptal_edildi", iptal_eden: "restoran" })
     .eq("id", id)
     .eq("restoran_id", restoranSahiplik.id)
     .select("id, tarih_saat, kisi_sayisi, kullanici_id, restoran_id, misafir_dili")

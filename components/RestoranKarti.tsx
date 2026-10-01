@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import type { Restoran } from "@/lib/types";
-import { fiyatGoster } from "@/lib/format";
+import { fiyatSeviyesi } from "@/lib/format";
 import { restoranYolu } from "@/lib/slug";
 import { TabakIkonu } from "@/components/icons";
 
@@ -15,6 +15,7 @@ export default function RestoranKarti({
   yorumSayisi: number;
 }) {
   const t = useTranslations("RestoranKarti");
+  const seviye = fiyatSeviyesi(restoran.ortalama_fiyat, restoran.fiyat_seviyesi);
 
   return (
     <Link
@@ -48,9 +49,10 @@ export default function RestoranKarti({
           {restoran.semt}, {restoran.sehir} · {restoran.mutfak_turu}
         </p>
         <div className="mt-2.5 flex items-center gap-2">
-          {fiyatGoster(restoran.ortalama_fiyat) && (
+          {seviye && (
             <span className="inline-block rounded-full bg-brand-light px-2.5 py-1 text-xs font-semibold text-brand-dark">
-              {fiyatGoster(restoran.ortalama_fiyat)}
+              {"₺".repeat(seviye)}
+              <span className="text-brand-dark/30">{"₺".repeat(4 - seviye)}</span>
             </span>
           )}
           {yorumSayisi > 0 && (

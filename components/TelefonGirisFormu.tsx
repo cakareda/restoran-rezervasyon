@@ -4,14 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
-
-function telefonNormalleştir(ham: string) {
-  const rakamlar = ham.replace(/[^\d+]/g, "");
-  if (rakamlar.startsWith("+")) return rakamlar;
-  if (rakamlar.startsWith("0")) return `+90${rakamlar.slice(1)}`;
-  if (rakamlar.startsWith("90")) return `+${rakamlar}`;
-  return `+90${rakamlar}`;
-}
+import TelefonGirdisi from "@/components/TelefonGirdisi";
 
 export default function TelefonGirisFormu() {
   const t = useTranslations("TelefonGiris");
@@ -27,17 +20,21 @@ export default function TelefonGirisFormu() {
   async function kodGonder(e: React.FormEvent) {
     e.preventDefault();
     setHata(null);
-    setGonderiliyor(true);
 
-    const normalTelefon = telefonNormalleştir(telefon);
-    const { error } = await supabase.auth.signInWithOtp({ phone: normalTelefon });
-
-    setGonderiliyor(false);
-    if (error) {
+    if (telefon.replace(/\D/g, "").length < 10) {
       setHata(t("hataKod"));
       return;
     }
-    setTelefon(normalTelefon);
+
+    setGonderiliyor(true);
+    const { error } = await supabase.auth.signInWithOtp({ phone: telefon });
+
+    setGonderiliyor(false);
+    if (error) {
+      console.error("[Telefon OTP] signInWithOtp hatası:", error.message);
+      setHata(t("hataKod"));
+      return;
+    }
     setAsama("kod");
   }
 
@@ -53,6 +50,7 @@ export default function TelefonGirisFormu() {
     });
 
     if (error || !data.user) {
+      console.error("[Telefon OTP] verifyOtp hatası:", error?.message);
       setGonderiliyor(false);
       setHata(t("hataDogrulama"));
       return;
@@ -107,14 +105,11 @@ export default function TelefonGirisFormu() {
 
   return (
     <form onSubmit={kodGonder} className="space-y-3">
-      <input
+      <TelefonGirdisi
         value={telefon}
-        onChange={(e) => setTelefon(e.target.value)}
-        type="tel"
-        required
-        autoComplete="tel"
+        onChange={setTelefon}
+        girdiSinifi="rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
         placeholder={t("telefonPlaceholder")}
-        className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
       />
       {hata && <p className="text-sm font-medium text-red-600">{hata}</p>}
       <button

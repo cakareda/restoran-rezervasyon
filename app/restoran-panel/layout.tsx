@@ -74,10 +74,10 @@ export default async function RestoranPanelLayout({
             Rezervasyonlar
           </PanelLink>
           <PanelLink
-            href="/restoran-panel/restoranim"
-            ikon={<RestoranIkonu className="h-4 w-4" />}
+            href="/restoran-panel/bekleme-listesi"
+            ikon={<MasaIkonu className="h-4 w-4" />}
           >
-            Restoranım
+            Bekleme Listesi
           </PanelLink>
           <PanelLink
             href="/restoran-panel/kat-plani"
@@ -86,10 +86,10 @@ export default async function RestoranPanelLayout({
             Kat Planı
           </PanelLink>
           <PanelLink
-            href="/restoran-panel/bekleme-listesi"
-            ikon={<MasaIkonu className="h-4 w-4" />}
+            href="/restoran-panel/restoranim"
+            ikon={<RestoranIkonu className="h-4 w-4" />}
           >
-            Bekleme Listesi
+            Restoranım
           </PanelLink>
           <PanelLink href="/restoran-panel/raporlar" ikon={<RaporIkonu className="h-4 w-4" />}>
             Raporlar
@@ -108,11 +108,14 @@ export default async function RestoranPanelLayout({
         <MobilPanelLink href="/restoran-panel" ikon={<TakvimIkonu className="h-5 w-5" />}>
           Rezervasyon
         </MobilPanelLink>
-        <MobilPanelLink href="/restoran-panel/restoranim" ikon={<RestoranIkonu className="h-5 w-5" />}>
-          Restoranım
-        </MobilPanelLink>
         <MobilPanelLink href="/restoran-panel/bekleme-listesi" ikon={<MasaIkonu className="h-5 w-5" />}>
           Bekleme
+        </MobilPanelLink>
+        <MobilPanelLink href="/restoran-panel/kat-plani" ikon={<MasaIkonu className="h-5 w-5" />}>
+          Kat Planı
+        </MobilPanelLink>
+        <MobilPanelLink href="/restoran-panel/restoranim" ikon={<RestoranIkonu className="h-5 w-5" />}>
+          Restoranım
         </MobilPanelLink>
         <MobilPanelLink href="/restoran-panel/raporlar" ikon={<RaporIkonu className="h-5 w-5" />}>
           Rapor

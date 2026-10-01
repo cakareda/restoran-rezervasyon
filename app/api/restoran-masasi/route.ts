@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ hata: "Yetkiniz yok." }, { status: 403 });
   }
 
-  const { isim, kapasite, alan, pozisyonX, pozisyonY } = await request.json();
+  const { isim, kapasite, alan, pozisyonX, pozisyonY, sekil } = await request.json();
   if (!isim || !kapasite || kapasite < 1) {
     return NextResponse.json({ hata: "Masa adı ve kapasite zorunlu." }, { status: 400 });
   }
@@ -33,6 +33,7 @@ export async function POST(request: Request) {
       alan: alan ?? "",
       pozisyon_x: pozisyonX ?? 10,
       pozisyon_y: pozisyonY ?? 10,
+      sekil: sekil === "daire" ? "daire" : "dikdortgen",
     })
     .select()
     .single();

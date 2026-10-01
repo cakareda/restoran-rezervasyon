@@ -120,12 +120,17 @@ export default function RezervasyonSatiri({
 
   async function eylemCagir(url: string, gövde?: object) {
     setYukleniyor(true);
-    await fetch(url, {
+    const yanit = await fetch(url, {
       method: "POST",
       headers: gövde ? { "Content-Type": "application/json" } : undefined,
       body: gövde ? JSON.stringify(gövde) : undefined,
     });
     setYukleniyor(false);
+    if (!yanit.ok) {
+      const gövdeYanit = await yanit.json().catch(() => null);
+      alert(gövdeYanit?.hata ?? "Bir şeyler ters gitti, tekrar dene.");
+      return;
+    }
     setOnayModali(null);
     router.refresh();
   }

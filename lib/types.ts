@@ -52,6 +52,7 @@ export interface RestoranMasasi {
   alan: string;
   pozisyon_x: number;
   pozisyon_y: number;
+  sekil: "daire" | "dikdortgen";
 }
 
 export const MASA_ALANLARI = [

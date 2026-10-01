@@ -36,6 +36,7 @@ export async function PATCH(
   if (typeof gövde.pozisyonY === "number") {
     guncelleme.pozisyon_y = Math.min(100, Math.max(0, gövde.pozisyonY));
   }
+  if (gövde.sekil === "daire" || gövde.sekil === "dikdortgen") guncelleme.sekil = gövde.sekil;
 
   const { error } = await supabase
     .from("restoran_masalari")
