@@ -47,10 +47,11 @@ async function kaydet(formData: FormData) {
   const ozelGunlerHam = String(formData.get("ozelGunler") ?? "[]");
   const ozelGunlerGecerli = ozelGunlerHam !== "[]" && ozelGunlerHam.trim() !== "" ? ozelGunlerHam : null;
 
-  const fiyatSeviyesiHam = formData.get("fiyatSeviyesi");
-  const fiyatSeviyesi =
-    fiyatSeviyesiHam && String(fiyatSeviyesiHam).trim() !== "" ? Number(fiyatSeviyesiHam) : null;
-
+  // Not: "fiyat_seviyesi" (ve dolayısıyla komisyon kademesi) buradan kasıtlı
+  // olarak güncellenmiyor. Komisyon oranı restoranın beyan ettiği fiyat
+  // seviyesine bağlı olduğu için bunu restoranın kendi kendine en düşük
+  // kademeyi seçip komisyondan kaçmasına izin vermemek adına yalnızca
+  // Masadaki ekibi (restoran-ekle.js scripti / admin) belirler.
   const { error } = await supabase.from("restoranlar").upsert(
     {
       auth_user_id: user.id,
@@ -61,8 +62,6 @@ async function kaydet(formData: FormData) {
       eposta: String(formData.get("eposta")),
       telefon: String(formData.get("telefon") ?? ""),
       kapasite: formData.get("kapasite") ? Number(formData.get("kapasite")) : null,
-      ortalama_fiyat: String(formData.get("ortalamaFiyat") ?? ""),
-      fiyat_seviyesi: fiyatSeviyesi,
       aciklama: String(formData.get("aciklama") ?? "").slice(0, 600),
       adres: String(formData.get("adres") ?? ""),
       acilis_saati: String(formData.get("acilisSaati") ?? "12:00"),

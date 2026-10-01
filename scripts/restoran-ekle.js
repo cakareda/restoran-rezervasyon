@@ -67,6 +67,19 @@ async function main() {
   const semt = await rl.question("Semt: ");
   const mutfakTuru = await rl.question("Mutfak türü (örn. Türk, Kebap, İtalyan...): ");
 
+  // Fiyat seviyesi (ve dolayısıyla komisyon kademesi) kasıtlı olarak yalnızca
+  // burada belirleniyor — restoran panelden kendi fiyat seviyesini seçip en
+  // düşük komisyon kademesine kaçamasın diye. Menü/ortalama fiyat bilgisine
+  // (başvuruda bildirdiyse yukarıda göründü) bakarak sen karar ver.
+  let fiyatSeviyesi = null;
+  while (!fiyatSeviyesi) {
+    const ham = await rl.question(
+      "Fiyat seviyesi (1=₺ 0-600TL, 2=₺₺ 600-1200TL, 3=₺₺₺ 1200-2500TL, 4=₺₺₺₺ 2500TL+): "
+    );
+    if (["1", "2", "3", "4"].includes(ham.trim())) fiyatSeviyesi = Number(ham.trim());
+    else console.log("Lütfen 1-4 arası bir sayı gir.");
+  }
+
   const { data: varOlanKullanici } = await supabase.auth.admin.listUsers();
   const mevcut = varOlanKullanici?.users?.find((u) => u.email === secilen.eposta);
 
@@ -95,6 +108,7 @@ async function main() {
         mutfak_turu: mutfakTuru,
         eposta: secilen.eposta,
         telefon: secilen.telefon,
+        fiyat_seviyesi: fiyatSeviyesi,
       },
       { onConflict: "auth_user_id" }
     )

@@ -45,9 +45,6 @@ export default function RestoranimForm({
   const [adres, setAdres] = useState(restoran?.adres ?? "");
   const [mutfakTuru, setMutfakTuru] = useState(restoran?.mutfak_turu ?? "");
   const baslangicFiyatSeviyesi = fiyatSeviyesiHesapla(restoran?.ortalama_fiyat, restoran?.fiyat_seviyesi);
-  const [ortalamaFiyat, setOrtalamaFiyat] = useState(
-    FIYAT_ARALIKLARI.find((f) => f.seviye === baslangicFiyatSeviyesi)?.aralik ?? ""
-  );
   const [acilisSaati, setAcilisSaati] = useState(restoran?.acilis_saati?.slice(0, 5) ?? "12:00");
   const [kapanisSaati, setKapanisSaati] = useState(restoran?.kapanis_saati?.slice(0, 5) ?? "23:00");
   const [olanaklar, setOlanaklar] = useState<string[]>(restoran?.olanaklar ?? []);
@@ -61,9 +58,7 @@ export default function RestoranimForm({
   const [ozelGunler, setOzelGunler] = useState<OzelGun[]>(() =>
     ozelGunlerYikle(restoran?.ozel_gunler)
   );
-  const [fiyatSeviyesi, setFiyatSeviyesi] = useState(
-    baslangicFiyatSeviyesi ? String(baslangicFiyatSeviyesi) : ""
-  );
+  const fiyatSeviyesi = baslangicFiyatSeviyesi ? String(baslangicFiyatSeviyesi) : "";
   const [degisti, setDegisti] = useState(false);
   const [menuUrl, setMenuUrl] = useState(restoran?.menu_url ?? "");
   const [lat, setLat] = useState<number | null>(restoran?.lat ?? null);
@@ -252,28 +247,16 @@ export default function RestoranimForm({
             </div>
           </div>
           <div>
-            <label className={etiketStil}>Fiyat aralığı</label>
-            <input type="hidden" name="ortalamaFiyat" value={ortalamaFiyat} />
-            <select
-              name="fiyatSeviyesi"
-              value={fiyatSeviyesi}
-              onChange={(e) => {
-                setFiyatSeviyesi(e.target.value);
-                const secilen = FIYAT_ARALIKLARI.find((f) => String(f.seviye) === e.target.value);
-                setOrtalamaFiyat(secilen?.aralik ?? "");
-              }}
-              required
-              className={girdiStil}
-            >
-              <option value="" disabled>
-                Seçin
-              </option>
-              {FIYAT_ARALIKLARI.map((f) => (
-                <option key={f.seviye} value={f.seviye}>
-                  {f.etiket}
-                </option>
-              ))}
-            </select>
+            <label className={etiketStil}>Fiyat seviyesi</label>
+            <div className={`${girdiStil} bg-zinc-50 text-muted`}>
+              {fiyatSeviyesi
+                ? FIYAT_ARALIKLARI.find((f) => String(f.seviye) === fiyatSeviyesi)?.etiket
+                : "Henüz belirlenmedi"}
+            </div>
+            <p className="mt-1 text-xs text-muted">
+              Komisyon kademesi bu seviyeye göre hesaplandığı için fiyat seviyesi Masadaki ekibi
+              tarafından belirlenir. Değişiklik istersen bize ulaş.
+            </p>
           </div>
         </div>
         <div>
