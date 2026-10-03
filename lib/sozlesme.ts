@@ -152,6 +152,6 @@ export async function sozlesmeEngeli(restoranId: string): Promise<NextResponse |
 }
 
 /** Sözleşme bitişine 30 günden az kaldıysa true (panelde yenileme uyarısı için). */
-export function sozlesmeYakindaBitiyor(bitisIso: string): boolean {
-  return new Date(bitisIso).getTime() - Date.now() < 30 * 24 * 60 * 60 * 1000;
+export function sozlesmeYakindaBitiyor(bitisIso: string, gun = 30): boolean {
+  return new Date(bitisIso).getTime() - Date.now() < gun * 24 * 60 * 60 * 1000;
 }

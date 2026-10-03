@@ -1,4 +1,5 @@
 import { NextResponse, after } from "next/server";
+import { hataBildir } from "@/lib/sistemIzleme";
 import { hizSiniriKontrol } from "@/lib/hizSiniri";
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
@@ -198,6 +199,7 @@ export async function POST(request: Request) {
 
   if (!kullanici) {
     console.error("[Rezervasyon] kullanici kaydedilemedi", kullaniciHatasi);
+    await hataBildir("rezervasyon:kullanici", `${kullaniciHatasi?.code ?? ""} ${kullaniciHatasi?.message ?? ""}`);
     return NextResponse.json(
       { hata: `Kullanıcı kaydedilemedi.${kullaniciHatasi?.code ? ` (${kullaniciHatasi.code})` : ""}` },
       { status: 500 }
@@ -230,6 +232,7 @@ export async function POST(request: Request) {
     .single();
 
   if (rezervasyonHata || !rezervasyon) {
+    await hataBildir("rezervasyon:olusturulamadi", rezervasyonHata?.message ?? "bilinmeyen");
     return NextResponse.json({ hata: "Rezervasyon oluşturulamadı." }, { status: 500 });
   }
 

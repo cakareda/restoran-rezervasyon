@@ -36,6 +36,7 @@ export type KomisyonSatiri = {
   misafirUyarisiSayisi: number;
   incelemeSayisi: number;
   toplamTutar: number;
+  birimTutar: number;
 };
 
 type Rezervasyon = {
@@ -167,6 +168,7 @@ export async function komisyonRaporuHesapla(ayParam: string | null | undefined) 
       misafirUyarisiSayisi: buRestoran.filter((k) => k.tur === "uyari").length,
       incelemeSayisi: buRestoran.filter((k) => k.tur === "inceleme").length,
       toplamTutar: ucretliKisi * KADEME_TUTARLARI[seviye],
+      birimTutar: KADEME_TUTARLARI[seviye],
     };
   });
 

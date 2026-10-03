@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import FiyatSeviyesiSecici from "./FiyatSeviyesiSecici";
 import Ek1Formu from "./Ek1Formu";
-import { SOZLESME_SURUMU } from "@/lib/sozlesme";
+import { SOZLESME_SURUMU, sozlesmeYakindaBitiyor } from "@/lib/sozlesme";
 
 export const metadata: Metadata = { title: "Restoranlar — Admin" };
 
@@ -22,6 +22,11 @@ export default async function AdminRestoranlar() {
     .eq("sozlesme_surumu", SOZLESME_SURUMU);
   const kabulHaritasi = new Map((kabuller ?? []).map((k) => [k.restoran_id, k]));
 
+  const bitecekler = (restoranlar ?? [])
+    .map((r) => ({ r, k: kabulHaritasi.get(r.id) }))
+    .filter((x) => x.k && sozlesmeYakindaBitiyor(x.k.sozlesme_bitis, 60))
+    .sort((a, b) => a.k!.sozlesme_bitis.localeCompare(b.k!.sozlesme_bitis));
+
   return (
     <div>
       <h1 className="text-2xl font-extrabold text-foreground">Restoranlar</h1>
@@ -29,6 +34,19 @@ export default async function AdminRestoranlar() {
         {restoranlar?.length ?? 0} restoran kayıtlı. Fiyat seviyesi (komisyon kademesi) yalnızca
         buradan değiştirilebilir — restoran paneli üzerinden değiştirilemez.
       </p>
+
+      {bitecekler.length > 0 && (
+        <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+          <p className="font-bold">Sözleşmesi 60 gün içinde dolacaklar (yenileme zamanı)</p>
+          <ul className="mt-1 space-y-0.5">
+            {bitecekler.map(({ r, k }) => (
+              <li key={r.id}>
+                {r.ad} — {new Date(k!.sozlesme_bitis).toLocaleDateString("tr-TR")}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="mt-6 overflow-x-auto rounded-2xl border border-border bg-white">
         <table className="w-full text-sm">

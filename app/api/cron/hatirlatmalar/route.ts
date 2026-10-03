@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cronSarmala } from "@/lib/sistemIzleme";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
 import { hatirlatmaEpostasi } from "@/lib/email/templates";
@@ -9,7 +10,7 @@ import { hatirlatmaEpostasi } from "@/lib/email/templates";
 const HATIRLATMA_ONCESI_DK = 180;
 const PENCERE_DK = 15;
 
-export async function GET(request: Request) {
+async function isle(request: Request) {
   const yetkiBasligi = request.headers.get("authorization");
   if (process.env.CRON_SECRET && yetkiBasligi !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ hata: "Yetkisiz." }, { status: 401 });
@@ -69,3 +70,5 @@ export async function GET(request: Request) {
 
   return NextResponse.json({ gonderilen });
 }
+
+export const GET = cronSarmala("hatirlatmalar", isle);

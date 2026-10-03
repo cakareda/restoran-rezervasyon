@@ -34,7 +34,7 @@ function tabloHtml(satirlar: KomisyonSatiri[], ayEtiketi: string, bekleyenToplam
 </style></head>
 <body>
   <h1>Komisyon Raporu — ${ayEtiketi}</h1>
-  <p>Sözleşme V1.0: Masadaki kaynaklı, onaylı, iptal/No-Show olmayan rezervasyonlar ücretlidir (kişi sayısı × segment bedeli, KDV hariç). Tahakkuk: "Geldi" ise rezervasyon saati, işaret yoksa rezervasyon saati + 48 saat. Misafir uyarısı ve inceleme kayıtları bilgi amaçlıdır.</p>
+  <p>Sözleşme taslağı: Masadaki kaynaklı, onaylı, iptal/No-Show olmayan rezervasyonlar ücretlidir (kişi sayısı × segment bedeli, KDV hariç). Tahakkuk: "Geldi" ise rezervasyon saati, işaret yoksa rezervasyon saati + 12 saat. Misafir uyarısı ve inceleme kayıtları bilgi amaçlıdır.</p>
   <table>
     <thead><tr>
       <th>Restoran</th><th>E-posta</th><th>Ücretsiz dönem bitişi</th>

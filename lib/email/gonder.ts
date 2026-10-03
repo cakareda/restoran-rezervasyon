@@ -1,4 +1,5 @@
 import { resend, GONDEREN_EPOSTA } from "./resend";
+import { hataBildir } from "@/lib/sistemIzleme";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 
 export async function bildirimGonderVeKaydet(params: {
@@ -25,6 +26,7 @@ export async function bildirimGonderVeKaydet(params: {
 
   if (error) {
     console.error("[Resend gönderim hatası]", error);
+    await hataBildir("eposta:gonderim", error.message);
     return;
   }
 

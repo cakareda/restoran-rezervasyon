@@ -27,9 +27,9 @@ export default async function AdminKomisyonRaporu({
     <div>
       <h1 className="text-2xl font-extrabold text-foreground">Komisyon Raporu</h1>
       <p className="mt-1 text-sm text-muted">
-        Sözleşme V1.0: Masadaki kaynaklı, onaylı, iptal/No-Show olmayan rezervasyonlar ücretlidir
+        Sözleşme taslağı: Masadaki kaynaklı, onaylı, iptal/No-Show olmayan rezervasyonlar ücretlidir
         (kişi sayısı × segment bedeli, KDV hariç). Tahakkuk: &quot;Geldi&quot; ise rezervasyon saati,
-        işaret yoksa rezervasyon saati + 48 saat. ★ = Kurucu Restoran.
+        işaret yoksa rezervasyon saati + 12 saat. ★ = Kurucu Restoran.
       </p>
 
       <form method="get" className="mt-4 flex items-center gap-2">
@@ -45,6 +45,12 @@ export default async function AdminKomisyonRaporu({
         >
           Göster
         </button>
+        <a
+          href={`/api/admin/komisyon-raporu/csv?ay=${secilenAy}`}
+          className="rounded-lg border border-border bg-white px-3.5 py-2 text-sm font-semibold text-foreground hover:bg-zinc-50"
+        >
+          Fatura özeti (CSV)
+        </a>
       </form>
 
       {hata ? (
