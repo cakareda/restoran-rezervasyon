@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { adminMi } from "@/lib/admin";
+import { adminMi, adminEpostalari } from "@/lib/admin";
 import AdminCikisButonu from "./AdminCikisButonu";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -18,9 +18,17 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="max-w-sm rounded-2xl bg-white p-8 text-center shadow-sm">
           <h1 className="text-lg font-bold text-foreground">Yetkiniz yok</h1>
           <p className="mt-2 text-sm text-muted">
-            Bu sayfa yalnızca Masadaki ekibine açık. Yanlış hesapla giriş yaptıysan çıkış yapıp
-            tekrar dene.
+            Bu sayfa yalnızca Masadaki ekibine açık. Şu an{" "}
+            <span className="font-semibold text-foreground">{user.email ?? "bilinmeyen hesap"}</span>{" "}
+            ile giriş yapılmış. Yanlış hesapsa çıkış yapıp admin hesabınla tekrar dene.
           </p>
+          <p className="mt-2 text-xs text-muted">
+            Sunucuda tanımlı admin adresi sayısı: {adminEpostalari().length}
+            {adminEpostalari().length === 0 && " — ADMIN_EPOSTALAR okunmuyor, Vercel'de redeploy gerekebilir."}
+          </p>
+          <div className="mt-4 text-sm font-semibold text-brand">
+            <AdminCikisButonu />
+          </div>
         </div>
       </div>
     );
