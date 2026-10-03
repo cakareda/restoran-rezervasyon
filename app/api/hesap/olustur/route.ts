@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { hizSiniriKontrol } from "@/lib/hizSiniri";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { DILLER } from "@/i18n/routing";
 
@@ -8,6 +9,8 @@ import { DILLER } from "@/i18n/routing";
 // gerçekten var mı ve e-postası eşleşiyor mu sunucuda doğruluyoruz. Ayrıca mevcut bir
 // profili başka bir hesaba bağlamıyoruz (hesap/rezervasyon ele geçirmeyi önlemek için).
 export async function POST(request: Request) {
+  const hiz = await hizSiniriKontrol(request, "hesap", 10, 3600);
+  if (hiz) return hiz;
   const { authUserId, adSoyad, eposta, telefon, dil } = await request.json();
   const gecerliDil = DILLER.includes(dil) ? dil : null;
 

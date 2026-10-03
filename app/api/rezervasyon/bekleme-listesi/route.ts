@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
+import { hizSiniriKontrol } from "@/lib/hizSiniri";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { telefonGecerliMi } from "@/lib/telefon";
 
 export async function POST(request: Request) {
+  const hiz = await hizSiniriKontrol(request, "bekleme", 10, 600);
+  if (hiz) return hiz;
   const body = await request.json();
   const { restoranId, adSoyad, eposta, telefon, tarih, saat, kisiSayisi } = body;
 

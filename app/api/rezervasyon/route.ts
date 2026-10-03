@@ -1,4 +1,5 @@
 import { NextResponse, after } from "next/server";
+import { hizSiniriKontrol } from "@/lib/hizSiniri";
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
 import { yeniTalepEpostasi } from "@/lib/email/templates";
@@ -7,6 +8,8 @@ import { telefonGecerliMi } from "@/lib/telefon";
 import { DILLER } from "@/i18n/routing";
 
 export async function POST(request: Request) {
+  const hiz = await hizSiniriKontrol(request, "rezervasyon", 10, 600);
+  if (hiz) return hiz;
   const body = await request.json();
   const {
     restoranId,
@@ -138,6 +141,10 @@ export async function POST(request: Request) {
   // E-posta karşılaştırması büyük/küçük harfe duyarsız olsun diye küçük harfe çeviriyoruz;
   // eski kayıtlar karışık harfli olabileceğinden önce küçük harfle, sonra olduğu gibi arıyoruz.
   const epostaKucuk = eposta.trim().toLowerCase();
+
+  // Aynı e-postaya saatte en fazla 5 talep: başkasının adresine bildirim yağdırmayı engeller.
+  const epostaHizi = await hizSiniriKontrol(request, "rezervasyon-eposta", 5, 3600, epostaKucuk);
+  if (epostaHizi) return epostaHizi;
   const kullaniciGetir = async () => {
     const ilk = await supabase
       .from("kullanicilar")

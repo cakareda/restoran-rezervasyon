@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
+import { hizSiniriKontrol } from "@/lib/hizSiniri";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
+  const hiz = await hizSiniriKontrol(request, "yorum", 10, 3600);
+  if (hiz) return hiz;
   const body = await request.json();
   const { rezervasyonId, puanYemek, puanServis, puanOrtam, yorumMetni } = body;
 

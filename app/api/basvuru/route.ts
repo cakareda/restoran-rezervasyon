@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { hizSiniriKontrol } from "@/lib/hizSiniri";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { resend, GONDEREN_EPOSTA } from "@/lib/email/resend";
 import { telefonGecerliMi } from "@/lib/telefon";
@@ -12,6 +13,8 @@ function kac(deger: unknown) {
 }
 
 export async function POST(request: Request) {
+  const hiz = await hizSiniriKontrol(request, "basvuru", 5, 3600);
+  if (hiz) return hiz;
   const body = await request.json();
   const { restoranAdi, eposta, telefon, masaDuzeni, menu } = body;
 

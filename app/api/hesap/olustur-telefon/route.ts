@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { hizSiniriKontrol } from "@/lib/hizSiniri";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { DILLER } from "@/i18n/routing";
 
@@ -7,6 +8,8 @@ import { DILLER } from "@/i18n/routing";
 // kullanıcılarının e-postası olmayabilir, "eposta" alanına göre eşleştirme
 // birden fazla kullanıcıyı aynı satıra düşürebilirdi).
 export async function POST(request: Request) {
+  const hiz = await hizSiniriKontrol(request, "hesap-tel", 10, 3600);
+  if (hiz) return hiz;
   const { authUserId, telefon, dil } = await request.json();
 
   if (!authUserId || !telefon) {
