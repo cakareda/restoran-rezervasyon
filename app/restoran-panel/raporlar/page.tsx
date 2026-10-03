@@ -1,3 +1,4 @@
+import { bugununTarihi, istanbulTarihSaat } from "@/lib/tarih";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 
@@ -19,9 +20,7 @@ export default async function Raporlar() {
     return <p className="text-muted">Önce restoran profilinizi tamamlayın.</p>;
   }
 
-  const ayBaslangic = new Date();
-  ayBaslangic.setDate(1);
-  ayBaslangic.setHours(0, 0, 0, 0);
+  const ayBaslangic = istanbulTarihSaat(`${bugununTarihi().slice(0, 8)}01`, "00:00");
 
   const { data: rezervasyonlar } = await supabase
     .from("rezervasyonlar")

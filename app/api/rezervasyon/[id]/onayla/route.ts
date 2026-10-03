@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
 import { onayEpostasi } from "@/lib/email/templates";
 
@@ -9,6 +9,7 @@ export async function POST(
 ) {
   const { id } = await params;
   const supabase = await createClient();
+  const servis = createServiceRoleClient();
 
   const {
     data: { user },
@@ -29,11 +30,12 @@ export async function POST(
     return NextResponse.json({ hata: "Yetkiniz yok." }, { status: 403 });
   }
 
-  const { data: rezervasyon, error: guncelHata } = await supabase
+  const { data: rezervasyon, error: guncelHata } = await servis
     .from("rezervasyonlar")
     .update({ durum: "onaylandi" })
     .eq("id", id)
     .eq("restoran_id", restoranSahiplik.id)
+    .eq("durum", "beklemede")
     .select("id, tarih_saat, kisi_sayisi, kullanici_id, restoran_id, misafir_dili")
     .single();
 

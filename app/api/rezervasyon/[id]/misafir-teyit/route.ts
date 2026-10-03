@@ -35,6 +35,9 @@ function htmlYanit(baslik: string, mesaj: string, status = 200) {
   });
 }
 
+// GET yalnızca onay sayfasını gösterir; cevabı KAYDETMEZ. E-posta güvenlik tarayıcıları
+// (SafeLinks vb.) linkleri otomatik açtığı için, kayıt ancak kullanıcının butona basıp
+// POST göndermesiyle yapılır.
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -43,6 +46,34 @@ export async function GET(
   const url = new URL(request.url);
   const cevap = url.searchParams.get("cevap") ?? "";
   const token = url.searchParams.get("token") ?? "";
+
+  if (!teyitTokenDogrula(id, cevap, token)) {
+    return htmlYanit(
+      "Geçersiz bağlantı",
+      "Bu bağlantının süresi dolmuş veya geçersiz görünüyor.",
+      400
+    );
+  }
+
+  const soru = cevap === "evet" ? "Rezervasyonuna gittiğini onaylıyor musun?" : "Rezervasyonuna gitmediğini onaylıyor musun?";
+  const dugme = cevap === "evet" ? "Evet, gittim" : "Evet, gitmedim";
+  return new NextResponse(
+    sayfa(
+      "Onay",
+      `${soru}<form method="post" style="margin-top:20px"><input type="hidden" name="cevap" value="${cevap}" /><input type="hidden" name="token" value="${token}" /><button type="submit" style="background:#7a1f2b;color:#fff;border:0;border-radius:10px;padding:12px 22px;font-size:15px;font-weight:600;cursor:pointer">${dugme}</button></form>`
+    ),
+    { headers: { "Content-Type": "text/html; charset=utf-8" } }
+  );
+}
+
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const form = await request.formData();
+  const cevap = String(form.get("cevap") ?? "");
+  const token = String(form.get("token") ?? "");
 
   if (!teyitTokenDogrula(id, cevap, token)) {
     return htmlYanit(
@@ -71,7 +102,8 @@ export async function GET(
   await supabase
     .from("rezervasyonlar")
     .update({ misafir_teyit: cevap === "evet", misafir_teyit_zamani: new Date().toISOString() })
-    .eq("id", id);
+    .eq("id", id)
+    .is("misafir_teyit", null);
 
   if (cevap === "evet") {
     return htmlYanit("Teşekkürler!", "Ziyaretini onayladın, restorana bildirdik.");

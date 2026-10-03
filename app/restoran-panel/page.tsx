@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import type { RezervasyonDurum, RezervasyonKaynagi } from "@/lib/types";
-import { bugununTarihi, yerelTarih } from "@/lib/tarih";
+import { bugununTarihi, yerelTarih, istanbulTarihSaat } from "@/lib/tarih";
 import RezervasyonSatiri from "./RezervasyonSatiri";
 import YeniRezervasyonEkle from "./YeniRezervasyonEkle";
 import DisaAktarButonu from "./DisaAktarButonu";
@@ -124,9 +124,10 @@ export default async function RestoranPaneli({
     .order("tarih_saat", { ascending: true });
 
   if (!tumu) {
-    const gunBaslangic = new Date(`${tarih}T00:00:00`);
-    const gunBitis = new Date(`${tarih}T00:00:00`);
-    gunBitis.setDate(gunBitis.getDate() + 1);
+    // Gün sınırı sunucu saat dilimine değil İstanbul'a göre (gece yarısından sonraki
+    // rezervasyonlar bir önceki günün listesinde görünmesin).
+    const gunBaslangic = istanbulTarihSaat(tarih, "00:00");
+    const gunBitis = new Date(gunBaslangic.getTime() + 24 * 60 * 60 * 1000);
     sorgu = sorgu.gte("tarih_saat", gunBaslangic.toISOString()).lt("tarih_saat", gunBitis.toISOString());
   }
 

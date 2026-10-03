@@ -23,7 +23,10 @@ const kaynakEtiketi: Record<string, string> = {
 };
 
 function csvHucre(deger: string) {
-  const guvenli = deger.replace(/"/g, '""');
+  // Excel/Sheets "=", "+", "-", "@" ile başlayan hücreleri formül sayar (CSV enjeksiyonu);
+  // misafirin yazdığı ad/not alanları bu yolla kötüye kullanılmasın diye başına ' koyuyoruz.
+  const duzMetin = /^[=+\-@\t\r]/.test(deger) ? `'${deger}` : deger;
+  const guvenli = duzMetin.replace(/"/g, '""');
   return `"${guvenli}"`;
 }
 

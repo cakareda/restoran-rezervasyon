@@ -16,6 +16,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ hata: "Yüklenecek satır bulunamadı." }, { status: 400 });
   }
 
+  if (satirlar.length > 500) {
+    return NextResponse.json({ hata: "Tek seferde en fazla 500 satır yüklenebilir." }, { status: 400 });
+  }
+
   const oturumClient = await createClient();
   const {
     data: { user },
@@ -57,7 +61,8 @@ export async function POST(request: Request) {
   let musaitDegil = 0;
 
   for (const satir of satirlar) {
-    if (!satir.adSoyad || !satir.tarihSaat || !satir.kisiSayisi) {
+    const kisi = Number(satir.kisiSayisi);
+    if (!satir.adSoyad || !satir.tarihSaat || !Number.isInteger(kisi) || kisi < 1 || kisi > 500) {
       atlanan++;
       continue;
     }
@@ -73,7 +78,7 @@ export async function POST(request: Request) {
     if (gelecekteMi) {
       const { musait, atanacakKapasite: kapasite } = musaitlikHesapla({
         istenenBaslangic: tarih,
-        kisiSayisi: satir.kisiSayisi,
+        kisiSayisi: kisi,
         oturmaSuresiDk: restoran.oturma_suresi_dk ?? 90,
         masalar: masalar ?? [],
         aktifRezervasyonlar: simulasyonListesi,
@@ -90,10 +95,10 @@ export async function POST(request: Request) {
     const { error } = await supabase.from("rezervasyonlar").insert({
       restoran_id: restoran.id,
       kullanici_id: null,
-      misafir_ad_soyad: satir.adSoyad,
+      misafir_ad_soyad: String(satir.adSoyad).replace(/[<>]/g, "").slice(0, 100),
       misafir_telefon: satir.telefon ?? null,
       tarih_saat: tarih.toISOString(),
-      kisi_sayisi: satir.kisiSayisi,
+      kisi_sayisi: kisi,
       durum: "onaylandi",
       kaynak: "telefon",
       masa_kapasitesi: atanacakKapasite,

@@ -100,7 +100,7 @@ export default async function AnaSayfa() {
     <div>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(yapilandirilmisVeri) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(yapilandirilmisVeri).replace(/</g, "\\u003c") }}
       />
       {/* Hero */}
       <section

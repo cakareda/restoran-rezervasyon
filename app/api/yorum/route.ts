@@ -8,6 +8,11 @@ export async function POST(request: Request) {
   if (!rezervasyonId || !puanYemek || !puanServis || !puanOrtam) {
     return NextResponse.json({ hata: "Eksik bilgi." }, { status: 400 });
   }
+  for (const puan of [puanYemek, puanServis, puanOrtam]) {
+    if (!Number.isInteger(puan) || puan < 1 || puan > 5) {
+      return NextResponse.json({ hata: "Puanlar 1 ile 5 arasında olmalı." }, { status: 400 });
+    }
+  }
 
   const supabase = createServiceRoleClient();
 
@@ -30,7 +35,7 @@ export async function POST(request: Request) {
     puan_yemek: puanYemek,
     puan_servis: puanServis,
     puan_ortam: puanOrtam,
-    yorum_metni: yorumMetni ?? null,
+    yorum_metni: yorumMetni ? String(yorumMetni).slice(0, 1000) : null,
   });
 
   if (error) {

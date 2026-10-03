@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
 import { yorumDavetiEpostasi } from "@/lib/email/templates";
 
@@ -11,6 +11,7 @@ export async function POST(
   const { geldiMi } = await request.json();
 
   const supabase = await createClient();
+  const servis = createServiceRoleClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -70,7 +71,7 @@ export async function POST(
     }
   }
 
-  const { data: rezervasyon, error: guncelHata } = await supabase
+  const { data: rezervasyon, error: guncelHata } = await servis
     .from("rezervasyonlar")
     .update({
       geldi_mi: geldiMi,

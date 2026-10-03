@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import type { RezervasyonDurum } from "@/lib/types";
 import { TakvimIkonu } from "@/components/icons";
 import UrlTemizle from "@/components/UrlTemizle";
@@ -59,11 +59,29 @@ export default async function Profilim({
 
   if (!user) return redirect({ href: "/hesap/giris", locale });
 
-  const { data: kullanici } = await supabase
+  let { data: kullanici } = await supabase
     .from("kullanicilar")
     .select("id, ad_soyad, eposta, telefon, dil")
     .eq("auth_user_id", user.id)
     .maybeSingle();
+
+  // E-posta onayı beklenirken kayıt tamamlandıysa (ya da misafir olarak rezervasyon yapılmış
+  // bir e-postayla sonradan hesap açıldıysa) profil henüz hesaba bağlı olmayabilir; giriş
+  // yapabildiğine göre e-posta onaylıdır, sahipsiz profili şimdi bağla.
+  if (!kullanici && user.email) {
+    const servis = createServiceRoleClient();
+    await servis
+      .from("kullanicilar")
+      .update({ auth_user_id: user.id })
+      .eq("eposta", user.email.toLowerCase())
+      .is("auth_user_id", null);
+    const yeniden = await supabase
+      .from("kullanicilar")
+      .select("id, ad_soyad, eposta, telefon, dil")
+      .eq("auth_user_id", user.id)
+      .maybeSingle();
+    kullanici = yeniden.data;
+  }
 
   if (!kullanici) return redirect({ href: "/hesap/giris", locale });
 

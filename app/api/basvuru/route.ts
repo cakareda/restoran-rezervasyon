@@ -3,6 +3,14 @@ import { createServiceRoleClient } from "@/lib/supabase/server";
 import { resend, GONDEREN_EPOSTA } from "@/lib/email/resend";
 import { telefonGecerliMi } from "@/lib/telefon";
 
+function kac(deger: unknown) {
+  return String(deger ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 export async function POST(request: Request) {
   const body = await request.json();
   const { restoranAdi, eposta, telefon, masaDuzeni, menu } = body;
@@ -38,13 +46,13 @@ export async function POST(request: Request) {
     await resend.emails.send({
       from: GONDEREN_EPOSTA,
       to: "info@masadaki.com",
-      subject: `Yeni restoran başvurusu: ${restoranAdi}`,
+      subject: `Yeni restoran başvurusu: ${String(restoranAdi).replace(/[\r\n]/g, " ").slice(0, 100)}`,
       html: `
-        <p><strong>Restoran:</strong> ${restoranAdi}</p>
-        <p><strong>E-posta:</strong> ${eposta}</p>
-        <p><strong>Telefon:</strong> ${telefon || "—"}</p>
-        <p><strong>Masa düzeni:</strong><br/>${masaDuzeni ? String(masaDuzeni).replace(/\n/g, "<br/>") : "—"}</p>
-        <p><strong>Menü:</strong><br/>${menu ? String(menu).replace(/\n/g, "<br/>") : "—"}</p>
+        <p><strong>Restoran:</strong> ${kac(restoranAdi)}</p>
+        <p><strong>E-posta:</strong> ${kac(eposta)}</p>
+        <p><strong>Telefon:</strong> ${kac(telefon) || "—"}</p>
+        <p><strong>Masa düzeni:</strong><br/>${masaDuzeni ? kac(String(masaDuzeni).slice(0, 1000)).replace(/\n/g, "<br/>") : "—"}</p>
+        <p><strong>Menü:</strong><br/>${menu ? kac(String(menu).slice(0, 1000)).replace(/\n/g, "<br/>") : "—"}</p>
       `,
     });
   } catch (e) {

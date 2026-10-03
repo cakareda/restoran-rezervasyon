@@ -138,7 +138,7 @@ export default async function RestoranDetay({
     <div>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(yapilandirilmisVeri) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(yapilandirilmisVeri).replace(/</g, "\\u003c") }}
       />
       {fotograflar.length > 0 ? (
         <div className="grid h-48 grid-cols-4 grid-rows-1 gap-1 sm:h-64">
@@ -254,7 +254,7 @@ export default async function RestoranDetay({
                 {t("whatsappBtn")}
               </a>
             )}
-            {restoran.instagram_url && (
+            {/^https?:\/\//i.test(restoran.instagram_url ?? "") && (
               <a
                 href={restoran.instagram_url}
                 target="_blank"
@@ -264,7 +264,7 @@ export default async function RestoranDetay({
                 Instagram
               </a>
             )}
-            {restoran.menu_url && (
+            {/^https?:\/\//i.test(restoran.menu_url ?? "") && (
               <a
                 href={restoran.menu_url}
                 target="_blank"

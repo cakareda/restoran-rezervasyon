@@ -1,5 +1,5 @@
 import { NextResponse, after } from "next/server";
-import { createServiceRoleClient } from "@/lib/supabase/server";
+import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
 import { yeniTalepEpostasi } from "@/lib/email/templates";
 import { musaitlikHesapla } from "@/lib/kapasite";
@@ -33,6 +33,21 @@ export async function POST(request: Request) {
 
   if (!telefon || !telefonGecerliMi(telefon)) {
     return NextResponse.json({ hata: "Geçerli bir telefon numarası girin." }, { status: 400 });
+  }
+
+  if (!Number.isInteger(kisiSayisi) || kisiSayisi < 1 || kisiSayisi > 500) {
+    return NextResponse.json({ hata: "Geçerli bir kişi sayısı girin." }, { status: 400 });
+  }
+  if (typeof tarihSaat !== "string" || Number.isNaN(new Date(tarihSaat).getTime())) {
+    return NextResponse.json({ hata: "Geçerli bir tarih/saat girin." }, { status: 400 });
+  }
+  if (typeof eposta !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(eposta) || eposta.length > 200) {
+    return NextResponse.json({ hata: "Geçerli bir e-posta girin." }, { status: 400 });
+  }
+  // E-posta HTML gövdesine giren alanlardan "<" ">" ayıklanır (HTML enjeksiyonuna karşı).
+  const temizAd = String(adSoyad).replace(/[<>]/g, "").trim().slice(0, 100);
+  if (!temizAd) {
+    return NextResponse.json({ hata: "Geçerli bir ad soyad girin." }, { status: 400 });
   }
 
   const supabase = createServiceRoleClient();
@@ -81,10 +96,10 @@ export async function POST(request: Request) {
     );
   }
 
-  const gunBaslangic = new Date(istenenBaslangic);
-  gunBaslangic.setUTCHours(0, 0, 0, 0);
-  const gunBitis = new Date(istenenBaslangic);
-  gunBitis.setUTCHours(23, 59, 59, 999);
+  // İstenen saatin ±12 saati: oturma süresi UTC gün sınırını aşsa bile (gece yarısı
+  // civarı rezervasyonlar) çakışma kaçırılmasın.
+  const gunBaslangic = new Date(istenenBaslangic.getTime() - 12 * 60 * 60 * 1000);
+  const gunBitis = new Date(istenenBaslangic.getTime() + 12 * 60 * 60 * 1000);
 
   const [{ data: masalar }, { data: aktifRezervasyonlar }] = await Promise.all([
     supabase.from("masalar").select("kapasite, adet").eq("restoran_id", restoranId),
@@ -112,16 +127,44 @@ export async function POST(request: Request) {
     );
   }
 
-  const { data: kullanici, error: kullaniciHata } = await supabase
-    .from("kullanicilar")
-    .upsert(
-      { ad_soyad: adSoyad, eposta, telefon: telefon ?? null },
-      { onConflict: "eposta" }
-    )
-    .select("id, dil")
-    .single();
+  // Mevcut bir hesabın ad/telefonu, o hesaba giriş yapmamış biri tarafından
+  // ezilemez (aksi halde başkasının e-postasıyla rezervasyon yapıp onun telefonunu
+  // değiştirerek WhatsApp bildirimlerini kendine yönlendirmek mümkün olurdu).
+  const oturumClient = await createClient();
+  const {
+    data: { user: girisYapan },
+  } = await oturumClient.auth.getUser();
 
-  if (kullaniciHata || !kullanici) {
+  const { data: mevcutKullanici } = await supabase
+    .from("kullanicilar")
+    .select("id, dil, auth_user_id, telefon")
+    .eq("eposta", eposta)
+    .maybeSingle();
+
+  let kullanici: { id: string; dil: string | null } | null = null;
+
+  if (!mevcutKullanici) {
+    const { data: yeni } = await supabase
+      .from("kullanicilar")
+      .insert({ ad_soyad: temizAd, eposta, telefon })
+      .select("id, dil")
+      .single();
+    kullanici = yeni;
+  } else {
+    kullanici = mevcutKullanici;
+    const kendiHesabi = girisYapan && mevcutKullanici.auth_user_id === girisYapan.id;
+    const sahipsizKayit = !mevcutKullanici.auth_user_id;
+    if (kendiHesabi || sahipsizKayit) {
+      await supabase
+        .from("kullanicilar")
+        .update({ ad_soyad: temizAd, telefon })
+        .eq("id", mevcutKullanici.id);
+    } else if (!mevcutKullanici.telefon) {
+      await supabase.from("kullanicilar").update({ telefon }).eq("id", mevcutKullanici.id);
+    }
+  }
+
+  if (!kullanici) {
     return NextResponse.json({ hata: "Kullanıcı kaydedilemedi." }, { status: 500 });
   }
 
@@ -156,7 +199,7 @@ export async function POST(request: Request) {
 
   const { konu, html } = yeniTalepEpostasi({
     restoranAd: restoran.ad,
-    misafirAd: adSoyad,
+    misafirAd: temizAd,
     tarihSaat,
     kisiSayisi,
     panelUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/restoran-panel`,

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 
 export async function POST(
   request: Request,
@@ -9,6 +9,7 @@ export async function POST(
   const { masaIdler } = (await request.json()) as { masaIdler: string[] };
 
   const supabase = await createClient();
+  const servis = createServiceRoleClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -37,7 +38,7 @@ export async function POST(
 
   // Boş liste = atamayı kaldır (masayı serbest bırak).
   if (!masaIdler || masaIdler.length === 0) {
-    await supabase.from("rezervasyonlar").update({ atanan_masa_idler: null }).eq("id", id);
+    await servis.from("rezervasyonlar").update({ atanan_masa_idler: null }).eq("id", id);
     return NextResponse.json({ basari: true });
   }
 
@@ -59,7 +60,7 @@ export async function POST(
     );
   }
 
-  const { error } = await supabase
+  const { error } = await servis
     .from("rezervasyonlar")
     .update({ atanan_masa_idler: masaIdler })
     .eq("id", id);

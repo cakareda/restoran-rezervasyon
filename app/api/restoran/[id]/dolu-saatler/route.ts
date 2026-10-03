@@ -22,8 +22,9 @@ export async function GET(
 
   const supabase = createServiceRoleClient();
 
-  const gunBaslangic = new Date(`${tarih}T00:00:00`).toISOString();
-  const gunBitis = new Date(`${tarih}T23:59:59`).toISOString();
+  // İstanbul gününün sınırı (+3) ve oturma süresi taşması için ±12 saat tampon.
+  const gunBaslangic = new Date(istanbulTarihSaat(tarih, "00:00").getTime() - 12 * 3600000).toISOString();
+  const gunBitis = new Date(istanbulTarihSaat(tarih, "23:59").getTime() + 12 * 3600000).toISOString();
 
   const [{ data: restoran }, { data: masalar }, { data: rezervasyonlar }] = await Promise.all([
     supabase.from("restoranlar").select("oturma_suresi_dk").eq("id", id).single(),

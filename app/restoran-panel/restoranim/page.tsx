@@ -7,6 +7,13 @@ import UrlTemizle from "@/components/UrlTemizle";
 
 export const metadata: Metadata = { title: "Restoranım" };
 
+// Restoranın girdiği linkler public sayfada href olarak kullanılıyor: yalnızca http(s) kabul
+// edilir ("javascript:" gibi şemalar saklı XSS yolu olurdu).
+function sadeceHttpUrl(deger: FormDataEntryValue | null) {
+  const metin = String(deger ?? "").trim();
+  return /^https?:\/\//i.test(metin) ? metin.slice(0, 500) : null;
+}
+
 async function kaydet(formData: FormData) {
   "use server";
 
@@ -52,10 +59,9 @@ async function kaydet(formData: FormData) {
   // seviyesine bağlı olduğu için bunu restoranın kendi kendine en düşük
   // kademeyi seçip komisyondan kaçmasına izin vermemek adına yalnızca
   // Masadaki ekibi (restoran-ekle.js scripti / admin) belirler.
-  const { error } = await supabase.from("restoranlar").upsert(
+  const { error } = await supabase.from("restoranlar").update(
     {
-      auth_user_id: user.id,
-      ad: String(formData.get("ad")).slice(0, 100),
+      ad: String(formData.get("ad")).replace(/[<>]/g, "").slice(0, 100),
       sehir: String(formData.get("sehir")),
       semt: String(formData.get("semt")),
       mutfak_turu: String(formData.get("mutfakTuru")),
@@ -68,8 +74,8 @@ async function kaydet(formData: FormData) {
       kapanis_saati: String(formData.get("kapanisSaati") ?? "23:00"),
       calisma_saatleri: calismaSaatleriGecerli,
       ozel_gunler: ozelGunlerGecerli,
-      instagram_url: String(formData.get("instagramUrl") ?? "").trim() || null,
-      menu_url: String(formData.get("menuUrl") ?? "").trim() || null,
+      instagram_url: sadeceHttpUrl(formData.get("instagramUrl")),
+      menu_url: sadeceHttpUrl(formData.get("menuUrl")),
       iptal_politikasi: String(formData.get("iptalPolitikasi") ?? "").trim().slice(0, 300) || null,
       duyuru: String(formData.get("duyuru") ?? "").trim().slice(0, 140) || null,
       lat: formData.get("lat") ? Number(formData.get("lat")) : null,
@@ -79,9 +85,8 @@ async function kaydet(formData: FormData) {
         : 90,
       olanaklar,
       fotograflar,
-    },
-    { onConflict: "auth_user_id" }
-  );
+    }
+  ).eq("auth_user_id", user.id);
 
   revalidatePath("/restoran-panel/restoranim");
   revalidatePath("/restoran-panel");

@@ -50,7 +50,7 @@ export default function IceAktarButonu() {
       .map((s) => ({
         adSoyad: s[0],
         telefon: s[1] || null,
-        tarihSaat: `${s[2]}T${s[3]}:00`,
+        tarihSaat: `${s[2]}T${s[3]}:00+03:00`, // İstanbul saati (dışa aktarma ile aynı)
         kisiSayisi: Number(s[4]) || 2,
       }));
 

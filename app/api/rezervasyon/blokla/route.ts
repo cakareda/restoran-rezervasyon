@@ -12,6 +12,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ hata: "Ad soyad, tarih/saat ve kişi sayısı gerekli." }, { status: 400 });
   }
 
+  if (!Number.isInteger(kisiSayisi) || kisiSayisi < 1 || kisiSayisi > 500) {
+    return NextResponse.json({ hata: "Geçerli bir kişi sayısı girin." }, { status: 400 });
+  }
+  if (typeof tarihSaat !== "string" || Number.isNaN(new Date(tarihSaat).getTime())) {
+    return NextResponse.json({ hata: "Geçerli bir tarih/saat girin." }, { status: 400 });
+  }
+
   if (!telefonGecerliMi(telefon)) {
     return NextResponse.json({ hata: "Geçerli bir telefon numarası girin." }, { status: 400 });
   }
@@ -37,10 +44,8 @@ export async function POST(request: Request) {
   }
 
   const istenenBaslangic = new Date(tarihSaat);
-  const gunBaslangic = new Date(istenenBaslangic);
-  gunBaslangic.setUTCHours(0, 0, 0, 0);
-  const gunBitis = new Date(istenenBaslangic);
-  gunBitis.setUTCHours(23, 59, 59, 999);
+  const gunBaslangic = new Date(istenenBaslangic.getTime() - 12 * 60 * 60 * 1000);
+  const gunBitis = new Date(istenenBaslangic.getTime() + 12 * 60 * 60 * 1000);
 
   const [{ data: masalar }, { data: aktifRezervasyonlar }] = await Promise.all([
     supabase.from("masalar").select("kapasite, adet").eq("restoran_id", restoran.id),
@@ -73,7 +78,7 @@ export async function POST(request: Request) {
     .insert({
       restoran_id: restoran.id,
       kullanici_id: null,
-      misafir_ad_soyad: adSoyad,
+      misafir_ad_soyad: String(adSoyad).replace(/[<>]/g, "").slice(0, 100),
       misafir_telefon: telefon ?? null,
       misafir_eposta: eposta ?? null,
       notlar: notlar ? String(notlar).slice(0, 300) : null,
