@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/hatirlatmalar",
       "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/misafir-teyit",
+      "schedule": "*/15 * * * *"
     }
   ]
 }

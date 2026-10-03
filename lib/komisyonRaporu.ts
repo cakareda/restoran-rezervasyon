@@ -11,15 +11,18 @@ import { fiyatSeviyesi } from "@/lib/format";
 //
 // TAHAKKUK ZAMANI (hangi ayın raporuna girer):
 //   - Restoran "Geldi" dediyse             -> rezervasyon saati
-//   - Hiçbir işaret yoksa                  -> rezervasyon saati + 48 saat (No-Show bildirim süresi doldu)
+//   - Hiçbir işaret yoksa                  -> rezervasyon saati + 12 saat (bildirim süresi doldu)
 //   - Restoran "Gelmedi" (No-Show) dediyse -> ücret yok. Ancak misafir "gittim" diye
 //     teyit ettiyse bu bir İNCELEME kaydıdır (Madde 9.6): otomatik faturalanmaz, ayrıca listelenir.
 //   - Misafir "gitmedim" dese bile restoran "Geldi" demişse ücretli kalır, ama UYARI olarak sayılır.
 //   - Tahakkuk zamanı henüz gelmediyse rapora girmez (bekleyen).
 
-export const KADEME_TUTARLARI: Record<1 | 2 | 3 | 4, number> = { 1: 15, 2: 20, 3: 30, 4: 40 };
+export const KADEME_TUTARLARI: Record<1 | 2 | 3 | 4, number> = { 1: 15, 2: 30, 3: 60, 4: 120 };
 export const UCRETSIZ_DONEM_AY = 6;
-export const NOSHOW_PENCERESI_SAAT = 48;
+// Restoran rezervasyon saatinden itibaren bu süre içinde Geldi/No-Show bildirmezse ücret doğar.
+export const NOSHOW_PENCERESI_SAAT = 12;
+// Bu tutarın üzerindeki No-Show iddiaları misafir yanıtından bağımsız incelemeye düşer.
+export const YUKSEK_TUTAR_ESIGI = 1000;
 const SORGU_TAMPON_GUN = 4;
 
 export type KomisyonSatiri = {
@@ -92,6 +95,11 @@ export async function komisyonRaporuHesapla(ayParam: string | null | undefined) 
     );
   }
 
+  const seviyeler = new Map<string, 1 | 2 | 3 | 4>();
+  for (const r of restoranlar ?? []) {
+    seviyeler.set(r.id, fiyatSeviyesi(r.ortalama_fiyat, r.fiyat_seviyesi) ?? 1);
+  }
+
   const simdi = Date.now();
   let bekleyenToplam = 0;
 
@@ -108,7 +116,9 @@ export async function komisyonRaporuHesapla(ayParam: string | null | undefined) 
     let tur: Kayit["tur"];
 
     if (r.geldi_mi === false) {
-      if (r.misafir_teyit !== true) continue;
+      const seviye = seviyeler.get(r.restoran_id) ?? 1;
+      const yuksekTutar = r.kisi_sayisi * KADEME_TUTARLARI[seviye] >= YUKSEK_TUTAR_ESIGI;
+      if (r.misafir_teyit !== true && !yuksekTutar) continue;
       tahakkuk = pencereBitisi;
       tur = "inceleme";
     } else if (r.geldi_mi === true) {

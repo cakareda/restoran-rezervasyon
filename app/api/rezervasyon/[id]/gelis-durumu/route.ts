@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
-import { yorumDavetiEpostasi, gelisTeyitEpostasi } from "@/lib/email/templates";
-import { teyitLinkUret } from "@/lib/misafirTeyit";
+import { yorumDavetiEpostasi } from "@/lib/email/templates";
 
 export async function POST(
   request: Request,
@@ -53,18 +52,19 @@ export async function POST(
     }
   }
 
-  // Sözleşme Madde 9.2 / Ek-4: No-Show rezervasyon saatinden önce işaretlenemez
-  // ve rezervasyon saatinden itibaren 48 saat içinde bildirilmelidir.
+  // Sözleşme Madde 9.2 / Ek-4: No-Show, rezervasyon saatinden 30 dakika sonra
+  // başlayıp 12 saat içinde bildirilebilir.
   if (geldiMi === false) {
-    if (Date.now() < rezervasyonZamani) {
+    const simdi = Date.now();
+    if (simdi < rezervasyonZamani + 30 * 60 * 1000) {
       return NextResponse.json(
-        { hata: "No-Show, rezervasyon saatinden önce işaretlenemez." },
+        { hata: "No-Show, rezervasyon saatinden en az 30 dakika sonra işaretlenebilir." },
         { status: 400 }
       );
     }
-    if (Date.now() > rezervasyonZamani + 48 * 60 * 60 * 1000) {
+    if (simdi > rezervasyonZamani + 12 * 60 * 60 * 1000) {
       return NextResponse.json(
-        { hata: "No-Show bildirim süresi (rezervasyon saatinden itibaren 48 saat) doldu." },
+        { hata: "No-Show bildirim süresi (rezervasyon saatinden itibaren 12 saat) doldu." },
         { status: 400 }
       );
     }
@@ -72,18 +72,21 @@ export async function POST(
 
   const { data: rezervasyon, error: guncelHata } = await supabase
     .from("rezervasyonlar")
-    .update({ geldi_mi: geldiMi })
+    .update({
+      geldi_mi: geldiMi,
+      no_show_bildirim_zamani: geldiMi === false ? new Date().toISOString() : null,
+    })
     .eq("id", id)
     .eq("restoran_id", restoranSahiplik.id)
     .eq("durum", "onaylandi")
-    .select("id, kullanici_id, restoran_id, misafir_dili, teyit_gonderildi")
+    .select("id, kullanici_id, restoran_id, misafir_dili")
     .single();
 
   if (guncelHata || !rezervasyon) {
     return NextResponse.json({ hata: "Rezervasyon güncellenemedi." }, { status: 404 });
   }
 
-  if (geldiMi === true || geldiMi === false) {
+  if (geldiMi === true) {
     const [{ data: kullanici }, { data: restoran }] = await Promise.all([
       supabase
         .from("kullanicilar")
@@ -111,27 +114,6 @@ export async function POST(
           konu,
           html,
         });
-      }
-
-      // Restoranın "Geldi" ya da "Gelmedi" (No-Show) beyanını bağımsız olarak
-      // doğrulatmak için misafire tek tıkla teyit linki gönderiyoruz. Aynı rezervasyona birden fazla kez
-      // (Geldi -> Geri al -> Geldi) gönderilmesin diye bir kere işaretliyoruz.
-      if (!rezervasyon.teyit_gonderildi) {
-        const { konu: teyitKonu, html: teyitHtml } = gelisTeyitEpostasi({
-          restoranAd: restoran.ad,
-          gelmedi: geldiMi === false,
-          evetUrl: teyitLinkUret(rezervasyon.id, "evet"),
-          hayirUrl: teyitLinkUret(rezervasyon.id, "hayir"),
-          dil: rezervasyon.misafir_dili,
-        });
-        await bildirimGonderVeKaydet({
-          rezervasyonId: rezervasyon.id,
-          aliciEposta: kullanici.eposta,
-          tur: "gelis_teyidi",
-          konu: teyitKonu,
-          html: teyitHtml,
-        });
-        await supabase.from("rezervasyonlar").update({ teyit_gonderildi: true }).eq("id", rezervasyon.id);
       }
     }
   }

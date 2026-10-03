@@ -74,7 +74,7 @@ async function main() {
   let fiyatSeviyesi = null;
   while (!fiyatSeviyesi) {
     const ham = await rl.question(
-      "Fiyat seviyesi (1=S1 0-600TL, 2=S2 601-1200TL, 3=S3 1201-2500TL, 4=S4 2501TL+): "
+      "Fiyat seviyesi (1=S1 0-500TL/15, 2=S2 501-1000TL/30, 3=S3 1001-2000TL/60, 4=S4 2001TL+/120): "
     );
     if (["1", "2", "3", "4"].includes(ham.trim())) fiyatSeviyesi = Number(ham.trim());
     else console.log("Lütfen 1-4 arası bir sayı gir.");
