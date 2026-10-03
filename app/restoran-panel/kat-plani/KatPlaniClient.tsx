@@ -23,6 +23,7 @@ export default function KatPlaniClient({
   const canvasRef = useRef<HTMLDivElement>(null);
   const [surukleniyor, setSurukleniyor] = useState<string | null>(null);
   const surukleniyorRef = useRef<string | null>(null);
+  const yerelPozisyonlarRef = useRef<Record<string, { x: number; y: number }>>({});
   const [yerelPozisyonlar, setYerelPozisyonlar] = useState<Record<string, { x: number; y: number }>>({});
   const [eklemeAcik, setEklemeAcik] = useState(false);
   const [yeniIsim, setYeniIsim] = useState("");
@@ -42,7 +43,12 @@ export default function KatPlaniClient({
   const [aktifSekme, setAktifSekme] = useState("genel");
   const gorunenMasalar = aktifSekme === "genel" ? masalar : masalar.filter((m) => m.alan === aktifSekme);
 
-  const simdi = Date.now();
+  // Dakikada bir güncelleniyor: "kaç dk dolu" ve dolu/boş durumu sayfa yenilenmeden de ilerlesin.
+  const [simdi, setSimdi] = useState(() => Date.now());
+  useEffect(() => {
+    const aralik = setInterval(() => setSimdi(Date.now()), 60000);
+    return () => clearInterval(aralik);
+  }, []);
 
   function masaAtamalari(masaId: string) {
     return bugunkuAtamalar
@@ -65,6 +71,10 @@ export default function KatPlaniClient({
       y: Math.min(100, Math.max(0, ((clientY - rect.top) / rect.height) * 100)),
     };
   }
+
+  useEffect(() => {
+    yerelPozisyonlarRef.current = yerelPozisyonlar;
+  }, [yerelPozisyonlar]);
 
   // Sürükleme sırasında pencere genelinde dinliyoruz — işaretçi kutunun veya
   // tuvalin dışına çıksa bile sürükleme kopmuyor, daha akıcı hissettiriyor.
@@ -100,9 +110,6 @@ export default function KatPlaniClient({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [surukleniyor]);
-
-  const yerelPozisyonlarRef = useRef(yerelPozisyonlar);
-  yerelPozisyonlarRef.current = yerelPozisyonlar;
 
   function suruklemeyiBaslat(e: React.PointerEvent, masaId: string) {
     e.preventDefault();

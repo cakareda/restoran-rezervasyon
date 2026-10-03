@@ -18,7 +18,7 @@ export default async function AdminBasvurular() {
     <div>
       <h1 className="text-2xl font-extrabold text-foreground">Başvurular</h1>
       <p className="mt-1 text-sm text-muted">
-        "Bize ulaşın" formundan gelen restoran başvuruları. Onaylarken şehir/semt/mutfak/fiyat
+        &quot;Bize ulaşın&quot; formundan gelen restoran başvuruları. Onaylarken şehir/semt/mutfak/fiyat
         seviyesini sen belirliyorsun, restoran hesabı otomatik açılıp giriş linki üretiliyor.
       </p>
 
