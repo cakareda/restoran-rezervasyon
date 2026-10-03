@@ -5,12 +5,13 @@ import FiyatSeviyesiSecici from "./FiyatSeviyesiSecici";
 export const metadata: Metadata = { title: "Restoranlar — Admin" };
 
 const UCRETSIZ_DONEM_AY = 6;
+const KURULUM_BEDELI = "2.500 TL + KDV";
 
 export default async function AdminRestoranlar() {
   const supabase = createServiceRoleClient();
   const { data: restoranlar } = await supabase
     .from("restoranlar")
-    .select("id, ad, sehir, semt, eposta, telefon, fiyat_seviyesi, olusturulma")
+    .select("id, ad, sehir, semt, eposta, telefon, fiyat_seviyesi, olusturulma, kurucu_restoran, aktivasyon_tarihi")
     .order("olusturulma", { ascending: false });
 
   return (
@@ -33,8 +34,8 @@ export default async function AdminRestoranlar() {
           </thead>
           <tbody>
             {(restoranlar ?? []).map((r) => {
-              const ucretsizBitis = new Date(r.olusturulma);
-              ucretsizBitis.setUTCMonth(ucretsizBitis.getUTCMonth() + UCRETSIZ_DONEM_AY);
+              const ucretsizBitis = new Date(r.aktivasyon_tarihi);
+              if (r.kurucu_restoran) ucretsizBitis.setUTCMonth(ucretsizBitis.getUTCMonth() + UCRETSIZ_DONEM_AY);
               return (
                 <tr key={r.id} className="border-b border-border last:border-0">
                   <td className="px-4 py-2.5">
@@ -48,8 +49,12 @@ export default async function AdminRestoranlar() {
                     <p>{r.telefon}</p>
                   </td>
                   <td className="px-4 py-2.5 text-xs text-muted">
-                    <p>Kayıt: {new Date(r.olusturulma).toLocaleDateString("tr-TR")}</p>
-                    <p>Ücretsiz bitiş: {ucretsizBitis.toLocaleDateString("tr-TR")}</p>
+                    <p>Aktivasyon: {new Date(r.aktivasyon_tarihi).toLocaleDateString("tr-TR")}</p>
+                    <p>
+                      {r.kurucu_restoran
+                        ? `★ Kurucu · ücretsiz bitiş: ${ucretsizBitis.toLocaleDateString("tr-TR")}`
+                        : `Kurucu değil · ücretsiz dönem yok · kurulum: ${KURULUM_BEDELI}`}
+                    </p>
                   </td>
                   <td className="px-4 py-2.5">
                     <FiyatSeviyesiSecici restoranId={r.id} mevcutSeviye={r.fiyat_seviyesi} />

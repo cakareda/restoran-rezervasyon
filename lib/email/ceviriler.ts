@@ -42,6 +42,7 @@ type SabitMetinler = {
   teyitKonu: (restoranAd: string) => string;
   teyitBaslik: string;
   teyitP1: (restoranAd: string) => string;
+  teyitGelmediP1: (restoranAd: string) => string;
   teyitEvet: string;
   teyitHayir: string;
 };
@@ -83,6 +84,7 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     teyitKonu: (ad) => `${ad}'a gittin mi?`,
     teyitBaslik: "Rezervasyonun gerçekleşti mi?",
     teyitP1: (ad) => `${ad} rezervasyonunu "geldi" olarak işaretledi. Onaylar mısın?`,
+    teyitGelmediP1: (ad) => `${ad} rezervasyonunu "gelmedi" olarak işaretledi. Gittiyseniz lütfen belirtin.`,
     teyitEvet: "Evet, gittim",
     teyitHayir: "Hayır, gitmedim",
   },
@@ -121,6 +123,7 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     teyitKonu: (ad) => `Did you visit ${ad}?`,
     teyitBaslik: "Did your reservation happen?",
     teyitP1: (ad) => `${ad} marked your reservation as "arrived." Can you confirm?`,
+    teyitGelmediP1: (ad) => `${ad} marked your reservation as "no-show". If you did visit, please let us know.`,
     teyitEvet: "Yes, I went",
     teyitHayir: "No, I didn't go",
   },
@@ -159,6 +162,7 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     teyitKonu: (ad) => `Waren Sie bei ${ad}?`,
     teyitBaslik: "Hat Ihre Reservierung stattgefunden?",
     teyitP1: (ad) => `${ad} hat Ihre Reservierung als "angekommen" markiert. Können Sie das bestätigen?`,
+    teyitGelmediP1: (ad) => `${ad} hat Ihre Reservierung als "nicht erschienen" markiert. Falls Sie dort waren, teilen Sie es uns bitte mit.`,
     teyitEvet: "Ja, ich war da",
     teyitHayir: "Nein, ich war nicht da",
   },
@@ -197,6 +201,7 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     teyitKonu: (ad) => `¿Visitaste ${ad}?`,
     teyitBaslik: "¿Se realizó tu reserva?",
     teyitP1: (ad) => `${ad} marcó tu reserva como "llegado". ¿Puedes confirmarlo?`,
+    teyitGelmediP1: (ad) => `${ad} marcó tu reserva como "no presentado". Si sí fuiste, avísanos.`,
     teyitEvet: "Sí, fui",
     teyitHayir: "No, no fui",
   },
@@ -235,6 +240,7 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     teyitKonu: (ad) => `Avez-vous visité ${ad} ?`,
     teyitBaslik: "Votre réservation a-t-elle eu lieu ?",
     teyitP1: (ad) => `${ad} a marqué votre réservation comme "arrivé". Pouvez-vous confirmer ?`,
+    teyitGelmediP1: (ad) => `${ad} a marqué votre réservation comme "absent". Si vous y étiez, merci de nous le signaler.`,
     teyitEvet: "Oui, j'y suis allé",
     teyitHayir: "Non, je n'y suis pas allé",
   },
@@ -273,6 +279,7 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     teyitKonu: (ad) => `Hai visitato ${ad}?`,
     teyitBaslik: "La tua prenotazione si è svolta?",
     teyitP1: (ad) => `${ad} ha contrassegnato la tua prenotazione come "arrivato". Puoi confermarlo?`,
+    teyitGelmediP1: (ad) => `${ad} ha contrassegnato la tua prenotazione come "assente". Se ci sei andato, faccelo sapere.`,
     teyitEvet: "Sì, ci sono andato",
     teyitHayir: "No, non ci sono andato",
   },
@@ -311,6 +318,7 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     teyitKonu: (ad) => `هل زرت ${ad}؟`,
     teyitBaslik: "هل تم حجزك فعلاً؟",
     teyitP1: (ad) => `قام ${ad} بتعليم حجزك كـ"وصل". هل يمكنك التأكيد؟`,
+    teyitGelmediP1: (ad) => `وضع ${ad} حجزك كـ"لم يحضر". إذا كنت قد زرته، يرجى إبلاغنا.`,
     teyitEvet: "نعم، ذهبت",
     teyitHayir: "لا، لم أذهب",
   },
@@ -349,6 +357,7 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     teyitKonu: (ad) => `Вы посетили ${ad}?`,
     teyitBaslik: "Ваша бронь состоялась?",
     teyitP1: (ad) => `${ad} отметил вашу бронь как "пришёл". Можете подтвердить?`,
+    teyitGelmediP1: (ad) => `${ad} отметил вашу бронь как "не явился". Если вы всё же приходили, сообщите нам.`,
     teyitEvet: "Да, я был(а)",
     teyitHayir: "Нет, я не был(а)",
   },

@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { adminMi } from "@/lib/admin";
 
+// Sözleşme Madde 7.1: 31 Aralık 2026 23:59'a kadar kayıt+aktivasyon = Kurucu Restoran.
+const KURUCU_SON_TARIH = new Date("2026-12-31T23:59:59+03:00");
+
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://masadaki.com").replace(/\/$/, "");
 const SIFRE_BELIRLEME_YOLU = "/restoran-girisi/sifre-sifirla";
 
@@ -73,6 +76,8 @@ export async function POST(
         eposta: basvuru.eposta,
         telefon: basvuru.telefon,
         fiyat_seviyesi: Number(fiyatSeviyesi),
+        kurucu_restoran: new Date() <= KURUCU_SON_TARIH,
+        aktivasyon_tarihi: new Date().toISOString(),
       },
       { onConflict: "auth_user_id" }
     )

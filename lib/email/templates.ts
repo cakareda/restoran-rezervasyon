@@ -287,6 +287,7 @@ export function yorumDavetiEpostasi(params: { restoranAd: string; yorumUrl: stri
  *  tek taraflı beyanını bağımsız bir teyitle doğrular (bkz. sözleşme Madde 5). */
 export function gelisTeyitEpostasi(params: {
   restoranAd: string;
+  gelmedi?: boolean;
   evetUrl: string;
   hayirUrl: string;
   dil?: string | null;
@@ -299,7 +300,7 @@ export function gelisTeyitEpostasi(params: {
       dil,
       icerikHtml: `
         ${baslik(c.teyitBaslik)}
-        <p style="margin:0;">${c.teyitP1(params.restoranAd)}</p>
+        <p style="margin:0;">${params.gelmedi ? c.teyitGelmediP1(params.restoranAd) : c.teyitP1(params.restoranAd)}</p>
         <p style="margin-top:20px;">
           ${buton(params.evetUrl, c.teyitEvet)}
           <span style="display:inline-block;width:10px;"></span>

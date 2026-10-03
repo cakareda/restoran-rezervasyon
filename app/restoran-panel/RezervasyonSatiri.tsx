@@ -321,6 +321,14 @@ export default function RezervasyonSatiri({
             ⚠️ Misafir onaylamadı
           </span>
         )}
+        {geldiMi === false && misafirTeyit === true && (
+          <span
+            title="Misafir gittiğini bildirdi — No-Show kaydı Masadaki tarafından incelenebilir."
+            className="rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700"
+          >
+            ⚠️ Misafir gittiğini bildirdi
+          </span>
+        )}
         {geldiMi === true && misafirTeyit === true && (
           <span className="rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
             ✓ Misafir onayladı

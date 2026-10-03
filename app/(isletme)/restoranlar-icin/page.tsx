@@ -14,7 +14,7 @@ const SAHIP_FOTO =
 
 const BASLIK = "Restoranlar için";
 const ACIKLAMA =
-  "Rezervasyon taleplerini tek panelden yönet, telefon trafiğini azalt. Kayıt ve kurulum ücretsiz.";
+  "Rezervasyon taleplerini tek panelden yönet, telefon trafiğini azalt. Kurucu restoranlara kurulum ve ilk 6 ay hizmet bedeli ücretsiz.";
 
 export const metadata: Metadata = {
   title: BASLIK,
@@ -69,9 +69,10 @@ export default function RestoranlarIcin() {
             Telefon trafiği azalsın, <span className="text-[#f0d2a8]">servise</span> odaklan.
           </h1>
           <p className="mt-3 max-w-md text-white/85">
-            Rezervasyon taleplerini tek panelden yönet, misafirlerine saniyeler içinde yanıt ver.
-            Kendi müşterinden komisyon almayız — yalnızca Masadaki&apos;nin getirdiği yeni
-            misafirden, o da gerçekten geldiğinde.
+            Rezervasyon taleplerini tek panelden yönet, restoran yanıt verdiğinde misafirin hemen
+            haberi olsun. Kendi kanallarından aldığın rezervasyonlar her zaman ücretsiz — hizmet
+            bedeli yalnızca Masadaki üzerinden gelen rezervasyonlar için, ilk 6 ay ücretsiz
+            (Kurucu Restoran).
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <Link

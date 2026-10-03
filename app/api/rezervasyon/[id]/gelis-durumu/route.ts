@@ -40,13 +40,31 @@ export async function POST(
     return NextResponse.json({ hata: "Rezervasyon bulunamadı." }, { status: 404 });
   }
 
-  if (geldiMi) {
+  const rezervasyonZamani = new Date(mevcutRezervasyon.tarih_saat).getTime();
+
+  if (geldiMi === true) {
     const ERKEN_ISARETLEME_TOLERANSI_DK = 30;
-    const rezervasyonZamani = new Date(mevcutRezervasyon.tarih_saat).getTime();
     const enErkenIsaretlemeZamani = rezervasyonZamani - ERKEN_ISARETLEME_TOLERANSI_DK * 60 * 1000;
     if (Date.now() < enErkenIsaretlemeZamani) {
       return NextResponse.json(
         { hata: "Bu rezervasyon için henüz 'Geldi' işaretlenemez — rezervasyon saati gelmedi." },
+        { status: 400 }
+      );
+    }
+  }
+
+  // Sözleşme Madde 9.2 / Ek-4: No-Show rezervasyon saatinden önce işaretlenemez
+  // ve rezervasyon saatinden itibaren 48 saat içinde bildirilmelidir.
+  if (geldiMi === false) {
+    if (Date.now() < rezervasyonZamani) {
+      return NextResponse.json(
+        { hata: "No-Show, rezervasyon saatinden önce işaretlenemez." },
+        { status: 400 }
+      );
+    }
+    if (Date.now() > rezervasyonZamani + 48 * 60 * 60 * 1000) {
+      return NextResponse.json(
+        { hata: "No-Show bildirim süresi (rezervasyon saatinden itibaren 48 saat) doldu." },
         { status: 400 }
       );
     }
@@ -65,7 +83,7 @@ export async function POST(
     return NextResponse.json({ hata: "Rezervasyon güncellenemedi." }, { status: 404 });
   }
 
-  if (geldiMi) {
+  if (geldiMi === true || geldiMi === false) {
     const [{ data: kullanici }, { data: restoran }] = await Promise.all([
       supabase
         .from("kullanicilar")
@@ -80,25 +98,28 @@ export async function POST(
     ]);
 
     if (kullanici && restoran) {
-      const { konu, html } = yorumDavetiEpostasi({
-        restoranAd: restoran.ad,
-        yorumUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/yorum/${rezervasyon.id}`,
-        dil: rezervasyon.misafir_dili,
-      });
-      await bildirimGonderVeKaydet({
-        rezervasyonId: rezervasyon.id,
-        aliciEposta: kullanici.eposta,
-        tur: "yorum_daveti",
-        konu,
-        html,
-      });
+      if (geldiMi === true) {
+        const { konu, html } = yorumDavetiEpostasi({
+          restoranAd: restoran.ad,
+          yorumUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/yorum/${rezervasyon.id}`,
+          dil: rezervasyon.misafir_dili,
+        });
+        await bildirimGonderVeKaydet({
+          rezervasyonId: rezervasyon.id,
+          aliciEposta: kullanici.eposta,
+          tur: "yorum_daveti",
+          konu,
+          html,
+        });
+      }
 
-      // Restoranın "Geldi" beyanını bağımsız olarak doğrulatmak için misafire
-      // tek tıkla teyit linki gönderiyoruz. Aynı rezervasyona birden fazla kez
+      // Restoranın "Geldi" ya da "Gelmedi" (No-Show) beyanını bağımsız olarak
+      // doğrulatmak için misafire tek tıkla teyit linki gönderiyoruz. Aynı rezervasyona birden fazla kez
       // (Geldi -> Geri al -> Geldi) gönderilmesin diye bir kere işaretliyoruz.
       if (!rezervasyon.teyit_gonderildi) {
         const { konu: teyitKonu, html: teyitHtml } = gelisTeyitEpostasi({
           restoranAd: restoran.ad,
+          gelmedi: geldiMi === false,
           evetUrl: teyitLinkUret(rezervasyon.id, "evet"),
           hayirUrl: teyitLinkUret(rezervasyon.id, "hayir"),
           dil: rezervasyon.misafir_dili,

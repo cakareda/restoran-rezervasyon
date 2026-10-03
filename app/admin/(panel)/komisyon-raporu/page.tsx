@@ -27,9 +27,9 @@ export default async function AdminKomisyonRaporu({
     <div>
       <h1 className="text-2xl font-extrabold text-foreground">Komisyon Raporu</h1>
       <p className="mt-1 text-sm text-muted">
-        Tahakkuk esaslı: misafir "evet" dediğinde, "hayır" dediğinde veya 48 saat yanıt vermeyip
-        sessizlikle kesinleştiğinde sayılır — rezervasyon tarihi değil, kesinleşme tarihi esas
-        alınır. KDV içermez.
+        Sözleşme V1.0: Masadaki kaynaklı, onaylı, iptal/No-Show olmayan rezervasyonlar ücretlidir
+        (kişi sayısı × segment bedeli, KDV hariç). Tahakkuk: &quot;Geldi&quot; ise rezervasyon saati,
+        işaret yoksa rezervasyon saati + 48 saat. ★ = Kurucu Restoran.
       </p>
 
       <form method="get" className="mt-4 flex items-center gap-2">
@@ -56,28 +56,41 @@ export default async function AdminKomisyonRaporu({
               <thead>
                 <tr className="border-b border-border bg-zinc-50 text-left text-xs font-semibold uppercase text-muted">
                   <th className="px-4 py-2.5">Restoran</th>
-                  <th className="px-4 py-2.5">E-posta</th>
                   <th className="px-4 py-2.5">Ücretsiz dönem bitişi</th>
-                  <th className="px-4 py-2.5 text-right">Kesinleşmiş gelen misafir</th>
-                  <th className="px-4 py-2.5 text-right">İtirazlı (hariç)</th>
+                  <th className="px-4 py-2.5 text-right">Ücretli rez.</th>
+                  <th className="px-4 py-2.5 text-right">Ücretli kişi</th>
+                  <th className="px-4 py-2.5 text-right">Misafir uyarısı</th>
+                  <th className="px-4 py-2.5 text-right">İnceleme</th>
                   <th className="px-4 py-2.5 text-right">Tutar (TL)</th>
                 </tr>
               </thead>
               <tbody>
                 {sonuc!.satirlar.map((s) => (
                   <tr key={s.restoranId} className="border-b border-border last:border-0">
-                    <td className="px-4 py-2.5 font-medium text-foreground">{s.restoranAd}</td>
-                    <td className="px-4 py-2.5 text-xs text-muted">{s.restoranEposta}</td>
+                    <td className="px-4 py-2.5">
+                      <p className="font-medium text-foreground">
+                        {s.restoranAd} {s.kurucuRestoran && "★"}
+                      </p>
+                      <p className="text-xs text-muted">{s.restoranEposta}</p>
+                    </td>
                     <td className="px-4 py-2.5 text-xs text-muted">
                       {new Date(s.ucretsizDonemBitisi).toLocaleDateString("tr-TR")}
                     </td>
-                    <td className="px-4 py-2.5 text-right">{s.kesinlesmisMisafirSayisi}</td>
+                    <td className="px-4 py-2.5 text-right">{s.ucretliRezervasyonSayisi}</td>
+                    <td className="px-4 py-2.5 text-right">{s.ucretliKisiSayisi}</td>
                     <td
-                      className={`px-4 py-2.5 text-right ${s.itirazliSayisi > 0 ? "font-semibold text-red-600" : ""}`}
+                      className={`px-4 py-2.5 text-right ${s.misafirUyarisiSayisi > 0 ? "font-semibold text-red-600" : ""}`}
                     >
-                      {s.itirazliSayisi}
+                      {s.misafirUyarisiSayisi}
                     </td>
-                    <td className={`px-4 py-2.5 text-right ${s.toplamTutar === 0 ? "text-muted" : "font-semibold"}`}>
+                    <td
+                      className={`px-4 py-2.5 text-right ${s.incelemeSayisi > 0 ? "font-semibold text-red-600" : ""}`}
+                    >
+                      {s.incelemeSayisi}
+                    </td>
+                    <td
+                      className={`px-4 py-2.5 text-right ${s.toplamTutar === 0 ? "text-muted" : "font-semibold"}`}
+                    >
                       {s.toplamTutar.toLocaleString("tr-TR")}
                     </td>
                   </tr>
@@ -85,7 +98,7 @@ export default async function AdminKomisyonRaporu({
               </tbody>
               <tfoot>
                 <tr className="bg-zinc-50">
-                  <th colSpan={5} className="px-4 py-2.5 text-left">
+                  <th colSpan={6} className="px-4 py-2.5 text-left">
                     Genel toplam
                   </th>
                   <th className="px-4 py-2.5 text-right">{genelToplam.toLocaleString("tr-TR")} TL</th>
@@ -94,8 +107,10 @@ export default async function AdminKomisyonRaporu({
             </table>
           </div>
           <p className="mt-2 text-xs text-muted">
-            {sonuc!.bekleyenToplam} rezervasyon henüz 48 saatlik itiraz penceresini doldurmadı,
-            kesinleştiği ayın raporunda otomatik görünecek.
+            {sonuc!.bekleyenToplam} rezervasyonun tahakkuk zamanı henüz gelmedi, ilgili ayın raporunda
+            otomatik görünecek. &quot;Misafir uyarısı&quot;: restoran geldi dedi ama misafir gitmedim
+            dedi (ücretli kalır, kontrol et). &quot;İnceleme&quot;: restoran No-Show dedi ama misafir
+            gittim dedi (faturalanmadı, Madde 9.6).
           </p>
         </>
       )}

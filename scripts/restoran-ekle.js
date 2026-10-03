@@ -74,7 +74,7 @@ async function main() {
   let fiyatSeviyesi = null;
   while (!fiyatSeviyesi) {
     const ham = await rl.question(
-      "Fiyat seviyesi (1=₺ 0-600TL, 2=₺₺ 600-1200TL, 3=₺₺₺ 1200-2500TL, 4=₺₺₺₺ 2500TL+): "
+      "Fiyat seviyesi (1=S1 0-600TL, 2=S2 601-1200TL, 3=S3 1201-2500TL, 4=S4 2501TL+): "
     );
     if (["1", "2", "3", "4"].includes(ham.trim())) fiyatSeviyesi = Number(ham.trim());
     else console.log("Lütfen 1-4 arası bir sayı gir.");
@@ -109,6 +109,8 @@ async function main() {
         eposta: secilen.eposta,
         telefon: secilen.telefon,
         fiyat_seviyesi: fiyatSeviyesi,
+        kurucu_restoran: new Date() <= new Date("2026-12-31T23:59:59+03:00"),
+        aktivasyon_tarihi: new Date().toISOString(),
       },
       { onConflict: "auth_user_id" }
     )

@@ -25,9 +25,9 @@ export function fiyatSeviyesi(
   const eslesme = fiyatTemizle(deger).match(/\d+/);
   if (!eslesme) return null;
   const sayi = Number(eslesme[0]);
-  if (sayi < 600) return 1;
-  if (sayi < 1200) return 2;
-  if (sayi < 2500) return 3;
+  if (sayi <= 600) return 1;
+  if (sayi <= 1200) return 2;
+  if (sayi <= 2500) return 3;
   return 4;
 }
 
