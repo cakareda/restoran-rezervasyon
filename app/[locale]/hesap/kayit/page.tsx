@@ -1,16 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { GozIkonu, GozKapaliIkonu } from "@/components/icons";
 import GoogleGirisButonu from "@/components/GoogleGirisButonu";
 import TelefonGirisFormu from "@/components/TelefonGirisFormu";
+import TelefonGirdisi from "@/components/TelefonGirdisi";
+import { DILLER, DIL_ADLARI } from "@/i18n/routing";
 
 export default function MusteriKayit() {
   const t = useTranslations("HesapKayit");
   const tTelefon = useTranslations("TelefonGiris");
+  const locale = useLocale();
   const router = useRouter();
   const supabase = createClient();
   const [gonderiliyor, setGonderiliyor] = useState(false);
@@ -29,6 +32,13 @@ export default function MusteriKayit() {
     const eposta = String(form.get("eposta"));
     const adSoyad = String(form.get("adSoyad"));
     const telefon = String(form.get("telefon") ?? "");
+    const dil = String(form.get("dil") ?? locale);
+
+    if (telefon.replace(/\D/g, "").length < 10) {
+      setGonderiliyor(false);
+      setHata(t("hataTelefon"));
+      return;
+    }
 
     const { data, error } = await supabase.auth.signUp({
       email: eposta,
@@ -46,7 +56,7 @@ export default function MusteriKayit() {
     await fetch("/api/hesap/olustur", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ authUserId: data.user.id, adSoyad, eposta, telefon }),
+      body: JSON.stringify({ authUserId: data.user.id, adSoyad, eposta, telefon, dil }),
     });
 
     setGonderiliyor(false);
@@ -145,13 +155,24 @@ export default function MusteriKayit() {
             placeholder={t("epostaPlaceholder")}
             className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
           />
-          <input
+          <TelefonGirdisi
             name="telefon"
-            type="tel"
-            autoComplete="tel"
-            placeholder={t("telefonPlaceholder")}
-            className="w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+            girdiSinifi="rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
           />
+          <label className="block">
+            <span className="text-xs font-bold uppercase tracking-wide text-muted">{t("dilEtiketi")}</span>
+            <select
+              name="dil"
+              defaultValue={locale}
+              className="mt-1 w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+            >
+              {DILLER.map((d) => (
+                <option key={d} value={d}>
+                  {DIL_ADLARI[d]}
+                </option>
+              ))}
+            </select>
+          </label>
           <div className="relative">
             <input
               name="sifre"

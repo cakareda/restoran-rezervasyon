@@ -4,6 +4,7 @@ import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
 import { yeniTalepEpostasi } from "@/lib/email/templates";
 import { musaitlikHesapla } from "@/lib/kapasite";
 import { telefonGecerliMi } from "@/lib/telefon";
+import { DILLER } from "@/i18n/routing";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -117,11 +118,19 @@ export async function POST(request: Request) {
       { ad_soyad: adSoyad, eposta, telefon: telefon ?? null },
       { onConflict: "eposta" }
     )
-    .select("id")
+    .select("id, dil")
     .single();
 
   if (kullaniciHata || !kullanici) {
     return NextResponse.json({ hata: "Kullanıcı kaydedilemedi." }, { status: 500 });
+  }
+
+  // Dil önceliği: profildeki tercih > rezervasyonun yapıldığı sayfa dili. Profilde dil
+  // yoksa sayfa dili profile de yazılır (bildirimler hep aynı dilde gitsin).
+  const sayfaDili = DILLER.includes(misafirDili) ? (misafirDili as string) : null;
+  const etkinDil = kullanici.dil ?? sayfaDili;
+  if (!kullanici.dil && sayfaDili) {
+    await supabase.from("kullanicilar").update({ dil: sayfaDili }).eq("id", kullanici.id);
   }
 
   const { data: rezervasyon, error: rezervasyonHata } = await supabase
@@ -136,7 +145,7 @@ export async function POST(request: Request) {
       ozel_gun: ozelGun ?? null,
       alan_tercihi: alanTercihi ?? null,
       masa_kapasitesi: atanacakKapasite,
-      misafir_dili: misafirDili ?? null,
+      misafir_dili: etkinDil,
     })
     .select("id")
     .single();

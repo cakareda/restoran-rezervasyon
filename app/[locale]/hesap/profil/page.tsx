@@ -8,6 +8,7 @@ import type { RezervasyonDurum } from "@/lib/types";
 import { TakvimIkonu } from "@/components/icons";
 import UrlTemizle from "@/components/UrlTemizle";
 import { telefonGecerliMi } from "@/lib/telefon";
+import { DILLER, DIL_ADLARI } from "@/i18n/routing";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -30,6 +31,9 @@ async function kaydet(formData: FormData) {
     .update({
       ad_soyad: String(formData.get("adSoyad")),
       telefon,
+      dil: DILLER.includes(String(formData.get("dil")) as (typeof DILLER)[number])
+        ? String(formData.get("dil"))
+        : null,
     })
     .eq("auth_user_id", user.id);
 
@@ -57,7 +61,7 @@ export default async function Profilim({
 
   const { data: kullanici } = await supabase
     .from("kullanicilar")
-    .select("id, ad_soyad, eposta, telefon")
+    .select("id, ad_soyad, eposta, telefon, dil")
     .eq("auth_user_id", user.id)
     .maybeSingle();
 
@@ -129,6 +133,20 @@ export default async function Profilim({
             placeholder={t("telefonOpsiyonel")}
             className="mt-1 w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
           />
+        </label>
+        <label className="block">
+          <span className="text-xs font-bold uppercase tracking-wide text-muted">{t("dilEtiketi")}</span>
+          <select
+            name="dil"
+            defaultValue={kullanici.dil ?? locale}
+            className="mt-1 w-full rounded-xl border-0 px-3.5 py-2.5 text-sm outline-none ring-1 ring-border focus:ring-2 focus:ring-brand"
+          >
+            {DILLER.map((d) => (
+              <option key={d} value={d}>
+                {DIL_ADLARI[d]}
+              </option>
+            ))}
+          </select>
         </label>
         <button
           type="submit"

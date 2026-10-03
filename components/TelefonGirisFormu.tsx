@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import TelefonGirdisi from "@/components/TelefonGirdisi";
 
 export default function TelefonGirisFormu() {
   const t = useTranslations("TelefonGiris");
+  const locale = useLocale();
   const router = useRouter();
   const supabase = createClient();
 
@@ -59,7 +60,7 @@ export default function TelefonGirisFormu() {
     await fetch("/api/hesap/olustur-telefon", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ authUserId: data.user.id, telefon }),
+      body: JSON.stringify({ authUserId: data.user.id, telefon, dil: locale }),
     });
 
     setGonderiliyor(false);
