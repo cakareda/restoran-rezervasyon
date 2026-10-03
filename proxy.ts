@@ -31,6 +31,6 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/restoran-panel/:path*",
-    "/((?!api|auth|_next|restoran-panel|restoran-girisi|restoran-kayit|restoranlar-icin|admin|kvkk|cerez-politikasi|hakkimizda|widget|opengraph-image|.*\\..*).*)",
+    "/((?!api|auth|_next|restoran-panel|restoran-girisi|restoran-kayit|restoranlar-icin|admin|teyit|kvkk|cerez-politikasi|hakkimizda|widget|opengraph-image|.*\\..*).*)",
   ],
 };

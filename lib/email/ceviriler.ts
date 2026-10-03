@@ -33,6 +33,8 @@ type SabitMetinler = {
   restoranIptalBaslik: string;
   restoranIptalP1: (restoranAd: string, tarihSaat: string) => string;
   restoranIptalP2: string;
+  restoranIptalGittimMetin: string;
+  restoranIptalGittimButon: string;
 
   yorumKonu: (restoranAd: string) => string;
   yorumBaslik: string;
@@ -76,6 +78,8 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     restoranIptalBaslik: "Rezervasyonunuz iptal edildi",
     restoranIptalP1: (ad, t) => `<strong>${ad}</strong>, ${t} tarihli rezervasyonunuzu iptal etti.`,
     restoranIptalP2: "Sorularınız için doğrudan restoranla iletişime geçebilirsiniz.",
+    restoranIptalGittimMetin: "Restoran rezervasyonunuzu iptal ettiği halde yine de restorana gittiyseniz lütfen bize bildirin.",
+    restoranIptalGittimButon: "Yine de gittim",
     yorumKonu: (ad) => `${ad} deneyiminizi puanlayın`,
     yorumBaslik: "Nasıl geçti?",
     yorumP1: (ad) => `<strong>${ad}</strong>'daki deneyiminizi diğer misafirlerle paylaşmak ister misiniz?`,
@@ -114,6 +118,8 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     restoranIptalBaslik: "Your reservation was cancelled",
     restoranIptalP1: (ad, t) => `<strong>${ad}</strong> cancelled your reservation for ${t}.`,
     restoranIptalP2: "Feel free to contact the restaurant directly with any questions.",
+    restoranIptalGittimMetin: "If you still went to the restaurant despite this cancellation, please let us know.",
+    restoranIptalGittimButon: "I went anyway",
     yorumKonu: (ad) => `Rate your experience at ${ad}`,
     yorumBaslik: "How was it?",
     yorumP1: (ad) => `Would you like to share your experience at <strong>${ad}</strong> with other guests?`,
@@ -152,6 +158,8 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     restoranIptalBaslik: "Ihre Reservierung wurde storniert",
     restoranIptalP1: (ad, t) => `<strong>${ad}</strong> hat Ihre Reservierung für ${t} storniert.`,
     restoranIptalP2: "Bei Fragen können Sie sich gerne direkt an das Restaurant wenden.",
+    restoranIptalGittimMetin: "Falls Sie trotz der Stornierung dennoch im Restaurant waren, teilen Sie es uns bitte mit.",
+    restoranIptalGittimButon: "Ich war trotzdem dort",
     yorumKonu: (ad) => `Bewerten Sie Ihren Besuch bei ${ad}`,
     yorumBaslik: "Wie war's?",
     yorumP1: (ad) => `Möchten Sie Ihre Erfahrung bei <strong>${ad}</strong> mit anderen Gästen teilen?`,
@@ -190,6 +198,8 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     restoranIptalBaslik: "Tu reserva fue cancelada",
     restoranIptalP1: (ad, t) => `<strong>${ad}</strong> canceló tu reserva del ${t}.`,
     restoranIptalP2: "Si tienes preguntas, puedes contactar directamente al restaurante.",
+    restoranIptalGittimMetin: "Si aun así fuiste al restaurante pese a la cancelación, avísanos.",
+    restoranIptalGittimButon: "Fui de todos modos",
     yorumKonu: (ad) => `Califica tu experiencia en ${ad}`,
     yorumBaslik: "¿Qué tal fue?",
     yorumP1: (ad) => `¿Quieres compartir tu experiencia en <strong>${ad}</strong> con otros huéspedes?`,
@@ -228,6 +238,8 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     restoranIptalBaslik: "Votre réservation a été annulée",
     restoranIptalP1: (ad, t) => `<strong>${ad}</strong> a annulé votre réservation du ${t}.`,
     restoranIptalP2: "Pour toute question, contactez directement le restaurant.",
+    restoranIptalGittimMetin: "Si vous vous êtes tout de même rendu au restaurant malgré l'annulation, merci de nous le signaler.",
+    restoranIptalGittimButon: "J'y suis allé quand même",
     yorumKonu: (ad) => `Évaluez votre expérience chez ${ad}`,
     yorumBaslik: "Comment ça s'est passé ?",
     yorumP1: (ad) => `Souhaitez-vous partager votre expérience chez <strong>${ad}</strong> avec d'autres clients ?`,
@@ -266,6 +278,8 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     restoranIptalBaslik: "La tua prenotazione è stata annullata",
     restoranIptalP1: (ad, t) => `<strong>${ad}</strong> ha annullato la tua prenotazione del ${t}.`,
     restoranIptalP2: "Per qualsiasi domanda, puoi contattare direttamente il ristorante.",
+    restoranIptalGittimMetin: "Se sei comunque andato al ristorante nonostante l'annullamento, faccelo sapere.",
+    restoranIptalGittimButon: "Ci sono andato lo stesso",
     yorumKonu: (ad) => `Valuta la tua esperienza da ${ad}`,
     yorumBaslik: "Com'è andata?",
     yorumP1: (ad) => `Vuoi condividere la tua esperienza da <strong>${ad}</strong> con altri ospiti?`,
@@ -304,6 +318,8 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     restoranIptalBaslik: "تم إلغاء حجزك",
     restoranIptalP1: (ad, t) => `ألغى <strong>${ad}</strong> حجزك بتاريخ ${t}.`,
     restoranIptalP2: "لأي استفسار، يمكنك التواصل مباشرة مع المطعم.",
+    restoranIptalGittimMetin: "إذا ذهبت إلى المطعم رغم الإلغاء، يرجى إبلاغنا.",
+    restoranIptalGittimButon: "ذهبت على أي حال",
     yorumKonu: (ad) => `قيّم تجربتك في ${ad}`,
     yorumBaslik: "كيف كانت تجربتك؟",
     yorumP1: (ad) => `هل ترغب بمشاركة تجربتك في <strong>${ad}</strong> مع ضيوف آخرين؟`,
@@ -342,6 +358,8 @@ export const EPOSTA_CEVIRILERI: Record<EpostaDili, SabitMetinler> = {
     restoranIptalBaslik: "Ваша бронь отменена",
     restoranIptalP1: (ad, t) => `<strong>${ad}</strong> отменил вашу бронь на ${t}.`,
     restoranIptalP2: "По любым вопросам вы можете связаться с рестораном напрямую.",
+    restoranIptalGittimMetin: "Если вы всё же пришли в ресторан, несмотря на отмену, сообщите нам.",
+    restoranIptalGittimButon: "Я всё равно пришёл",
     yorumKonu: (ad) => `Оцените свой опыт в ${ad}`,
     yorumBaslik: "Как всё прошло?",
     yorumP1: (ad) => `Хотите поделиться впечатлениями о <strong>${ad}</strong> с другими гостями?`,

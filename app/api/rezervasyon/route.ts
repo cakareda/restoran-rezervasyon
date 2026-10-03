@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ hata: "Eksik bilgi." }, { status: 400 });
   }
 
-  if (!telefonGecerliMi(telefon)) {
+  if (!telefon || !telefonGecerliMi(telefon)) {
     return NextResponse.json({ hata: "Geçerli bir telefon numarası girin." }, { status: 400 });
   }
 

@@ -249,6 +249,7 @@ export function restoranIptalEpostasi(params: {
   restoranAd: string;
   tarihSaat: string;
   kisiSayisi: number;
+  gittimUrl?: string;
   dil?: string | null;
 }) {
   const dil = epostaDiliCoz(params.dil);
@@ -262,6 +263,11 @@ export function restoranIptalEpostasi(params: {
         <p style="margin:0;">${c.restoranIptalP1(params.restoranAd, tarihSaatFormatla(params.tarihSaat, dil))}</p>
         ${detayListesi([`<strong>${c.kisiSayisiEtiketi}:</strong> ${params.kisiSayisi}`])}
         <p style="margin:0;">${c.restoranIptalP2}</p>
+        ${
+          params.gittimUrl
+            ? `<p style="margin:16px 0 0 0;font-size:13px;color:#6b7280;">${c.restoranIptalGittimMetin}</p>${buton(params.gittimUrl, c.restoranIptalGittimButon, "#6b7280")}`
+            : ""
+        }
       `,
     }),
   };

@@ -38,3 +38,16 @@ export function teyitLinkUret(rezervasyonId: string, cevap: TeyitCevabi): string
   const token = teyitTokenUret(rezervasyonId, cevap);
   return `${siteUrl}/api/rezervasyon/${rezervasyonId}/misafir-teyit?cevap=${cevap}&token=${token}`;
 }
+
+/** WhatsApp URL butonları için kısa kod: "<rezervasyonId>.<e|h>.<token>" — buton
+ *  şablonunda sabit taban "https://www.masadaki.com/teyit/{{1}}" olduğu için
+ *  yalnızca bu son ek değişken olarak gönderilir. */
+export function teyitKisaKod(rezervasyonId: string, cevap: TeyitCevabi): string {
+  return `${rezervasyonId}.${cevap === "evet" ? "e" : "h"}.${teyitTokenUret(rezervasyonId, cevap)}`;
+}
+
+export function teyitKisaKodCoz(kod: string): { id: string; cevap: TeyitCevabi; token: string } | null {
+  const [id, harf, token] = kod.split(".");
+  if (!id || !token || (harf !== "e" && harf !== "h")) return null;
+  return { id, cevap: harf === "e" ? "evet" : "hayir", token };
+}

@@ -247,6 +247,10 @@ export default function RezervasyonFormu({
       setHata(t("hataKvkkOnay"));
       return;
     }
+    if ((telefon || profil?.telefon || "").replace(/\D/g, "").length < 10) {
+      setHata(t("hataTelefon"));
+      return;
+    }
     if (notlar.trim() && !notOnayi) {
       setNotUyarisiGoster(true);
       return;

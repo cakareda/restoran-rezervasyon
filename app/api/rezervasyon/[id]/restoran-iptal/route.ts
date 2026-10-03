@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
 import { restoranIptalEpostasi } from "@/lib/email/templates";
+import { teyitLinkUret, teyitKisaKod } from "@/lib/misafirTeyit";
+import { whatsappSablonGonder, whatsappSablonDili } from "@/lib/whatsapp";
 
 export async function POST(
   _request: Request,
@@ -40,25 +42,42 @@ export async function POST(
 
   const [{ data: kullanici }, { data: restoran }] = await Promise.all([
     rezervasyon.kullanici_id
-      ? supabase.from("kullanicilar").select("eposta").eq("id", rezervasyon.kullanici_id).single()
+      ? supabase.from("kullanicilar").select("eposta, telefon").eq("id", rezervasyon.kullanici_id).single()
       : Promise.resolve({ data: null }),
     supabase.from("restoranlar").select("ad").eq("id", rezervasyon.restoran_id).single(),
   ]);
 
   if (kullanici && restoran) {
-    const { konu, html } = restoranIptalEpostasi({
-      restoranAd: restoran.ad,
-      tarihSaat: rezervasyon.tarih_saat,
-      kisiSayisi: rezervasyon.kisi_sayisi,
-      dil: rezervasyon.misafir_dili,
+    // Öncelik WhatsApp (iptal bilgisi + "Yine de gittim" butonu); gitmezse e-posta.
+    const tarihMetni = new Date(rezervasyon.tarih_saat).toLocaleString("tr-TR", {
+      dateStyle: "long",
+      timeStyle: "short",
+      timeZone: "Europe/Istanbul",
     });
-    await bildirimGonderVeKaydet({
-      rezervasyonId: rezervasyon.id,
-      aliciEposta: kullanici.eposta,
-      tur: "restoran_iptali",
-      konu,
-      html,
+    const wa = await whatsappSablonGonder({
+      telefon: kullanici.telefon,
+      sablon: "masadaki_restoran_iptal",
+      dil: whatsappSablonDili(rezervasyon.misafir_dili),
+      govdeDegiskenleri: [restoran.ad, tarihMetni],
+      butonEkleri: [teyitKisaKod(rezervasyon.id, "evet")],
     });
+
+    if (!wa.gonderildi && kullanici.eposta) {
+      const { konu, html } = restoranIptalEpostasi({
+        restoranAd: restoran.ad,
+        tarihSaat: rezervasyon.tarih_saat,
+        kisiSayisi: rezervasyon.kisi_sayisi,
+        gittimUrl: teyitLinkUret(rezervasyon.id, "evet"),
+        dil: rezervasyon.misafir_dili,
+      });
+      await bildirimGonderVeKaydet({
+        rezervasyonId: rezervasyon.id,
+        aliciEposta: kullanici.eposta,
+        tur: "restoran_iptali",
+        konu,
+        html,
+      });
+    }
   }
 
   return NextResponse.json({ basari: true });

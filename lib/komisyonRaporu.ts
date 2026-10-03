@@ -45,6 +45,8 @@ type Rezervasyon = {
   kisi_sayisi: number;
   geldi_mi: boolean | null;
   misafir_teyit: boolean | null;
+  durum: string;
+  iptal_eden: string | null;
 };
 
 export function ayAraligi(ayParam: string | null | undefined): {
@@ -80,9 +82,9 @@ export async function komisyonRaporuHesapla(ayParam: string | null | undefined) 
 
   const { data: rezervasyonlar, error: rezHata } = await supabase
     .from("rezervasyonlar")
-    .select("id, restoran_id, tarih_saat, kisi_sayisi, geldi_mi, misafir_teyit")
+    .select("id, restoran_id, tarih_saat, kisi_sayisi, geldi_mi, misafir_teyit, durum, iptal_eden")
     .eq("kaynak", "online")
-    .eq("durum", "onaylandi")
+    .in("durum", ["onaylandi", "iptal_edildi"])
     .gte("tarih_saat", sorguBaslangic.toISOString())
     .lt("tarih_saat", bitis.toISOString());
   if (rezHata) throw new Error("Rezervasyonlar okunamadı.");
@@ -110,6 +112,15 @@ export async function komisyonRaporuHesapla(ayParam: string | null | undefined) 
     const donemBitis = donemBitisleri.get(r.restoran_id);
     const rezZamani = new Date(r.tarih_saat).getTime();
     if (donemBitis === undefined || rezZamani < donemBitis) continue;
+
+    // Restoran iptal etti ama misafir "yine de gittim" dediyse: incelemeye düşer (Madde 9.6 / platform dışı yönlendirme).
+    if (r.durum === "iptal_edildi") {
+      if (r.iptal_eden !== "restoran" || r.misafir_teyit !== true) continue;
+      if (rezZamani >= baslangic.getTime() && rezZamani < bitis.getTime() && simdi >= rezZamani) {
+        buAy.push({ restoran_id: r.restoran_id, kisi: r.kisi_sayisi, tur: "inceleme" });
+      }
+      continue;
+    }
 
     const pencereBitisi = rezZamani + NOSHOW_PENCERESI_SAAT * 60 * 60 * 1000;
     let tahakkuk: number;

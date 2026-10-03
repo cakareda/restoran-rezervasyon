@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
 import { gelisTeyitEpostasi } from "@/lib/email/templates";
-import { teyitLinkUret } from "@/lib/misafirTeyit";
+import { teyitLinkUret, teyitKisaKod } from "@/lib/misafirTeyit";
+import { whatsappSablonGonder, whatsappSablonDili } from "@/lib/whatsapp";
 
 // Rezervasyon saatinden ~1 saat sonra, restoranın Geldi/No-Show işaretlemesinden
 // BAĞIMSIZ olarak misafire "Rezervasyonunuza gittiniz mi?" maili gönderir.
@@ -23,7 +24,7 @@ export async function GET(request: Request) {
 
   const { data: rezervasyonlar, error } = await supabase
     .from("rezervasyonlar")
-    .select("id, restoran_id, misafir_dili, kullanicilar(eposta)")
+    .select("id, restoran_id, misafir_dili, kullanicilar(eposta, telefon)")
     .eq("durum", "onaylandi")
     .eq("teyit_gonderildi", false)
     .not("kullanici_id", "is", null)
@@ -41,9 +42,10 @@ export async function GET(request: Request) {
   for (const r of rezervasyonlar ?? []) {
     const kullanici = (Array.isArray(r.kullanicilar) ? r.kullanicilar[0] : r.kullanicilar) as {
       eposta: string | null;
+      telefon: string | null;
     } | null;
 
-    if (kullanici?.eposta) {
+    if (kullanici?.eposta || kullanici?.telefon) {
       if (!restoranAdlari.has(r.restoran_id)) {
         const { data: restoran } = await supabase
           .from("restoranlar")
@@ -55,24 +57,37 @@ export async function GET(request: Request) {
       const restoranAd = restoranAdlari.get(r.restoran_id);
 
       if (restoranAd) {
-        const { konu, html } = gelisTeyitEpostasi({
-          restoranAd,
-          evetUrl: teyitLinkUret(r.id, "evet"),
-          hayirUrl: teyitLinkUret(r.id, "hayir"),
-          dil: r.misafir_dili,
+        // Öncelik WhatsApp (daha yüksek açılma/yanıt oranı); gitmezse e-postaya düş.
+        const wa = await whatsappSablonGonder({
+          telefon: kullanici.telefon,
+          sablon: "masadaki_teyit",
+          dil: whatsappSablonDili(r.misafir_dili),
+          govdeDegiskenleri: [restoranAd],
+          butonEkleri: [teyitKisaKod(r.id, "evet"), teyitKisaKod(r.id, "hayir")],
         });
-        await bildirimGonderVeKaydet({
-          rezervasyonId: r.id,
-          aliciEposta: kullanici.eposta,
-          tur: "gelis_teyidi",
-          konu,
-          html,
-        });
-        gonderilen++;
+
+        if (wa.gonderildi) {
+          gonderilen++;
+        } else if (kullanici.eposta) {
+          const { konu, html } = gelisTeyitEpostasi({
+            restoranAd,
+            evetUrl: teyitLinkUret(r.id, "evet"),
+            hayirUrl: teyitLinkUret(r.id, "hayir"),
+            dil: r.misafir_dili,
+          });
+          await bildirimGonderVeKaydet({
+            rezervasyonId: r.id,
+            aliciEposta: kullanici.eposta,
+            tur: "gelis_teyidi",
+            konu,
+            html,
+          });
+          gonderilen++;
+        }
       }
     }
 
-    // E-postası olmayan (telefon girişli) misafirler için de tekrar tekrar denenmesin.
+    // İletişim bilgisi olmayan misafirler için de tekrar tekrar denenmesin.
     await supabase.from("rezervasyonlar").update({ teyit_gonderildi: true }).eq("id", r.id);
   }
 
