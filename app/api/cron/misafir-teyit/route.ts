@@ -3,7 +3,7 @@ import { createServiceRoleClient } from "@/lib/supabase/server";
 import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
 import { gelisTeyitEpostasi } from "@/lib/email/templates";
 import { teyitLinkUret, teyitKisaKod } from "@/lib/misafirTeyit";
-import { whatsappSablonGonder, whatsappSablonDili } from "@/lib/whatsapp";
+import { whatsappSablonGonder, whatsappSablonDili, whatsappTarihMetni } from "@/lib/whatsapp";
 
 // Rezervasyon saatinden ~1 saat sonra, restoranın Geldi/No-Show işaretlemesinden
 // BAĞIMSIZ olarak misafire "Rezervasyonunuza gittiniz mi?" maili gönderir.
@@ -24,7 +24,7 @@ export async function GET(request: Request) {
 
   const { data: rezervasyonlar, error } = await supabase
     .from("rezervasyonlar")
-    .select("id, restoran_id, misafir_dili, kullanicilar(eposta, telefon)")
+    .select("id, restoran_id, tarih_saat, misafir_dili, kullanicilar(ad_soyad, eposta, telefon)")
     .eq("durum", "onaylandi")
     .eq("teyit_gonderildi", false)
     .not("kullanici_id", "is", null)
@@ -41,6 +41,7 @@ export async function GET(request: Request) {
 
   for (const r of rezervasyonlar ?? []) {
     const kullanici = (Array.isArray(r.kullanicilar) ? r.kullanicilar[0] : r.kullanicilar) as {
+      ad_soyad: string | null;
       eposta: string | null;
       telefon: string | null;
     } | null;
@@ -58,11 +59,13 @@ export async function GET(request: Request) {
 
       if (restoranAd) {
         // Öncelik WhatsApp (daha yüksek açılma/yanıt oranı); gitmezse e-postaya düş.
+        const sablonDili = whatsappSablonDili(r.misafir_dili);
+        const ilkAd = (kullanici.ad_soyad ?? "").trim().split(/\s+/)[0] || "Misafir";
         const wa = await whatsappSablonGonder({
           telefon: kullanici.telefon,
           sablon: "masadaki_teyit",
-          dil: whatsappSablonDili(r.misafir_dili),
-          govdeDegiskenleri: [restoranAd],
+          dil: sablonDili,
+          govdeDegiskenleri: [ilkAd, restoranAd, whatsappTarihMetni(r.tarih_saat, sablonDili)],
           butonEkleri: [teyitKisaKod(r.id, "evet"), teyitKisaKod(r.id, "hayir")],
         });
 

@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
 import { restoranIptalEpostasi } from "@/lib/email/templates";
 import { teyitLinkUret, teyitKisaKod } from "@/lib/misafirTeyit";
-import { whatsappSablonGonder, whatsappSablonDili } from "@/lib/whatsapp";
+import { whatsappSablonGonder, whatsappSablonDili, whatsappTarihMetni } from "@/lib/whatsapp";
 
 export async function POST(
   _request: Request,
@@ -49,16 +49,12 @@ export async function POST(
 
   if (kullanici && restoran) {
     // Öncelik WhatsApp (iptal bilgisi + "Yine de gittim" butonu); gitmezse e-posta.
-    const tarihMetni = new Date(rezervasyon.tarih_saat).toLocaleString("tr-TR", {
-      dateStyle: "long",
-      timeStyle: "short",
-      timeZone: "Europe/Istanbul",
-    });
+    const sablonDili = whatsappSablonDili(rezervasyon.misafir_dili);
     const wa = await whatsappSablonGonder({
       telefon: kullanici.telefon,
       sablon: "masadaki_restoran_iptal",
-      dil: whatsappSablonDili(rezervasyon.misafir_dili),
-      govdeDegiskenleri: [restoran.ad, tarihMetni],
+      dil: sablonDili,
+      govdeDegiskenleri: [restoran.ad, whatsappTarihMetni(rezervasyon.tarih_saat, sablonDili)],
       butonEkleri: [teyitKisaKod(rezervasyon.id, "evet")],
     });
 
