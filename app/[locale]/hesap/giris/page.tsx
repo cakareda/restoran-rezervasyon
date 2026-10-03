@@ -8,6 +8,10 @@ import { GozIkonu, GozKapaliIkonu } from "@/components/icons";
 import GoogleGirisButonu from "@/components/GoogleGirisButonu";
 import TelefonGirisFormu from "@/components/TelefonGirisFormu";
 
+// Telefon/OTP girişi Supabase'de bir SMS sağlayıcısı bağlanana kadar çalışmaz; hazır olunca
+// Vercel'de NEXT_PUBLIC_TELEFON_GIRISI=1 yapılır.
+const TELEFON_GIRISI_ACIK = process.env.NEXT_PUBLIC_TELEFON_GIRISI === "1";
+
 export default function MusteriGiris() {
   const t = useTranslations("HesapGiris");
   const tTelefon = useTranslations("TelefonGiris");
@@ -58,6 +62,7 @@ export default function MusteriGiris() {
           <div className="h-px flex-1 bg-border" />
         </div>
 
+        {TELEFON_GIRISI_ACIK && (
         <div className="mb-4 flex rounded-xl bg-zinc-100 p-1 text-sm font-semibold">
           <button
             type="button"
@@ -74,8 +79,9 @@ export default function MusteriGiris() {
             {tTelefon("telefonSekmesi")}
           </button>
         </div>
+        )}
 
-        {yontem === "telefon" ? (
+        {TELEFON_GIRISI_ACIK && yontem === "telefon" ? (
           <TelefonGirisFormu />
         ) : (
         <form method="post" onSubmit={girisYap} className="space-y-3">

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { sozlesmeEngeli } from "@/lib/sozlesme";
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { musaitlikHesapla } from "@/lib/kapasite";
 import { telefonGecerliMi } from "@/lib/telefon";
@@ -42,6 +43,9 @@ export async function POST(request: Request) {
   if (!restoran) {
     return NextResponse.json({ hata: "Restoran bulunamadı." }, { status: 404 });
   }
+
+  const sozlesmeEngel = await sozlesmeEngeli(restoran.id);
+  if (sozlesmeEngel) return sozlesmeEngel;
 
   const istenenBaslangic = new Date(tarihSaat);
   const gunBaslangic = new Date(istenenBaslangic.getTime() - 12 * 60 * 60 * 1000);

@@ -10,6 +10,10 @@ import TelefonGirisFormu from "@/components/TelefonGirisFormu";
 import TelefonGirdisi from "@/components/TelefonGirdisi";
 import { DILLER, DIL_ADLARI } from "@/i18n/routing";
 
+// Telefon/OTP girişi Supabase'de bir SMS sağlayıcısı bağlanana kadar çalışmaz; hazır olunca
+// Vercel'de NEXT_PUBLIC_TELEFON_GIRISI=1 yapılır.
+const TELEFON_GIRISI_ACIK = process.env.NEXT_PUBLIC_TELEFON_GIRISI === "1";
+
 export default function MusteriKayit() {
   const t = useTranslations("HesapKayit");
   const tTelefon = useTranslations("TelefonGiris");
@@ -114,6 +118,7 @@ export default function MusteriKayit() {
           <div className="h-px flex-1 bg-border" />
         </div>
 
+        {TELEFON_GIRISI_ACIK && (
         <div className="mb-4 flex rounded-xl bg-zinc-100 p-1 text-sm font-semibold">
           <button
             type="button"
@@ -130,8 +135,9 @@ export default function MusteriKayit() {
             {tTelefon("telefonSekmesi")}
           </button>
         </div>
+        )}
 
-        {yontem === "telefon" ? (
+        {TELEFON_GIRISI_ACIK && yontem === "telefon" ? (
           kvkkOnay ? (
             <TelefonGirisFormu />
           ) : (

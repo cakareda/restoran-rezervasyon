@@ -1,0 +1,6 @@
+Hukuki belge PDF'lerini bu klasore koy (adlar lib/sozlesme.ts icindeki SOZLESME_BELGELERI ile ayni olmali):
+- masadaki-restoran-sozlesmesi-v1.0.pdf
+- ek-3-kisisel-veriler-v1.0.pdf
+- ek-4-platform-ve-rezervasyon-kurallari-v1.0.pdf
+Ek-1 ve Ek-2 panelde dinamik gosterilir (PDF gerekmez).
+Bu dosyalar herkese aciktir; yalnizca yayinlanacak final metni koy.

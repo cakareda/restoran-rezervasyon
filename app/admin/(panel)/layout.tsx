@@ -57,6 +57,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <Link href="/admin/komisyon-raporu" className="hover:text-brand-dark">
             Komisyon Raporu
           </Link>
+          <Link href="/admin/sinyaller" className="hover:text-brand-dark">
+            Sinyaller
+          </Link>
           <AdminCikisButonu />
         </nav>
       </header>

@@ -8,14 +8,12 @@ export default function AyarlarForm({
   enErkenSaat,
   enGecGun,
   maksimumKisi,
-  grupEsigi,
 }: {
   kaydet: (formData: FormData) => void;
   hatirlatmaAktif: boolean;
   enErkenSaat: number;
   enGecGun: number;
   maksimumKisi: number;
-  grupEsigi: number | null;
 }) {
   const [degisti, setDegisti] = useState(false);
 
@@ -100,26 +98,6 @@ export default function AyarlarForm({
         />
         <p className="mt-1 text-xs text-muted">
           Bunun üzerindeki gruplar için misafire telefonla arama önerilir.
-        </p>
-      </div>
-
-      <div>
-        <label htmlFor="grupEsigi" className="mb-1 block text-xs font-semibold text-muted">
-          Grup rezervasyonu eşiği (opsiyonel)
-        </label>
-        <input
-          id="grupEsigi"
-          type="number"
-          name="grupEsigi"
-          min={2}
-          max={100}
-          defaultValue={grupEsigi ?? ""}
-          placeholder="örn. 8"
-          className="w-32 rounded-lg border-0 px-2.5 py-1.5 text-sm ring-1 ring-border"
-        />
-        <p className="mt-1 text-xs text-muted">
-          Bu kişi sayısı ve üzeri rezervasyonlarda rezervasyon listesinde &quot;Grup&quot;
-          rozeti gösterilir.
         </p>
       </div>
 

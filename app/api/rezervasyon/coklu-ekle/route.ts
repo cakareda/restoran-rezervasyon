@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { sozlesmeEngeli } from "@/lib/sozlesme";
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { musaitlikHesapla, type AktifRezervasyon } from "@/lib/kapasite";
 
@@ -38,6 +39,9 @@ export async function POST(request: Request) {
   if (!restoran) {
     return NextResponse.json({ hata: "Restoran bulunamadı." }, { status: 404 });
   }
+
+  const sozlesmeEngel = await sozlesmeEngeli(restoran.id);
+  if (sozlesmeEngel) return sozlesmeEngel;
 
   const { data: masalar } = await supabase
     .from("masalar")

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import FiyatSeviyesiSecici from "./FiyatSeviyesiSecici";
+import Ek1Formu from "./Ek1Formu";
+import { SOZLESME_SURUMU } from "@/lib/sozlesme";
 
 export const metadata: Metadata = { title: "Restoranlar — Admin" };
 
@@ -11,8 +13,14 @@ export default async function AdminRestoranlar() {
   const supabase = createServiceRoleClient();
   const { data: restoranlar } = await supabase
     .from("restoranlar")
-    .select("id, ad, sehir, semt, eposta, telefon, fiyat_seviyesi, olusturulma, kurucu_restoran, aktivasyon_tarihi")
+    .select("id, ad, sehir, semt, eposta, telefon, fiyat_seviyesi, olusturulma, kurucu_restoran, aktivasyon_tarihi, uyelik_paketi, uyelik_aylik_ucret_tl, hesaplasma_donemi, odeme_vadesi_gun, odeme_yontemi")
     .order("olusturulma", { ascending: false });
+
+  const { data: kabuller } = await supabase
+    .from("sozlesme_kabulleri")
+    .select("restoran_id, kabul_no, kabul_zamani, imza_adi, sozlesme_bitis").gt("sozlesme_bitis", new Date().toISOString())
+    .eq("sozlesme_surumu", SOZLESME_SURUMU);
+  const kabulHaritasi = new Map((kabuller ?? []).map((k) => [k.restoran_id, k]));
 
   return (
     <div>
@@ -30,6 +38,8 @@ export default async function AdminRestoranlar() {
               <th className="px-4 py-2.5">İletişim</th>
               <th className="px-4 py-2.5">Kayıt / Ücretsiz dönem bitişi</th>
               <th className="px-4 py-2.5">Fiyat seviyesi</th>
+              <th className="px-4 py-2.5">Ek-1</th>
+              <th className="px-4 py-2.5">Sözleşme ({SOZLESME_SURUMU})</th>
             </tr>
           </thead>
           <tbody>
@@ -58,6 +68,34 @@ export default async function AdminRestoranlar() {
                   </td>
                   <td className="px-4 py-2.5">
                     <FiyatSeviyesiSecici restoranId={r.id} mevcutSeviye={r.fiyat_seviyesi} />
+                  </td>
+                  <td className="px-4 py-2.5">
+                    <Ek1Formu
+                      restoranId={r.id}
+                      baslangic={{
+                        uyelikPaketi: r.uyelik_paketi ?? "",
+                        uyelikAylikUcretTl: r.uyelik_aylik_ucret_tl === null ? "" : String(r.uyelik_aylik_ucret_tl),
+                        hesaplasmaDonemi: r.hesaplasma_donemi,
+                        odemeVadesiGun: r.odeme_vadesi_gun,
+                        odemeYontemi: r.odeme_yontemi,
+                      }}
+                    />
+                  </td>
+                  <td className="px-4 py-2.5 text-xs">
+                    {kabulHaritasi.get(r.id) ? (
+                      <div className="text-green-700">
+                        <p className="font-semibold">✓ İmzalandı</p>
+                        <p>{kabulHaritasi.get(r.id)!.imza_adi}</p>
+                        <p className="text-muted">
+                          {kabulHaritasi.get(r.id)!.kabul_no} ·{" "}
+                          {new Date(kabulHaritasi.get(r.id)!.kabul_zamani).toLocaleDateString("tr-TR")}
+                          {" → "}
+                          {new Date(kabulHaritasi.get(r.id)!.sozlesme_bitis).toLocaleDateString("tr-TR")}
+                        </p>
+                      </div>
+                    ) : (
+                      <span className="font-semibold text-amber-700">İmza bekliyor</span>
+                    )}
                   </td>
                 </tr>
               );

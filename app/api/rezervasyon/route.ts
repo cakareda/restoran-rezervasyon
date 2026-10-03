@@ -135,22 +135,47 @@ export async function POST(request: Request) {
     data: { user: girisYapan },
   } = await oturumClient.auth.getUser();
 
-  const { data: mevcutKullanici } = await supabase
-    .from("kullanicilar")
-    .select("id, dil, auth_user_id, telefon")
-    .eq("eposta", eposta)
-    .maybeSingle();
+  // E-posta karşılaştırması büyük/küçük harfe duyarsız olsun diye küçük harfe çeviriyoruz;
+  // eski kayıtlar karışık harfli olabileceğinden önce küçük harfle, sonra olduğu gibi arıyoruz.
+  const epostaKucuk = eposta.trim().toLowerCase();
+  const kullaniciGetir = async () => {
+    const ilk = await supabase
+      .from("kullanicilar")
+      .select("id, dil, auth_user_id, telefon")
+      .eq("eposta", epostaKucuk)
+      .maybeSingle();
+    if (ilk.data) return ilk.data;
+    if (epostaKucuk !== eposta) {
+      const ikinci = await supabase
+        .from("kullanicilar")
+        .select("id, dil, auth_user_id, telefon")
+        .eq("eposta", eposta)
+        .maybeSingle();
+      return ikinci.data;
+    }
+    return null;
+  };
 
+  let mevcutKullanici = await kullaniciGetir();
   let kullanici: { id: string; dil: string | null } | null = null;
+  let kullaniciHatasi: { code?: string; message?: string } | null = null;
 
   if (!mevcutKullanici) {
-    const { data: yeni } = await supabase
+    const { data: yeni, error: eklemeHatasi } = await supabase
       .from("kullanicilar")
-      .insert({ ad_soyad: temizAd, eposta, telefon })
+      .insert({ ad_soyad: temizAd, eposta: epostaKucuk, telefon })
       .select("id, dil")
       .single();
-    kullanici = yeni;
-  } else {
+    if (yeni) {
+      kullanici = yeni;
+    } else {
+      kullaniciHatasi = eklemeHatasi;
+      // Yarış durumu: aynı anda başka bir istek ekledi (benzersiz e-posta çakışması).
+      mevcutKullanici = await kullaniciGetir();
+    }
+  }
+
+  if (mevcutKullanici) {
     kullanici = mevcutKullanici;
     const kendiHesabi = girisYapan && mevcutKullanici.auth_user_id === girisYapan.id;
     const sahipsizKayit = !mevcutKullanici.auth_user_id;
@@ -165,7 +190,11 @@ export async function POST(request: Request) {
   }
 
   if (!kullanici) {
-    return NextResponse.json({ hata: "Kullanıcı kaydedilemedi." }, { status: 500 });
+    console.error("[Rezervasyon] kullanici kaydedilemedi", kullaniciHatasi);
+    return NextResponse.json(
+      { hata: `Kullanıcı kaydedilemedi.${kullaniciHatasi?.code ? ` (${kullaniciHatasi.code})` : ""}` },
+      { status: 500 }
+    );
   }
 
   // Dil önceliği: profildeki tercih > rezervasyonun yapıldığı sayfa dili. Profilde dil

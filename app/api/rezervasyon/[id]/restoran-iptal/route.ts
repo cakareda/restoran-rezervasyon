@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { sozlesmeEngeli } from "@/lib/sozlesme";
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 import { bildirimGonderVeKaydet } from "@/lib/email/gonder";
 import { restoranIptalEpostasi } from "@/lib/email/templates";
@@ -28,6 +29,9 @@ export async function POST(
   if (!restoranSahiplik) {
     return NextResponse.json({ hata: "Yetkiniz yok." }, { status: 403 });
   }
+
+  const sozlesmeEngel = await sozlesmeEngeli(restoranSahiplik.id);
+  if (sozlesmeEngel) return sozlesmeEngel;
 
   const { data: rezervasyon, error: guncelHata } = await servis
     .from("rezervasyonlar")

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { sozlesmeEngeli } from "@/lib/sozlesme";
 import { createClient, createServiceRoleClient } from "@/lib/supabase/server";
 
 export async function POST(
@@ -25,6 +26,9 @@ export async function POST(
   if (!restoran) {
     return NextResponse.json({ hata: "Yetkiniz yok." }, { status: 403 });
   }
+
+  const sozlesmeEngel = await sozlesmeEngeli(restoran.id);
+  if (sozlesmeEngel) return sozlesmeEngel;
 
   const { data: rezervasyon } = await supabase
     .from("rezervasyonlar")

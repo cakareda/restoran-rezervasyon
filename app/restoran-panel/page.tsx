@@ -93,7 +93,7 @@ export default async function RestoranPaneli({
 
   const { data: restoran } = await supabase
     .from("restoranlar")
-    .select("id, ad, sehir, semt, acilis_saati, kapanis_saati, calisma_saatleri, grup_esigi")
+    .select("id, ad, sehir, semt, acilis_saati, kapanis_saati, calisma_saatleri")
     .eq("auth_user_id", user!.id)
     .maybeSingle();
 
@@ -315,7 +315,6 @@ export default async function RestoranPaneli({
               ozelGun={r.ozel_gun}
               restoranNotu={r.restoran_notu}
               hayaletUyarisi={hayaletMi(r)}
-              grupUyarisi={Boolean(restoran.grup_esigi) && r.kisi_sayisi >= restoran.grup_esigi!}
             />
           ))
         ) : liste.length > 0 ? (

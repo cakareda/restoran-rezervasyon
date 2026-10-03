@@ -21,12 +21,6 @@ async function kaydet(formData: FormData) {
   const enErkenSaat = Math.min(168, Math.max(0, Number(formData.get("enErkenSaat") ?? 1)));
   const enGecGun = Math.min(365, Math.max(1, Number(formData.get("enGecGun") ?? 60)));
   const maksimumKisi = Math.min(100, Math.max(1, Number(formData.get("maksimumKisi") ?? 20)));
-  const grupEsigiHam = formData.get("grupEsigi");
-  const grupEsigi =
-    grupEsigiHam && String(grupEsigiHam).trim() !== ""
-      ? Math.min(100, Math.max(2, Number(grupEsigiHam)))
-      : null;
-
   await supabase
     .from("restoranlar")
     .update({
@@ -34,7 +28,6 @@ async function kaydet(formData: FormData) {
       en_erken_rezervasyon_saat: enErkenSaat,
       en_gec_rezervasyon_gun: enGecGun,
       maksimum_kisi_sayisi: maksimumKisi,
-      grup_esigi: grupEsigi,
     })
     .eq("auth_user_id", user.id);
 
@@ -56,7 +49,7 @@ export default async function Ayarlar({
   const { data: restoran } = await supabase
     .from("restoranlar")
     .select(
-      "eposta, hatirlatma_epostasi_aktif, en_erken_rezervasyon_saat, en_gec_rezervasyon_gun, maksimum_kisi_sayisi, grup_esigi"
+      "eposta, hatirlatma_epostasi_aktif, en_erken_rezervasyon_saat, en_gec_rezervasyon_gun, maksimum_kisi_sayisi"
     )
     .eq("auth_user_id", user!.id)
     .maybeSingle();
@@ -97,7 +90,6 @@ export default async function Ayarlar({
         enErkenSaat={restoran?.en_erken_rezervasyon_saat ?? 1}
         enGecGun={restoran?.en_gec_rezervasyon_gun ?? 60}
         maksimumKisi={restoran?.maksimum_kisi_sayisi ?? 20}
-        grupEsigi={restoran?.grup_esigi ?? null}
       />
     </div>
   );

@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import CikisYapButonu from "./CikisYapButonu";
 import BildirimZili from "./BildirimZili";
 import PwaKaydi from "./PwaKaydi";
+import SozlesmeKapisi from "./SozlesmeKapisi";
+import { gecerliKabulBul, sozlesmeYakindaBitiyor, sozlesmeZorunluMu } from "@/lib/sozlesme";
 import {
   TakvimIkonu,
   RestoranIkonu,
@@ -58,6 +60,16 @@ export default async function RestoranPanelLayout({
     );
   }
 
+  // Sözleşme ve ekleri imzalanmadan panele erişim yok: imza yoksa panel yerine imza kapısı
+  // gösterilir (açmak için Vercel'de SOZLESME_ZORUNLU=1; PDF belgeler hazır olunca).
+  let kabul: { sozlesme_bitis: string } | null = null;
+  let bitiyor = false;
+  if (sozlesmeZorunluMu()) {
+    kabul = await gecerliKabulBul(supabase, restoran.id);
+    if (!kabul) return <SozlesmeKapisi restoranId={restoran.id} />;
+    bitiyor = sozlesmeYakindaBitiyor(kabul.sozlesme_bitis);
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-[#faf7f4]">
       <PwaKaydi />
@@ -85,6 +97,12 @@ export default async function RestoranPanelLayout({
           <CikisYapButonu />
         </div>
       </header>
+
+      {kabul && bitiyor && (
+        <div className="bg-amber-50 px-5 py-2 text-center text-xs font-semibold text-amber-800">
+          Sözleşme süreniz {new Date(kabul.sozlesme_bitis).toLocaleDateString("tr-TR", { timeZone: "Europe/Istanbul" })} tarihinde doluyor. Yenileme için Masadaki ekibi sizinle iletişime geçecek.
+        </div>
+      )}
 
       <div className="flex flex-1">
         <nav className="hidden w-56 shrink-0 border-r border-border bg-white p-3 sm:block">

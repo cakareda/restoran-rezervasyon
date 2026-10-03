@@ -62,7 +62,10 @@ export default function BildirimZili({ restoranId }: { restoranId: string }) {
         .from("rezervasyonlar")
         .select("id", { count: "exact", head: true })
         .eq("restoran_id", restoranId)
-        .eq("durum", "beklemede");
+        .eq("durum", "beklemede")
+        // Saati geçmiş ama hiç yanıtlanmamış talepler artık işlem bekleyen bir şey değil;
+        // rozeti sonsuza kadar "1"de tutmasın.
+        .gte("tarih_saat", new Date().toISOString());
       if (!iptal) setBekleyenSayisi(count ?? 0);
     }
     sayaciYukle();
@@ -93,7 +96,8 @@ export default function BildirimZili({ restoranId }: { restoranId: string }) {
           ...onceki,
         ].slice(0, 15)
       );
-      setOkunmamisSayisi((n) => n + 1);
+      // Yeni talepler zaten "bekleyen" sayacında; çift saymamak için yalnızca iptaller okunmamış sayılır.
+      if (tur === "iptal") setOkunmamisSayisi((n) => n + 1);
       setYeniGeldi(true);
       bildirimSesiCal();
       setTimeout(() => setYeniGeldi(false), 4000);
@@ -186,6 +190,18 @@ export default function BildirimZili({ restoranId }: { restoranId: string }) {
       {acik && (
         <div className="absolute right-0 top-full z-30 mt-2 w-80 rounded-2xl border border-border bg-white p-2 shadow-xl">
           <p className="px-2 py-1.5 text-xs font-bold uppercase tracking-wide text-muted">Bildirimler</p>
+          {bekleyenSayisi > 0 && (
+            <button
+              onClick={() => {
+                setAcik(false);
+                router.push("/restoran-panel?sekme=bekleyen");
+              }}
+              className="flex w-full items-center gap-2 rounded-xl bg-amber-50 px-2.5 py-2 text-left text-sm font-semibold text-amber-800 hover:bg-amber-100"
+            >
+              <span className="text-base">⏳</span>
+              {bekleyenSayisi} bekleyen rezervasyon talebi — yanıt bekliyor
+            </button>
+          )}
           {bildirimler.length === 0 ? (
             <p className="px-2 py-4 text-center text-sm text-muted">Henüz bildirim yok.</p>
           ) : (
