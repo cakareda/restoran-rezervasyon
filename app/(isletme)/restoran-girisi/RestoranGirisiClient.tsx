@@ -16,14 +16,26 @@ export default function RestoranGirisiClient() {
   const [sifreGorunur, setSifreGorunur] = useState(false);
   const [oturumKontrolEdiliyor, setOturumKontrolEdiliyor] = useState(true);
 
+  // Müşteri, restoran ve admin hesapları aynı Supabase Auth havuzunu paylaşıyor; bu yüzden
+  // "giriş yapmış" olmak restoran paneline girme hakkı vermez: hesabın bir restoranı olmalı.
+  async function restoranSahibiMi(kullaniciId: string) {
+    const { data } = await supabase
+      .from("restoranlar")
+      .select("id")
+      .eq("auth_user_id", kullaniciId)
+      .maybeSingle();
+    return Boolean(data);
+  }
+
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (user && (await restoranSahibiMi(user.id))) {
         router.replace("/restoran-panel");
         return;
       }
       setOturumKontrolEdiliyor(false);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, supabase]);
 
   async function girisYap(e: React.FormEvent<HTMLFormElement>) {
@@ -32,18 +44,25 @@ export default function RestoranGirisiClient() {
     setGonderiliyor(true);
 
     const form = new FormData(e.currentTarget);
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: String(form.get("eposta")),
       password: String(form.get("sifre")),
     });
 
-    setGonderiliyor(false);
-
-    if (error) {
+    if (error || !data.user) {
+      setGonderiliyor(false);
       setHata("E-posta veya şifre hatalı.");
       return;
     }
 
+    if (!(await restoranSahibiMi(data.user.id))) {
+      await supabase.auth.signOut();
+      setGonderiliyor(false);
+      setHata("Bu hesap bir restoran hesabı değil. Müşteri hesapları restoran paneline giremez.");
+      return;
+    }
+
+    setGonderiliyor(false);
     router.push("/restoran-panel");
     router.refresh();
   }

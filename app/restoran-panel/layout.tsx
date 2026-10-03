@@ -40,6 +40,24 @@ export default async function RestoranPanelLayout({
     .eq("auth_user_id", user.id)
     .maybeSingle();
 
+  // Giriş yapmış ama restoranı olmayan hesaplar (müşteri, admin) panelin içine alınmaz.
+  if (!restoran) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#faf7f4] px-6">
+        <div className="max-w-sm rounded-2xl bg-white p-8 text-center shadow-sm">
+          <h1 className="text-lg font-bold text-foreground">Bu hesap bir restoran hesabı değil</h1>
+          <p className="mt-2 text-sm text-muted">
+            {user.email} ile giriş yapıldı, ancak bu hesaba bağlı bir restoran yok. Restoran hesapları
+            Masadaki ekibi tarafından açılır. Başka bir hesapla girmek için çıkış yap.
+          </p>
+          <div className="mt-4">
+            <CikisYapButonu />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-[#faf7f4]">
       <PwaKaydi />
